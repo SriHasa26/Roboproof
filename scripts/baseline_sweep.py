@@ -10,7 +10,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "backend"))
 from app.core.bounds import SCENARIO_BOUNDS  # noqa: E402
 from app.core.schemas import Policy, Scenario  # noqa: E402
-from app.scenarios.sweep import DEV_SEED_BASE, HELDOUT_SEED_BASE, latin_hypercube  # noqa: E402
+from app.core.seeds import DEV_SEED_BASE, HELDOUT_SEED_BASE
+from app.scenarios.sweep import latin_hypercube  # noqa: E402
 from app.sim.pickplace import run_scenario  # noqa: E402
 
 

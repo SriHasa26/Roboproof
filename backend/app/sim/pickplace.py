@@ -19,6 +19,7 @@ import pybullet as pb
 from pybullet_utils.bullet_client import BulletClient
 
 from ..core.schemas import FailureReason, Policy, Result, Scenario
+from ..core.seeds import check_seed
 
 DT = 1.0 / 240.0
 G = 9.81
@@ -339,8 +340,12 @@ def _execute(w: World, pol: Policy) -> None:
 
 
 def run_scenario(policy: Policy, scenario: Scenario, record: bool = False, render: bool = False,
-                 record_every: int = 6) -> tuple[Result, Trace | None, list[np.ndarray]]:
-    """Run one scenario. Same (policy, scenario) always gives the same Result."""
+                 record_every: int = 6, held_out: bool = False) -> tuple[Result, Trace | None, list[np.ndarray]]:
+    """Run one scenario. Same (policy, scenario) always gives the same Result.
+
+    Seeds in the held-out range raise HeldOutSeedError unless held_out=True (gate only, see core/seeds.py).
+    """
+    check_seed(scenario.seed, held_out)
     w = World(scenario, record_every=record_every if (record or render) else 0, render=render)
     w.completion = None
     reason: FailureReason | None = None

@@ -10,7 +10,8 @@ import pytest
 pytest.importorskip("pybullet")
 
 from app.core.schemas import FailureReason, Policy, PolicyPatch, Scenario  # noqa: E402
-from app.scenarios.sweep import DEV_SEED_BASE, HELDOUT_SEED_BASE, latin_hypercube  # noqa: E402
+from app.core.seeds import DEV_SEED_BASE, HELDOUT_SEED_BASE
+from app.scenarios.sweep import latin_hypercube  # noqa: E402
 from app.sim.pickplace import run_scenario  # noqa: E402
 from app.sim.recorder import record_scenario  # noqa: E402
 

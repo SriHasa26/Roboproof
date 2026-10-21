@@ -1,8 +1,6 @@
 """Seeded Latin-hypercube sweep over the scenario space (numpy only).
 
-Seed ranges are reserved so development never touches held-out data:
-  DEV_SEED_BASE     = 1_000      development / tuning sweeps
-  HELDOUT_SEED_BASE = 900_000    gate G5 only; never used during development
+Seed ranges (core/seeds.py): dev seeds start at DEV_SEED_BASE; seeds >= HELDOUT_SEED_BASE are gate-only.
 """
 from __future__ import annotations
 
@@ -10,13 +8,13 @@ import numpy as np
 
 from ..core.bounds import SCENARIO_BOUNDS
 from ..core.schemas import Scenario
-
-DEV_SEED_BASE = 1_000
-HELDOUT_SEED_BASE = 900_000
+from ..core.seeds import DEV_SEED_BASE, HELDOUT_SEED_BASE, check_seed  # noqa: F401  (re-exported)
 AXES = list(SCENARIO_BOUNDS)
 
 
 def latin_hypercube(n: int, sweep_seed: int, tag: str = "lhs", seed_base: int = DEV_SEED_BASE) -> list[Scenario]:
+    check_seed(seed_base)
+    check_seed(seed_base + n - 1)
     rng = np.random.default_rng(sweep_seed)
     d = len(AXES)
     u = np.empty((n, d))

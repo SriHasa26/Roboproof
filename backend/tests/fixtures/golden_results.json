@@ -1,0 +1,182 @@
+[
+ {
+  "scenario": {
+   "id": "g1",
+   "mass_kg": 0.2,
+   "friction": 0.8,
+   "size_m": 0.05,
+   "pos_offset_x": 0.0,
+   "pos_offset_y": 0.0,
+   "sensor_noise_m": 0.0,
+   "gripper_delay_steps": 0,
+   "seed": 1
+  },
+  "policy": {
+   "grip_force": 15.0,
+   "approach_speed": 0.3,
+   "lift_height": 0.15,
+   "lift_speed": 0.3,
+   "grasp_hold_steps": 10,
+   "place_slow_factor": 1.0,
+   "retry_count": 0
+  },
+  "result": {
+   "scenario_id": "g1",
+   "seed": 1,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.2708,
+   "final_place_error_m": 8e-05,
+   "max_slip_m": 0.00294,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1414,
+    "steps": 1021.0
+   }
+  }
+ },
+ {
+  "scenario": {
+   "id": "g2",
+   "mass_kg": 0.9,
+   "friction": 0.15,
+   "size_m": 0.05,
+   "pos_offset_x": 0.03,
+   "pos_offset_y": -0.02,
+   "sensor_noise_m": 0.005,
+   "gripper_delay_steps": 4,
+   "seed": 2
+  },
+  "policy": {
+   "grip_force": 15.0,
+   "approach_speed": 0.3,
+   "lift_height": 0.15,
+   "lift_speed": 0.3,
+   "grasp_hold_steps": 10,
+   "place_slow_factor": 1.0,
+   "retry_count": 0
+  },
+  "result": {
+   "scenario_id": "g2",
+   "seed": 2,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.4583,
+   "final_place_error_m": 0.27085,
+   "max_slip_m": 0.10878,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 350.0
+   }
+  }
+ },
+ {
+  "scenario": {
+   "id": "g3",
+   "mass_kg": 0.4,
+   "friction": 0.6,
+   "size_m": 0.03,
+   "pos_offset_x": -0.05,
+   "pos_offset_y": 0.04,
+   "sensor_noise_m": 0.02,
+   "gripper_delay_steps": 18,
+   "seed": 3
+  },
+  "policy": {
+   "grip_force": 15.0,
+   "approach_speed": 0.3,
+   "lift_height": 0.15,
+   "lift_speed": 0.3,
+   "grasp_hold_steps": 10,
+   "place_slow_factor": 1.0,
+   "retry_count": 0
+  },
+  "result": {
+   "scenario_id": "g3",
+   "seed": 3,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.35,
+   "final_place_error_m": 0.35222,
+   "max_slip_m": 0.14969,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 324.0
+   }
+  }
+ },
+ {
+  "scenario": {
+   "id": "g4",
+   "mass_kg": 0.6,
+   "friction": 1.0,
+   "size_m": 0.08,
+   "pos_offset_x": 0.0,
+   "pos_offset_y": 0.06,
+   "sensor_noise_m": 0.03,
+   "gripper_delay_steps": 10,
+   "seed": 4
+  },
+  "policy": {
+   "grip_force": 15.0,
+   "approach_speed": 0.3,
+   "lift_height": 0.15,
+   "lift_speed": 0.3,
+   "grasp_hold_steps": 10,
+   "place_slow_factor": 1.0,
+   "retry_count": 0
+  },
+  "result": {
+   "scenario_id": "g4",
+   "seed": 4,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7083,
+   "final_place_error_m": 0.01949,
+   "max_slip_m": 0.0001,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1454,
+    "steps": 1126.0
+   }
+  }
+ },
+ {
+  "scenario": {
+   "id": "g5",
+   "mass_kg": 0.1,
+   "friction": 0.3,
+   "size_m": 0.06,
+   "pos_offset_x": 0.07,
+   "pos_offset_y": 0.0,
+   "sensor_noise_m": 0.01,
+   "gripper_delay_steps": 0,
+   "seed": 5
+  },
+  "policy": {
+   "grip_force": 15.0,
+   "approach_speed": 0.3,
+   "lift_height": 0.15,
+   "lift_speed": 0.3,
+   "grasp_hold_steps": 10,
+   "place_slow_factor": 1.0,
+   "retry_count": 0
+  },
+  "result": {
+   "scenario_id": "g5",
+   "seed": 5,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.3958,
+   "final_place_error_m": 0.00793,
+   "max_slip_m": 0.00138,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1429,
+    "steps": 1051.0
+   }
+  }
+ }
+]

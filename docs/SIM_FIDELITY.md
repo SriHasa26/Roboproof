@@ -76,3 +76,13 @@ Single-parameter sensitivity, measured on dev sweep seed 7 (n=200, default polic
 So the fixer has five parameters with real influence (`grip_force`, `grasp_hold_steps`, `retry_count`, `lift_speed`, and `lift_height` in the harmful direction) and two that do nothing in this simulator (`approach_speed`, `place_slow_factor`). They stay in the policy schema because the brief lists them; do not describe them as effective. Lowering `lift_height` is a ready-made trap for the naive-fix demo.
 
 Some failures cannot be fixed by these parameters. For example with sensor noise at 0.03 m, a grasp that succeeds off-centre in x ends up displaced from the target; retries do not correct that. The gate should report such cases honestly rather than the system claiming a fix.
+
+## Freeze (from P3 Part A)
+
+From this point the simulator, parameter bounds and default policy are frozen. Changing them invalidates every baseline, patch and held-out comparison.
+
+- **Fingerprint:** `backend/app/sim/FROZEN_HASH.txt` holds SHA-256 hashes of `sim/pickplace.py` (line endings normalised) and of the scenario ranges, policy bounds and default policy values. `tests/test_sim_frozen.py` fails with an explanatory message if either changes.
+- **Golden results:** `tests/fixtures/golden_results.json` holds exact `Result`s for 5 fixed scenarios; the test re-runs them and requires exact equality. This also catches a changed PyBullet version or platform. It is run on the same image/machine as it was generated, so a failure on a different host (for example on Nebius) means bit-identical physics is not guaranteed there; it would not necessarily be a bug in the code.
+- **Deliberate re-freeze:** `python scripts/refreeze.py --i-understand-this-invalidates-results`, then re-run the dev baseline and ceiling search and note the reason here.
+- **Git tag `sim-frozen`:** marks the commit that introduced the fingerprint. The P2 commit (`007bec9`) differs from it only by the held-out seed guard in `run_scenario`; the dev baseline was re-run after adding the guard and was unchanged (70.0%, sweep seed 7, n=200).
+- **Seed guard:** `backend/app/core/seeds.py`. Seeds >= 900000 raise `HeldOutSeedError` in `run_scenario`, the sweep sampler, the scenario generator and the runners unless `held_out=True`, and `held_out=True` requires seeds >= 900000 (the two sets never mix). `tests/test_seed_guard.py` includes a static scan proving no code outside `backend/app/gate/` (and the forwarding parameters in the sim/runner/generator) passes the flag, including everything in `scripts/`.
