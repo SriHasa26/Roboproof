@@ -12,13 +12,15 @@ SCENARIO_BOUNDS: dict[str, tuple[float, float]] = {
     "gripper_delay_steps": (0, 20),
 }
 
-# (min, max, default) for tunable policy parameters. Defaults finalised in P2 on dev seeds only.
+# (min, max, default) for tunable policy parameters.
+# FROZEN in P2: defaults chosen using DEV seeds only (sweep seeds 7 and 11, seed base 1000); see docs/SIM_FIDELITY.md.
+# Do not change after seeing held-out results.
 POLICY_BOUNDS: dict[str, tuple[float, float, float]] = {
-    "grip_force": (5.0, 80.0, 30.0),
+    "grip_force": (5.0, 80.0, 15.0),
     "approach_speed": (0.05, 0.6, 0.3),
     "lift_height": (0.05, 0.30, 0.15),
     "lift_speed": (0.05, 0.6, 0.3),
-    "grasp_hold_steps": (0, 120, 30),
+    "grasp_hold_steps": (0, 120, 10),
     "place_slow_factor": (0.1, 1.0, 1.0),
     "retry_count": (0, 3, 0),
 }

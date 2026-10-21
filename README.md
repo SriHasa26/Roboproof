@@ -6,7 +6,7 @@ An AI test engineer for robot policies. It stress-tests a simulated pick-and-pla
 
 **This is a simulation, not a real robot.** Nothing here has been validated on hardware. See `docs/SIM_FIDELITY.md` for simulator limits.
 
-**Status: work in progress.** P1 (foundations) done. Everything that needs a real Nebius call is marked `PENDING_KEY` in [docs/NEBIUS_NOTES.md](docs/NEBIUS_NOTES.md). No measured results exist yet, so none are claimed.
+**Status: work in progress.** P1 (foundations) and P2 (simulator + policy) done. Everything that needs a real Nebius call is marked `PENDING_KEY` in [docs/NEBIUS_NOTES.md](docs/NEBIUS_NOTES.md). No measured results exist yet, so none are claimed.
 
 ## Setup
 
@@ -18,6 +18,17 @@ python scripts/list_models.py --filter nemotron   # then set NEBIUS_MODEL_FAST /
 ```
 
 Model IDs and keys come only from environment variables.
+
+## Simulator
+
+PyBullet has no Windows wheel for Python 3.13, so the simulator runs in Docker (`docker/Dockerfile.sim`):
+
+```bash
+docker build -f docker/Dockerfile.sim -t roboproof-sim:dev docker
+scripts/dock.sh sh -c 'cd backend && python -m pytest -q'            # all tests, including the simulator
+scripts/dock.sh python scripts/baseline_sweep.py --n 200             # dev baseline table
+```
+Fidelity limits and the tuning log are in [docs/SIM_FIDELITY.md](docs/SIM_FIDELITY.md).
 
 ## Layout
 

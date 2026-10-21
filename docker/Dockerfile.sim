@@ -1,0 +1,5 @@
+FROM python:3.11
+RUN pip install --no-cache-dir pybullet
+RUN pip install --no-cache-dir numpy pydantic pillow pytest python-dotenv httpx openai fastapi uvicorn
+WORKDIR /app
+ENV PYTHONPATH=/app/backend PYTHONHASHSEED=0
