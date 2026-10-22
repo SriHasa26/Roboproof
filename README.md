@@ -79,8 +79,8 @@ The simulator needs Python 3.11 (PyBullet has no wheel for the host's 3.13), so 
 
 ```bash
 cp .env.example .env            # fill NEBIUS_API_KEY, NEBIUS_BASE_URL, model ids (never commit .env)
-python scripts/list_models.py   # (needs the openai package) lists models for your key; fill NEBIUS_MODEL_* in .env
-scripts/dock.sh build           # first build ~5 min
+scripts/dock.sh build           # first build ~5 min (a cached rebuild took 43 s)
+scripts/dock.sh python scripts/list_models.py   # lists models for your key; fill NEBIUS_MODEL_* in .env
 scripts/dock.sh test            # test suite inside the image
 ```
 
@@ -99,7 +99,7 @@ It prints `MODE: REHEARSAL` and takes about 3.5 minutes (one measured run: 3m45s
 It reads only exported JSON from recorded real runs. Nothing is computed live and no model is called.
 
 ```bash
-python scripts/export_demo_data.py   # regenerate frontend/public/data from recorded_runs (run in the sim image: scripts/dock.sh python scripts/export_demo_data.py)
+scripts/dock.sh python scripts/export_demo_data.py   # optional: regenerate frontend/public/data from recorded_runs (the committed copy is already current)
 cd frontend
 npm install
 npm run dev                          # http://localhost:5173
