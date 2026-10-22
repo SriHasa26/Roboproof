@@ -467,5 +467,6 @@
    "final_patch": null,
    "total_tokens": 2994
   }
- ]
+ ],
+ "pipeline_version": "v1 (git tag pipeline-frozen)"
 }

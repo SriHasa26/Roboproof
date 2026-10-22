@@ -1,5 +1,7 @@
 # rehearsal_001: REHEARSAL, NOT AN OFFICIAL RESULT
 
+> **Pipeline v1** (git tag `pipeline-frozen`, before the P4.6 changes: one fixer patch per attempt chosen by the model, strict all-or-nothing generator validation, no generator fallback). Superseded by pipeline v2 (tag `pipeline-frozen-v2`); the v2 rehearsal study is `recorded_runs/reliability_002`. Kept unchanged as the record of v1.
+
 Produced by `scripts/run_rehearsal.py` on 2026-10-22 with real Nemotron calls via Nebius Token Factory (no cache, `LLM_DEV_CACHE=0`) and the local fallback runner (**LocalRunner, not Nebius Serverless Jobs**). Verification sets came from the **rehearsal** seed block (800000 to 801599, four single-use blocks of 400). **Held-out seeds (>= 900000) were not generated or run.** One run, one seed: it shows the machinery works end to end, not how reliable it is.
 
 | Run | Patch | Verdict | Checks |

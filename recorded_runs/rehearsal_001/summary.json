@@ -202,5 +202,6 @@
    "G5 verification set",
    1
   ]
- ]
+ ],
+ "pipeline_version": "v1 (git tag pipeline-frozen)"
 }

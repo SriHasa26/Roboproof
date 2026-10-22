@@ -1,5 +1,7 @@
 # reliability_001: REHEARSAL STUDY, NOT AN OFFICIAL RESULT
 
+> **Pipeline v1** (git tag `pipeline-frozen`, before the P4.6 changes: one fixer patch per attempt chosen by the model, strict all-or-nothing generator validation, no generator fallback). Superseded by pipeline v2 (tag `pipeline-frozen-v2`); the v2 rehearsal study is `recorded_runs/reliability_002`. Kept unchanged as the record of v1.
+
 Rebuilt from the saved run files (nothing re-run). Master seeds fixed in advance (101 202 303 404 505); no run was re-rolled for its verdict. Runs with no verdict failed in the scenario generator (validation failed after its single retry): that is not an infrastructure error, so they were not re-run. LocalRunner (labelled fallback, not Nebius). Rehearsal seed blocks only; held-out seeds were never run.
 
 Runs: 5. Verdicts: {'VERIFIED': 1, 'FAILED': 2, 'UNVERIFIED': 0, 'ERROR (no verdict)': 2}. Attempts needed (runs with a verdict): {3: 2, 2: 1}.
