@@ -1,0 +1,167 @@
+{
+ "label": "scripted example, not model output",
+ "patch": {
+  "grip_force": 80.0,
+  "approach_speed": 0.3,
+  "lift_height": 0.15,
+  "lift_speed": 0.3,
+  "grasp_hold_steps": 60,
+  "place_slow_factor": 1.0,
+  "retry_count": 0
+ },
+ "patch_description": "scripted example, not model output",
+ "targeting": "scripted rule: baseline failures with mass>0.5 and friction<0.4",
+ "verdict": "FAILED",
+ "checks": [
+  {
+   "id": "G1",
+   "name": "Determinism",
+   "status": "pass",
+   "observed": {
+    "sample": 30,
+    "mismatches": 0
+   },
+   "threshold": {
+    "mismatches": 0
+   },
+   "details": "all outcomes identical"
+  },
+  {
+   "id": "G2",
+   "name": "Targeted failures reproduced",
+   "status": "pass",
+   "observed": {
+    "targeted": 15,
+    "not_reproduced": 0
+   },
+   "threshold": {
+    "not_reproduced": 0
+   },
+   "details": "all reproduced"
+  },
+  {
+   "id": "G3",
+   "name": "Targeted failures fixed",
+   "status": "pass",
+   "observed": {
+    "fixed": 14,
+    "targeted": 15,
+    "fix_rate": 0.9333
+   },
+   "threshold": {
+    "min_fix_rate": 0.7
+   },
+   "details": ""
+  },
+  {
+   "id": "G4",
+   "name": "No regressions",
+   "status": "fail",
+   "observed": {
+    "regressions": 6,
+    "previously_passing": 188,
+    "strict_zero_budget_pass": false
+   },
+   "threshold": {
+    "budget": 3,
+    "budget_frac": 0.02
+   },
+   "details": "regressed: ['cov-1006', 'cov-1007', 'cov-1058', 'cov-1084', 'cov-1106', 'tgt-1161']"
+  },
+  {
+   "id": "G5",
+   "name": "Held-out generalization",
+   "status": "fail",
+   "observed": {
+    "patched_pass_rate": 0.83,
+    "patched_wilson95_lower": 0.7901,
+    "unpatched_pass_rate": 0.7325,
+    "improvement": 0.0975,
+    "n": 400,
+    "conditions": {
+     "target": false,
+     "improvement": false,
+     "wilson_lower_above_baseline": true
+    }
+   },
+   "threshold": {
+    "min_pass_rate": 0.9,
+    "min_improvement": 0.1,
+    "wilson_lower_must_exceed_unpatched_pass_rate": true
+   },
+   "details": "DIAGNOSTIC (an earlier check had already failed). failed: target, improvement"
+  },
+  {
+   "id": "G6",
+   "name": "Complete execution",
+   "status": "pass",
+   "observed": {
+    "runs": 6,
+    "incomplete_runs": [],
+    "failed_shards": 0,
+    "missing_scenarios": 0
+   },
+   "threshold": {},
+   "details": "all shards finished"
+  }
+ ],
+ "metrics": {
+  "analysis": {
+   "before": {
+    "n": 250,
+    "pass_rate": 0.752,
+    "pass_rate_ci95": [
+     0.6949,
+     0.8014
+    ],
+    "collision_rate": 0.008,
+    "mean_completion_time_s": 3.701
+   },
+   "after": {
+    "n": 250,
+    "pass_rate": 0.844,
+    "pass_rate_ci95": [
+     0.7939,
+     0.8837
+    ],
+    "collision_rate": 0.004,
+    "mean_completion_time_s": 3.902
+   }
+  },
+  "verification": {
+   "before": {
+    "n": 400,
+    "pass_rate": 0.7325,
+    "pass_rate_ci95": [
+     0.6871,
+     0.7735
+    ],
+    "collision_rate": 0.0025,
+    "mean_completion_time_s": 3.643
+   },
+   "after": {
+    "n": 400,
+    "pass_rate": 0.83,
+    "pass_rate_ci95": [
+     0.7901,
+     0.8636
+    ],
+    "collision_rate": 0.0,
+    "mean_completion_time_s": 3.852
+   }
+  }
+ },
+ "regressed_scenario_ids": [
+  "cov-1006",
+  "cov-1007",
+  "cov-1058",
+  "cov-1084",
+  "cov-1106",
+  "tgt-1161"
+ ],
+ "strict_zero_budget": {
+  "regressions": 6,
+  "pass": false
+ },
+ "note": "Stored gate result from rehearsal_001 (rehearsal seed block, not a held-out result). G5 was run as a diagnostic after G4 failed. Not recomputed here."
+}

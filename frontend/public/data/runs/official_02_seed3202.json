@@ -1,0 +1,1084 @@
+{
+ "id": "official_02_seed3202",
+ "badges": {
+  "pipeline_version": "v2",
+  "mode": "official",
+  "runner": "LOCAL FALLBACK, not Nebius",
+  "recorded": true
+ },
+ "label": "OFFICIAL RUN. Verification used a fresh single-use held-out seed block.",
+ "master_seed": 3202,
+ "verdict": "VERIFIED",
+ "error": null,
+ "attempts_used": 2,
+ "g5_executed": true,
+ "gate": {
+  "checks": [
+   {
+    "id": "G1",
+    "name": "Determinism",
+    "status": "pass",
+    "observed": {
+     "sample": 30,
+     "mismatches": 0
+    },
+    "threshold": {
+     "mismatches": 0
+    },
+    "details": "all outcomes identical"
+   },
+   {
+    "id": "G2",
+    "name": "Targeted failures reproduced",
+    "status": "pass",
+    "observed": {
+     "targeted": 76,
+     "not_reproduced": 0
+    },
+    "threshold": {
+     "not_reproduced": 0
+    },
+    "details": "all reproduced"
+   },
+   {
+    "id": "G3",
+    "name": "Targeted failures fixed",
+    "status": "pass",
+    "observed": {
+     "fixed": 55,
+     "targeted": 76,
+     "fix_rate": 0.7237
+    },
+    "threshold": {
+     "min_fix_rate": 0.7,
+     "comparison": "exact fraction, inclusive"
+    },
+    "details": ""
+   },
+   {
+    "id": "G4",
+    "name": "No regressions",
+    "status": "pass",
+    "observed": {
+     "regressions": 3,
+     "previously_passing": 171,
+     "strict_zero_budget_pass": false
+    },
+    "threshold": {
+     "budget": 3,
+     "budget_frac": 0.02
+    },
+    "details": "regressed: ['tgt-1156', 'tgt-1157', 'tgt-1222']"
+   },
+   {
+    "id": "G5",
+    "name": "Held-out generalization",
+    "status": "pass",
+    "observed": {
+     "patched_pass_rate": 0.955,
+     "patched_wilson95_lower": 0.93,
+     "unpatched_pass_rate": 0.6875,
+     "improvement": 0.2675,
+     "n": 400,
+     "patched_passes": 382,
+     "unpatched_passes": 275,
+     "conditions": {
+      "target": true,
+      "improvement": true,
+      "wilson_lower_above_baseline": true
+     }
+    },
+    "threshold": {
+     "min_pass_rate": 0.9,
+     "min_improvement": 0.1,
+     "wilson_lower_must_exceed_unpatched_pass_rate": true,
+     "comparison": "target and improvement: exact fractions, inclusive; Wilson: strict, float"
+    },
+    "details": "all conditions met"
+   },
+   {
+    "id": "G6",
+    "name": "Complete execution",
+    "status": "pass",
+    "observed": {
+     "runs": 6,
+     "incomplete_runs": [],
+     "failed_shards": 0,
+     "missing_scenarios": 0
+    },
+    "threshold": {},
+    "details": "all shards finished"
+   }
+  ],
+  "regressed_scenario_ids": [
+   "tgt-1156",
+   "tgt-1157",
+   "tgt-1222"
+  ],
+  "strict_zero_budget": {
+   "regressions": 3,
+   "pass": false
+  },
+  "config": {
+   "heldout_target": 0.9,
+   "min_improvement": 0.1,
+   "target_fix_rate": 0.7,
+   "regression_budget_frac": 0.02,
+   "determinism_sample": 30,
+   "heldout_size": 400
+  },
+  "verification_set": {
+   "block": "held_out",
+   "start": 900400,
+   "count": 400,
+   "sampler": "latin_hypercube",
+   "rehearsal": false
+  }
+ },
+ "metrics": {
+  "analysis": {
+   "before": {
+    "n": 250,
+    "pass_rate": 0.684,
+    "pass_rate_ci95": [
+     0.624,
+     0.7385
+    ],
+    "collision_rate": 0.004,
+    "mean_completion_time_s": 3.68
+   },
+   "after": {
+    "n": 250,
+    "pass_rate": 0.904,
+    "pass_rate_ci95": [
+     0.8611,
+     0.9346
+    ],
+    "collision_rate": 0.008,
+    "mean_completion_time_s": 4.392
+   }
+  },
+  "verification": {
+   "before": {
+    "n": 400,
+    "pass_rate": 0.6875,
+    "pass_rate_ci95": [
+     0.6405,
+     0.731
+    ],
+    "collision_rate": 0.005,
+    "mean_completion_time_s": 3.646
+   },
+   "after": {
+    "n": 400,
+    "pass_rate": 0.955,
+    "pass_rate_ci95": [
+     0.93,
+     0.9713
+    ],
+    "collision_rate": 0.015,
+    "mean_completion_time_s": 4.337
+   }
+  }
+ },
+ "candidate_tables": [
+  {
+   "attempt": 1,
+   "selected_index": 2,
+   "regression_budget": 3,
+   "v1_single_patch": false,
+   "diversity_violations": [],
+   "dropped": [],
+   "candidates": [
+    {
+     "index": 0,
+     "applied": {
+      "retry_count": 3.0
+     },
+     "fixed": 25,
+     "targeted": 76,
+     "regressions": 0,
+     "previously_passing": 171,
+     "pass_rate": 0.792,
+     "per_hypothesis_fixed": {
+      "H1": "10/35",
+      "H2": "5/26",
+      "H3": "20/55",
+      "H4": "13/42"
+     },
+     "selected": false,
+     "complete": true,
+     "clamped": {
+      "retry_count": false
+     },
+     "rounded": {}
+    },
+    {
+     "index": 1,
+     "applied": {
+      "grip_force": 25.0,
+      "grasp_hold_steps": 21.0,
+      "lift_speed": 0.2
+     },
+     "fixed": 24,
+     "targeted": 76,
+     "regressions": 0,
+     "previously_passing": 171,
+     "pass_rate": 0.784,
+     "per_hypothesis_fixed": {
+      "H1": "14/35",
+      "H2": "13/26",
+      "H3": "12/55",
+      "H4": "15/42"
+     },
+     "selected": false,
+     "complete": true,
+     "clamped": {
+      "grip_force": false,
+      "grasp_hold_steps": false,
+      "lift_speed": false
+     },
+     "rounded": {}
+    },
+    {
+     "index": 2,
+     "applied": {
+      "grip_force": 40.0,
+      "grasp_hold_steps": 60.0,
+      "retry_count": 1.0
+     },
+     "fixed": 38,
+     "targeted": 76,
+     "regressions": 1,
+     "previously_passing": 171,
+     "pass_rate": 0.836,
+     "per_hypothesis_fixed": {
+      "H1": "24/35",
+      "H2": "21/26",
+      "H3": "21/55",
+      "H4": "22/42"
+     },
+     "selected": true,
+     "complete": true,
+     "clamped": {
+      "grip_force": false,
+      "grasp_hold_steps": false,
+      "retry_count": false
+     },
+     "rounded": {}
+    },
+    {
+     "index": 3,
+     "applied": {
+      "grasp_hold_steps": 60.0
+     },
+     "fixed": 16,
+     "targeted": 76,
+     "regressions": 4,
+     "previously_passing": 171,
+     "pass_rate": 0.736,
+     "per_hypothesis_fixed": {
+      "H1": "6/35",
+      "H2": "11/26",
+      "H3": "8/55",
+      "H4": "12/42"
+     },
+     "selected": false,
+     "complete": true,
+     "clamped": {
+      "grasp_hold_steps": false
+     },
+     "rounded": {}
+    }
+   ]
+  },
+  {
+   "attempt": 2,
+   "selected_index": 2,
+   "regression_budget": 3,
+   "v1_single_patch": false,
+   "diversity_violations": [],
+   "dropped": [],
+   "candidates": [
+    {
+     "index": 0,
+     "applied": {
+      "retry_count": 3.0
+     },
+     "fixed": 25,
+     "targeted": 76,
+     "regressions": 0,
+     "previously_passing": 171,
+     "pass_rate": 0.792,
+     "per_hypothesis_fixed": {
+      "H1": "10/35",
+      "H2": "5/26",
+      "H3": "20/55",
+      "H4": "13/42"
+     },
+     "selected": false,
+     "complete": true,
+     "clamped": {
+      "retry_count": false
+     },
+     "rounded": {}
+    },
+    {
+     "index": 1,
+     "applied": {
+      "grip_force": 50.0,
+      "grasp_hold_steps": 80.0,
+      "lift_speed": 0.2
+     },
+     "fixed": 32,
+     "targeted": 76,
+     "regressions": 2,
+     "previously_passing": 171,
+     "pass_rate": 0.808,
+     "per_hypothesis_fixed": {
+      "H1": "22/35",
+      "H2": "17/26",
+      "H3": "16/55",
+      "H4": "18/42"
+     },
+     "selected": false,
+     "complete": true,
+     "clamped": {
+      "grip_force": false,
+      "grasp_hold_steps": false,
+      "lift_speed": false
+     },
+     "rounded": {}
+    },
+    {
+     "index": 2,
+     "applied": {
+      "grip_force": 80.0,
+      "grasp_hold_steps": 120.0,
+      "retry_count": 2.0
+     },
+     "fixed": 55,
+     "targeted": 76,
+     "regressions": 3,
+     "previously_passing": 171,
+     "pass_rate": 0.904,
+     "per_hypothesis_fixed": {
+      "H1": "30/35",
+      "H2": "22/26",
+      "H3": "35/55",
+      "H4": "32/42"
+     },
+     "selected": true,
+     "complete": true,
+     "clamped": {
+      "grip_force": false,
+      "grasp_hold_steps": false,
+      "retry_count": false
+     },
+     "rounded": {}
+    },
+    {
+     "index": 3,
+     "applied": {
+      "lift_speed": 0.1
+     },
+     "fixed": 16,
+     "targeted": 76,
+     "regressions": 0,
+     "previously_passing": 171,
+     "pass_rate": 0.752,
+     "per_hypothesis_fixed": {
+      "H1": "6/35",
+      "H2": "11/26",
+      "H3": "8/55",
+      "H4": "12/42"
+     },
+     "selected": false,
+     "complete": true,
+     "clamped": {
+      "lift_speed": false
+     },
+     "rounded": {}
+    }
+   ]
+  }
+ ],
+ "hypotheses": [
+  {
+   "id": "H1",
+   "model_text_unverified": {
+    "statement": "Low friction causes missed grasps because the current grip force is insufficient to generate the friction force needed to hold the cube during lift.",
+    "mechanism": "In low friction scenarios, the normal force from the fingers produces too little tangential friction force to counteract gravity and inertial loads, leading to MISSED_GRASP (E2). The failure rate in this friction band is the highest marginal rate (E8). The interaction with high sensor noise (E46) shows an extreme fail rate of 0.8846, indicating that perception noise exacerbates the weak grasp.",
+    "prediction": "Increasing grip_force should reduce MISSED_GRASP failures in the low friction region (E8) and in the low-friction/high-sensor-noise interaction (E46)."
+   },
+   "region": {
+    "friction": [
+     0.1,
+     0.32
+    ]
+   },
+   "levers": [
+    {
+     "param": "grip_force",
+     "direction": "increase"
+    }
+   ],
+   "targeted_failures": 35,
+   "evidence": [
+    {
+     "id": "E2",
+     "kind": "reasons",
+     "title": "Failure reasons",
+     "data": {
+      "counts": {
+       "MISSED_GRASP": 68,
+       "SLIPPED_ON_LIFT": 9,
+       "COLLISION": 1,
+       "PLACED_OUTSIDE_ZONE": 1
+      }
+     }
+    },
+    {
+     "id": "E8",
+     "kind": "bin",
+     "title": "friction in [0.1, 0.32]",
+     "data": {
+      "axis": "friction",
+      "range": [
+       0.1,
+       0.32
+      ],
+      "n": 55,
+      "n_fail": 35,
+      "fail_rate": 0.6364,
+      "fail_rate_ci95": [
+       0.5042,
+       0.7507
+      ]
+     }
+    },
+    {
+     "id": "E46",
+     "kind": "tree_leaf",
+     "title": "Failing region: friction <= 0.2605 AND sensor_noise_m > 0.0217",
+     "data": {
+      "region": {
+       "friction": [
+        0.1,
+        0.2605
+       ],
+       "sensor_noise_m": [
+        0.0217,
+        0.03
+       ]
+      },
+      "path": [
+       "friction <= 0.2605",
+       "sensor_noise_m > 0.0217"
+      ],
+      "n": 26,
+      "n_fail": 23,
+      "fail_rate": 0.8846,
+      "fail_rate_ci95": [
+       0.7102,
+       0.96
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "H2",
+   "model_text_unverified": {
+    "statement": "Small cube size leads to missed grasps due to reduced contact area and higher sensitivity to position offsets, and the current grasp hold time is too short for the fingers to settle securely.",
+    "mechanism": "Cubes at the smallest size have the highest marginal fail rate (E13). Interactions with pos_offset_y near zero (E28) and pos_offset_x near zero (E40) show excess failure rates over marginals, indicating that small size amplifies misalignment effects. A short grasp_hold_steps (current 10) may not allow enough time for the fingers to conform and stabilize on the small contact patch before lifting.",
+    "prediction": "Increasing grasp_hold_steps should reduce MISSED_GRASP failures in the small size region (E13) and in the interacting regions with pos_offset_x (E40) and pos_offset_y (E28)."
+   },
+   "region": {
+    "size_m": [
+     0.03,
+     0.04
+    ]
+   },
+   "levers": [
+    {
+     "param": "grasp_hold_steps",
+     "direction": "increase"
+    }
+   ],
+   "targeted_failures": 26,
+   "evidence": [
+    {
+     "id": "E13",
+     "kind": "bin",
+     "title": "size_m in [0.03, 0.04]",
+     "data": {
+      "axis": "size_m",
+      "range": [
+       0.03,
+       0.04
+      ],
+      "n": 47,
+      "n_fail": 26,
+      "fail_rate": 0.5532,
+      "fail_rate_ci95": [
+       0.4125,
+       0.6859
+      ]
+     }
+    },
+    {
+     "id": "E28",
+     "kind": "bin",
+     "title": "sensor_noise_m in [0.0, 0.006]",
+     "data": {
+      "axis": "sensor_noise_m",
+      "range": [
+       0.0,
+       0.006
+      ],
+      "n": 30,
+      "n_fail": 6,
+      "fail_rate": 0.2,
+      "fail_rate_ci95": [
+       0.095,
+       0.3731
+      ]
+     }
+    },
+    {
+     "id": "E40",
+     "kind": "interaction",
+     "title": "size_m in [0.03, 0.0467] x pos_offset_x in [-0.0267, 0.0267]",
+     "data": {
+      "axes": [
+       "size_m",
+       "pos_offset_x"
+      ],
+      "region": {
+       "size_m": [
+        0.03,
+        0.0467
+       ],
+       "pos_offset_x": [
+        -0.0267,
+        0.0267
+       ]
+      },
+      "n": 26,
+      "n_fail": 15,
+      "fail_rate": 0.5769,
+      "marginal_fail_rates": {
+       "size_m": 0.4156,
+       "pos_offset_x": 0.3953
+      },
+      "excess_over_max_marginal": 0.1613
+     }
+    }
+   ]
+  },
+  {
+   "id": "H3",
+   "model_text_unverified": {
+    "statement": "High sensor noise causes missed grasps by degrading pose estimation, and the controller has no retry mechanism to re-perceive after a failed grasp attempt.",
+    "mechanism": "The highest sensor noise band has a fail rate of 0.4231 (E32). The interaction with low friction (E46) yields a fail rate of 0.8846, far above the marginal maximum. With retry_count currently 0, a single noisy perception leads to a failed grasp with no second chance.",
+    "prediction": "Increasing retry_count to at least 1 should reduce MISSED_GRASP failures in the high sensor noise region (E32) and in the low-friction/high-sensor-noise interaction (E46)."
+   },
+   "region": {
+    "sensor_noise_m": [
+     0.024,
+     0.03
+    ]
+   },
+   "levers": [
+    {
+     "param": "retry_count",
+     "direction": "increase"
+    }
+   ],
+   "targeted_failures": 55,
+   "evidence": [
+    {
+     "id": "E32",
+     "kind": "bin",
+     "title": "sensor_noise_m in [0.024, 0.03]",
+     "data": {
+      "axis": "sensor_noise_m",
+      "range": [
+       0.024,
+       0.03
+      ],
+      "n": 130,
+      "n_fail": 55,
+      "fail_rate": 0.4231,
+      "fail_rate_ci95": [
+       0.3416,
+       0.509
+      ]
+     }
+    },
+    {
+     "id": "E46",
+     "kind": "tree_leaf",
+     "title": "Failing region: friction <= 0.2605 AND sensor_noise_m > 0.0217",
+     "data": {
+      "region": {
+       "friction": [
+        0.1,
+        0.2605
+       ],
+       "sensor_noise_m": [
+        0.0217,
+        0.03
+       ]
+      },
+      "path": [
+       "friction <= 0.2605",
+       "sensor_noise_m > 0.0217"
+      ],
+      "n": 26,
+      "n_fail": 23,
+      "fail_rate": 0.8846,
+      "fail_rate_ci95": [
+       0.7102,
+       0.96
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "H4",
+   "model_text_unverified": {
+    "statement": "Gripper delay steps exceeding the controller's grasp hold steps cause the lift to begin before the fingers have closed, resulting in missed grasps.",
+    "mechanism": "The controller waits grasp_hold_steps (current 10) after commanding close before lifting. The scenario delays the actual close command by gripper_delay_steps. When delay > 10 (E36, E37), the lift starts while fingers are still open, causing MISSED_GRASP. Fail rates in these delay bands are 0.3846 and 0.4074 respectively.",
+    "prediction": "Increasing grasp_hold_steps to exceed the maximum gripper_delay_steps (20) should eliminate MISSED_GRASP failures in the high delay region (E36, E37)."
+   },
+   "region": {
+    "gripper_delay_steps": [
+     12.0,
+     20.0
+    ]
+   },
+   "levers": [
+    {
+     "param": "grasp_hold_steps",
+     "direction": "increase"
+    }
+   ],
+   "targeted_failures": 42,
+   "evidence": [
+    {
+     "id": "E36",
+     "kind": "bin",
+     "title": "gripper_delay_steps in [12.0, 16.0]",
+     "data": {
+      "axis": "gripper_delay_steps",
+      "range": [
+       12.0,
+       16.0
+      ],
+      "n": 52,
+      "n_fail": 20,
+      "fail_rate": 0.3846,
+      "fail_rate_ci95": [
+       0.2647,
+       0.5204
+      ]
+     }
+    },
+    {
+     "id": "E37",
+     "kind": "bin",
+     "title": "gripper_delay_steps in [16.0, 20.0]",
+     "data": {
+      "axis": "gripper_delay_steps",
+      "range": [
+       16.0,
+       20.0
+      ],
+      "n": 54,
+      "n_fail": 22,
+      "fail_rate": 0.4074,
+      "fail_rate_ci95": [
+       0.2868,
+       0.5403
+      ]
+     }
+    }
+   ]
+  }
+ ],
+ "generator": {
+  "source": "llm",
+  "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+  "dropped_regions": [
+   {
+    "name": "edge",
+    "reason": "region 'edge' covers only 0.91% of the parameter space; at least 2% is required, widen it"
+   }
+  ],
+  "clamped_values": [],
+  "trail": [
+   {
+    "stage": "primary",
+    "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+    "outcome": "ok",
+    "seconds": 2.58,
+    "regions_valid": 1,
+    "regions_dropped": 1
+   }
+  ],
+  "regions_used": [
+   {
+    "name": "jitter",
+    "ranges": {
+     "sensor_noise_m": [
+      0.025,
+      0.03
+     ],
+     "pos_offset_y": [
+      0.06,
+      0.08
+     ]
+    },
+    "rationale_unverified": "Sensor noise and position offsets can misalign the cube relative to target and wall"
+   }
+  ]
+ },
+ "heatmaps": [
+  {
+   "x": "friction",
+   "y": "mass_kg",
+   "x_edges": [
+    0.1,
+    0.32,
+    0.54,
+    0.76,
+    0.98,
+    1.2
+   ],
+   "y_edges": [
+    0.05,
+    0.24,
+    0.43,
+    0.62,
+    0.81,
+    1.0
+   ],
+   "cells": [
+    [
+     {
+      "n": 13,
+      "n_fail": 6
+     },
+     {
+      "n": 11,
+      "n_fail": 3
+     },
+     {
+      "n": 9,
+      "n_fail": 3
+     },
+     {
+      "n": 11,
+      "n_fail": 3
+     },
+     {
+      "n": 9,
+      "n_fail": 2
+     }
+    ],
+    [
+     {
+      "n": 16,
+      "n_fail": 7
+     },
+     {
+      "n": 6,
+      "n_fail": 0
+     },
+     {
+      "n": 13,
+      "n_fail": 1
+     },
+     {
+      "n": 5,
+      "n_fail": 2
+     },
+     {
+      "n": 12,
+      "n_fail": 3
+     }
+    ],
+    [
+     {
+      "n": 11,
+      "n_fail": 9
+     },
+     {
+      "n": 14,
+      "n_fail": 4
+     },
+     {
+      "n": 6,
+      "n_fail": 1
+     },
+     {
+      "n": 11,
+      "n_fail": 4
+     },
+     {
+      "n": 12,
+      "n_fail": 1
+     }
+    ],
+    [
+     {
+      "n": 12,
+      "n_fail": 10
+     },
+     {
+      "n": 8,
+      "n_fail": 2
+     },
+     {
+      "n": 8,
+      "n_fail": 3
+     },
+     {
+      "n": 11,
+      "n_fail": 2
+     },
+     {
+      "n": 8,
+      "n_fail": 1
+     }
+    ],
+    [
+     {
+      "n": 3,
+      "n_fail": 3
+     },
+     {
+      "n": 13,
+      "n_fail": 3
+     },
+     {
+      "n": 10,
+      "n_fail": 2
+     },
+     {
+      "n": 9,
+      "n_fail": 1
+     },
+     {
+      "n": 9,
+      "n_fail": 3
+     }
+    ]
+   ]
+  },
+  {
+   "x": "gripper_delay_steps",
+   "y": "sensor_noise_m",
+   "x_edges": [
+    0.0,
+    4.0,
+    8.0,
+    12.0,
+    16.0,
+    20.0
+   ],
+   "y_edges": [
+    0.0,
+    0.006,
+    0.012,
+    0.018,
+    0.024,
+    0.03
+   ],
+   "cells": [
+    [
+     {
+      "n": 5,
+      "n_fail": 1
+     },
+     {
+      "n": 5,
+      "n_fail": 0
+     },
+     {
+      "n": 7,
+      "n_fail": 1
+     },
+     {
+      "n": 7,
+      "n_fail": 2
+     },
+     {
+      "n": 6,
+      "n_fail": 2
+     }
+    ],
+    [
+     {
+      "n": 6,
+      "n_fail": 2
+     },
+     {
+      "n": 5,
+      "n_fail": 0
+     },
+     {
+      "n": 8,
+      "n_fail": 0
+     },
+     {
+      "n": 5,
+      "n_fail": 0
+     },
+     {
+      "n": 6,
+      "n_fail": 1
+     }
+    ],
+    [
+     {
+      "n": 7,
+      "n_fail": 0
+     },
+     {
+      "n": 5,
+      "n_fail": 1
+     },
+     {
+      "n": 7,
+      "n_fail": 1
+     },
+     {
+      "n": 2,
+      "n_fail": 0
+     },
+     {
+      "n": 9,
+      "n_fail": 4
+     }
+    ],
+    [
+     {
+      "n": 3,
+      "n_fail": 1
+     },
+     {
+      "n": 13,
+      "n_fail": 3
+     },
+     {
+      "n": 3,
+      "n_fail": 1
+     },
+     {
+      "n": 7,
+      "n_fail": 3
+     },
+     {
+      "n": 4,
+      "n_fail": 1
+     }
+    ],
+    [
+     {
+      "n": 26,
+      "n_fail": 14
+     },
+     {
+      "n": 16,
+      "n_fail": 3
+     },
+     {
+      "n": 28,
+      "n_fail": 9
+     },
+     {
+      "n": 31,
+      "n_fail": 15
+     },
+     {
+      "n": 29,
+      "n_fail": 14
+     }
+    ]
+   ]
+  }
+ ],
+ "analysis_set": {
+  "n": 250,
+  "n_coverage": 150,
+  "n_targeted": 100
+ },
+ "timing": {
+  "wall_clock_s": 193.07,
+  "llm_s": 68.57,
+  "candidate_evals_s": 79.07,
+  "other_simulation_s": 45.43,
+  "stages_s": {
+   "generate_scenarios_llm": 2.58,
+   "baseline_run": 8.67,
+   "evidence": 0.01,
+   "analyst_llm": 36.22,
+   "gate_prepare_g1_g2": 2.95,
+   "fixer_llm_attempt1": 14.68,
+   "candidate_evals_attempt1": 38.76,
+   "dev_stage_attempt1": 0.0,
+   "fixer_llm_attempt2": 15.21,
+   "candidate_evals_attempt2": 40.3,
+   "dev_stage_attempt2": 0.0,
+   "verification_g5": 33.6
+  },
+  "gate_stages_s": {
+   "g1_fresh_process_rerun_s": 1.7,
+   "g2_targeted_rerun_s": 1.25,
+   "attempt1_cand0_1_s": 10.42,
+   "candidate_evals_total_s": 79.07,
+   "attempt1_cand1_1_s": 9.14,
+   "attempt1_cand2_1_s": 10.39,
+   "attempt1_cand3_1_s": 8.82,
+   "attempt2_cand0_1_s": 8.66,
+   "attempt2_cand1_1_s": 9.43,
+   "attempt2_cand2_1_s": 11.84,
+   "attempt2_cand3_1_s": 10.37,
+   "g5_unpatched_run_s": 12.44,
+   "g5_patched_run_s": 21.1
+  }
+ },
+ "tokens": {
+  "prompt": 11439,
+  "completion": 14914,
+  "llm_calls": 4
+ },
+ "cost": {
+  "estimated_usd": 0.05488,
+  "note": "ESTIMATE from API prices; actual billing UNCONFIRMED"
+ },
+ "provenance": {
+  "commit": "bac5f38d45eaa3ab7d0cceb4f05923927b10c627",
+  "tag": "pipeline-frozen-v2",
+  "pipeline_version": "v2",
+  "image_build_id": "sha256:75d76a1c492894f195aec0990a29a5f8f886c13cac90f8fa23f8d07fa6bcedab",
+  "protocol_commit": "8171c7d5bff60a25307cb0a5bc1320b405cad81b",
+  "model_fast": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+  "model_reasoning": "nvidia/Nemotron-3-Ultra-550b-a55b",
+  "runner_name": "local",
+  "official": true
+ },
+ "final_patch": {
+  "grip_force": 80.0,
+  "approach_speed": 0.3,
+  "lift_height": 0.15,
+  "lift_speed": 0.3,
+  "grasp_hold_steps": 120,
+  "place_slow_factor": 1.0,
+  "retry_count": 2
+ }
+}

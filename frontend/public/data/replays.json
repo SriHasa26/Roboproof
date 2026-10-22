@@ -1,0 +1,69 @@
+{
+ "run": "official_01_seed3101",
+ "scenario": {
+  "id": "cov-1000",
+  "mass_kg": 0.13884581286224926,
+  "friction": 0.11362829749088081,
+  "size_m": 0.03486187260164412,
+  "pos_offset_x": 0.03240943248754469,
+  "pos_offset_y": -0.01611789168044324,
+  "sensor_noise_m": 0.005525353797037823,
+  "gripper_delay_steps": 12,
+  "seed": 1000,
+  "tag": "cov"
+ },
+ "seed": 1000,
+ "baseline": {
+  "gif": "replays/cov-1000_baseline.gif",
+  "result": {
+   "scenario_id": "cov-1000",
+   "seed": 1000,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.45,
+   "final_place_error_m": 0.27388,
+   "max_slip_m": 0.15432,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0007,
+    "steps": 348.0
+   }
+  },
+  "policy": {
+   "grip_force": 15.0,
+   "approach_speed": 0.3,
+   "lift_height": 0.15,
+   "lift_speed": 0.3,
+   "grasp_hold_steps": 10,
+   "place_slow_factor": 1.0,
+   "retry_count": 0
+  }
+ },
+ "patched": {
+  "gif": "replays/cov-1000_patched.gif",
+  "result": {
+   "scenario_id": "cov-1000",
+   "seed": 1000,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 6.2667,
+   "final_place_error_m": 0.00266,
+   "max_slip_m": 0.00121,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1489,
+    "steps": 1740.0
+   }
+  },
+  "policy": {
+   "grip_force": 80.0,
+   "approach_speed": 0.3,
+   "lift_height": 0.15,
+   "lift_speed": 0.05,
+   "grasp_hold_steps": 100,
+   "place_slow_factor": 1.0,
+   "retry_count": 3
+  }
+ },
+ "note": "Same scenario and seed; frozen simulator; the default policy fails and the final patch of this run passes."
+}

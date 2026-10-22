@@ -1,0 +1,807 @@
+[
+ {
+  "name": "reliability_001",
+  "pipeline_version": "v1",
+  "note": "Rebuilt from the saved run files (nothing re-run). Master seeds fixed in advance (101 202 303 404 505); no run was re-rolled for its verdict. Runs with no verdict failed in the scenario generator (validation failed after its single retry): that is not an infrastructure error, so they were not re-run. LocalRunner (labelled fallback, not Nebius). Rehearsal seed blocks only; held-out seeds were never run.",
+  "aggregate": {
+   "runs": 5,
+   "verdict_counts": {
+    "VERIFIED": 1,
+    "FAILED": 2,
+    "UNVERIFIED": 0,
+    "ERROR (no verdict)": 2
+   },
+   "attempts_distribution_for_runs_with_a_verdict": {
+    "3": 2,
+    "2": 1
+   },
+   "total_tokens": {
+    "min": 2789,
+    "median": 16959,
+    "max": 34554,
+    "n": 5
+   },
+   "wall_clock_total_s": {
+    "min": 7.63,
+    "median": 105.01,
+    "max": 159.34,
+    "n": 5
+   },
+   "estimated_cost_usd": {
+    "min": 0.000256,
+    "median": 0.028883,
+    "max": 0.06304,
+    "n": 5
+   },
+   "llm_seconds": {
+    "min": 7.58,
+    "median": 23.21,
+    "max": 52.09,
+    "n": 5
+   },
+   "generator_value_pooled": {
+    "cov": {
+     "n": 450,
+     "n_fail": 126,
+     "fail_rate": 0.28,
+     "wilson95": [
+      0.2405,
+      0.3232
+     ]
+    },
+    "tgt": {
+     "n": 300,
+     "n_fail": 139,
+     "fail_rate": 0.4633,
+     "wilson95": [
+      0.4077,
+      0.5199
+     ]
+    }
+   }
+  },
+  "runs": [
+   {
+    "run_id": "run_01_seed101",
+    "master_seed": 101,
+    "verdict": null,
+    "attempts": 0,
+    "analysis_before": null,
+    "analysis_after": null,
+    "verification_before": null,
+    "verification_after": null,
+    "estimated_cost_usd": 0.000256,
+    "wall_clock_total_s": 7.63,
+    "final_checks": null,
+    "error": "LLMValidationError: scenario_generation: output failed validation after retry: 1 validation error for ScenarioProposal\nregions.2\n  Value error, region 'NoisyOffset' covers only 1.17% of the parameter space; at least 2% is required, widen it [type=value_error, input_value={'name': 'NoisyOffset', '...8]}, 'unverified': True}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error",
+    "generator": null
+   },
+   {
+    "run_id": "run_02_seed202",
+    "master_seed": 202,
+    "verdict": "FAILED",
+    "attempts": 3,
+    "analysis_before": {
+     "n": 250,
+     "pass_rate": 0.704,
+     "pass_rate_ci95": [
+      0.6447,
+      0.7572
+     ],
+     "collision_rate": 0.0,
+     "mean_completion_time_s": 3.671
+    },
+    "analysis_after": {
+     "n": 250,
+     "pass_rate": 0.828,
+     "pass_rate_ci95": [
+      0.7763,
+      0.8697
+     ],
+     "collision_rate": 0.0,
+     "mean_completion_time_s": 3.794
+    },
+    "verification_before": {
+     "n": 400,
+     "pass_rate": 0.6925,
+     "pass_rate_ci95": [
+      0.6456,
+      0.7357
+     ],
+     "collision_rate": 0.0075,
+     "mean_completion_time_s": 3.652
+    },
+    "verification_after": {
+     "n": 400,
+     "pass_rate": 0.8425,
+     "pass_rate_ci95": [
+      0.8036,
+      0.8749
+     ],
+     "collision_rate": 0.0025,
+     "mean_completion_time_s": 3.778
+    },
+    "estimated_cost_usd": 0.06304,
+    "wall_clock_total_s": 159.34,
+    "final_checks": {
+     "G1": "pass",
+     "G2": "pass",
+     "G3": "pass",
+     "G4": "pass",
+     "G5": "fail",
+     "G6": "pass"
+    },
+    "error": null,
+    "generator": null
+   },
+   {
+    "run_id": "run_03_seed303",
+    "master_seed": 303,
+    "verdict": "VERIFIED",
+    "attempts": 2,
+    "analysis_before": {
+     "n": 250,
+     "pass_rate": 0.616,
+     "pass_rate_ci95": [
+      0.5544,
+      0.6741
+     ],
+     "collision_rate": 0.008,
+     "mean_completion_time_s": 3.646
+    },
+    "analysis_after": {
+     "n": 250,
+     "pass_rate": 0.932,
+     "pass_rate_ci95": [
+      0.8938,
+      0.9571
+     ],
+     "collision_rate": 0.028,
+     "mean_completion_time_s": 4.301
+    },
+    "verification_before": {
+     "n": 400,
+     "pass_rate": 0.7075,
+     "pass_rate_ci95": [
+      0.6611,
+      0.7499
+     ],
+     "collision_rate": 0.0025,
+     "mean_completion_time_s": 3.637
+    },
+    "verification_after": {
+     "n": 400,
+     "pass_rate": 0.95,
+     "pass_rate_ci95": [
+      0.924,
+      0.9674
+     ],
+     "collision_rate": 0.0075,
+     "mean_completion_time_s": 4.297
+    },
+    "estimated_cost_usd": 0.028883,
+    "wall_clock_total_s": 133.47,
+    "final_checks": {
+     "G1": "pass",
+     "G2": "pass",
+     "G3": "pass",
+     "G4": "pass",
+     "G5": "pass",
+     "G6": "pass"
+    },
+    "error": null,
+    "generator": null
+   },
+   {
+    "run_id": "run_04_seed404",
+    "master_seed": 404,
+    "verdict": "FAILED",
+    "attempts": 3,
+    "analysis_before": {
+     "n": 250,
+     "pass_rate": 0.62,
+     "pass_rate_ci95": [
+      0.5584,
+      0.6779
+     ],
+     "collision_rate": 0.008,
+     "mean_completion_time_s": 3.694
+    },
+    "analysis_after": {
+     "n": 250,
+     "pass_rate": 0.744,
+     "pass_rate_ci95": [
+      0.6865,
+      0.7941
+     ],
+     "collision_rate": 0.004,
+     "mean_completion_time_s": 3.692
+    },
+    "verification_before": null,
+    "verification_after": null,
+    "estimated_cost_usd": 0.050789,
+    "wall_clock_total_s": 105.01,
+    "final_checks": {
+     "G1": "pass",
+     "G2": "pass",
+     "G3": "fail",
+     "G4": "fail",
+     "G5": "skipped_after_failure",
+     "G6": "pass"
+    },
+    "error": null,
+    "generator": null
+   },
+   {
+    "run_id": "run_05_seed505",
+    "master_seed": 505,
+    "verdict": null,
+    "attempts": 0,
+    "analysis_before": null,
+    "analysis_after": null,
+    "verification_before": null,
+    "verification_after": null,
+    "estimated_cost_usd": 0.000293,
+    "wall_clock_total_s": 10.06,
+    "final_checks": null,
+    "error": "LLMValidationError: scenario_generation: output failed validation after retry: 1 validation error for ScenarioProposal\nregions.0\n  Value error, region 'LowMassHighFriction' covers only 1.34% of the parameter space; at least 2% is required, widen it [type=value_error, input_value={'name': 'LowMassHighFric...1]}, 'unverified': True}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error",
+    "generator": null
+   }
+  ]
+ },
+ {
+  "name": "reliability_002",
+  "pipeline_version": "v2",
+  "note": "Completed 2026-10-22 14:07. All planned runs executed. Master seeds fixed in advance; no run re-rolled for its verdict. LocalRunner (labelled fallback, not Nebius). Rehearsal seed blocks only; held-out seeds were never run.",
+  "aggregate": {
+   "runs": 8,
+   "verdict_counts": {
+    "VERIFIED": 4,
+    "FAILED": 3,
+    "UNVERIFIED": 0,
+    "ERROR (no verdict)": 1
+   },
+   "verified_rate": {
+    "verified": 4,
+    "of_runs": 8,
+    "rate": 0.5,
+    "wilson95": [
+     0.2152,
+     0.7848
+    ]
+   },
+   "attempts_distribution_for_runs_with_a_verdict": {
+    "1": 6,
+    "3": 1
+   },
+   "generator_sources": {
+    "llm": 8
+   },
+   "total_tokens": {
+    "min": 16086,
+    "median": 19567.0,
+    "max": 33656,
+    "n": 8
+   },
+   "wall_clock_total_s": {
+    "min": 47.37,
+    "median": 138.245,
+    "max": 231.49,
+    "n": 8
+   },
+   "estimated_cost_usd": {
+    "min": 0.02836,
+    "median": 0.031984,
+    "max": 0.070119,
+    "n": 8
+   },
+   "llm_seconds": {
+    "min": 25.46,
+    "median": 36.195,
+    "max": 64.56,
+    "n": 8
+   },
+   "total_estimated_cost_usd": 0.2979,
+   "generator_value_pooled": {
+    "cov": {
+     "n": 1200,
+     "n_fail": 337,
+     "fail_rate": 0.2808,
+     "wilson95": [
+      0.2561,
+      0.3069
+     ]
+    },
+    "tgt": {
+     "n": 800,
+     "n_fail": 369,
+     "fail_rate": 0.4612,
+     "wilson95": [
+      0.427,
+      0.4959
+     ]
+    }
+   }
+  },
+  "runs": [
+   {
+    "run_id": "run_01_seed611",
+    "master_seed": 611,
+    "verdict": "VERIFIED",
+    "attempts": 1,
+    "analysis_before": {
+     "n": 250,
+     "pass_rate": 0.728,
+     "pass_rate_ci95": [
+      0.6697,
+      0.7794
+     ],
+     "collision_rate": 0.004,
+     "mean_completion_time_s": 3.674
+    },
+    "analysis_after": {
+     "n": 250,
+     "pass_rate": 0.96,
+     "pass_rate_ci95": [
+      0.9279,
+      0.9781
+     ],
+     "collision_rate": 0.008,
+     "mean_completion_time_s": 4.351
+    },
+    "verification_before": {
+     "n": 400,
+     "pass_rate": 0.7125,
+     "pass_rate_ci95": [
+      0.6663,
+      0.7547
+     ],
+     "collision_rate": 0.0025,
+     "mean_completion_time_s": 3.655
+    },
+    "verification_after": {
+     "n": 400,
+     "pass_rate": 0.9575,
+     "pass_rate_ci95": [
+      0.933,
+      0.9733
+     ],
+     "collision_rate": 0.0025,
+     "mean_completion_time_s": 4.326
+    },
+    "estimated_cost_usd": 0.028868,
+    "wall_clock_total_s": 124.06,
+    "final_checks": {
+     "G1": "pass",
+     "G2": "pass",
+     "G3": "pass",
+     "G4": "pass",
+     "G5": "pass",
+     "G6": "pass"
+    },
+    "error": null,
+    "generator": {
+     "source": "llm",
+     "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+     "regions_used": 1,
+     "dropped": 2,
+     "clamped": 0,
+     "trail": [
+      "primary:ok"
+     ]
+    }
+   },
+   {
+    "run_id": "run_02_seed622",
+    "master_seed": 622,
+    "verdict": "VERIFIED",
+    "attempts": 1,
+    "analysis_before": {
+     "n": 250,
+     "pass_rate": 0.772,
+     "pass_rate_ci95": [
+      0.7161,
+      0.8197
+     ],
+     "collision_rate": 0.004,
+     "mean_completion_time_s": 3.626
+    },
+    "analysis_after": {
+     "n": 250,
+     "pass_rate": 0.948,
+     "pass_rate_ci95": [
+      0.9131,
+      0.9694
+     ],
+     "collision_rate": 0.008,
+     "mean_completion_time_s": 4.737
+    },
+    "verification_before": {
+     "n": 400,
+     "pass_rate": 0.6875,
+     "pass_rate_ci95": [
+      0.6405,
+      0.731
+     ],
+     "collision_rate": 0.01,
+     "mean_completion_time_s": 3.65
+    },
+    "verification_after": {
+     "n": 400,
+     "pass_rate": 0.9575,
+     "pass_rate_ci95": [
+      0.933,
+      0.9733
+     ],
+     "collision_rate": 0.01,
+     "mean_completion_time_s": 4.848
+    },
+    "estimated_cost_usd": 0.028465,
+    "wall_clock_total_s": 143.63,
+    "final_checks": {
+     "G1": "pass",
+     "G2": "pass",
+     "G3": "pass",
+     "G4": "pass",
+     "G5": "pass",
+     "G6": "pass"
+    },
+    "error": null,
+    "generator": {
+     "source": "llm",
+     "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+     "regions_used": 1,
+     "dropped": 4,
+     "clamped": 0,
+     "trail": [
+      "primary:ok"
+     ]
+    }
+   },
+   {
+    "run_id": "run_03_seed633",
+    "master_seed": 633,
+    "verdict": "FAILED",
+    "attempts": 1,
+    "analysis_before": {
+     "n": 250,
+     "pass_rate": 0.544,
+     "pass_rate_ci95": [
+      0.4821,
+      0.6046
+     ],
+     "collision_rate": 0.008,
+     "mean_completion_time_s": 3.635
+    },
+    "analysis_after": {
+     "n": 250,
+     "pass_rate": 0.828,
+     "pass_rate_ci95": [
+      0.7763,
+      0.8697
+     ],
+     "collision_rate": 0.0,
+     "mean_completion_time_s": 5.279
+    },
+    "verification_before": {
+     "n": 400,
+     "pass_rate": 0.72,
+     "pass_rate_ci95": [
+      0.6741,
+      0.7617
+     ],
+     "collision_rate": 0.005,
+     "mean_completion_time_s": 3.642
+    },
+    "verification_after": {
+     "n": 400,
+     "pass_rate": 0.885,
+     "pass_rate_ci95": [
+      0.85,
+      0.9127
+     ],
+     "collision_rate": 0.0025,
+     "mean_completion_time_s": 5.284
+    },
+    "estimated_cost_usd": 0.03655,
+    "wall_clock_total_s": 150.7,
+    "final_checks": {
+     "G1": "pass",
+     "G2": "pass",
+     "G3": "pass",
+     "G4": "pass",
+     "G5": "fail",
+     "G6": "pass"
+    },
+    "error": null,
+    "generator": {
+     "source": "llm",
+     "model": "nvidia/nemotron-3-super-120b-a12b",
+     "regions_used": 2,
+     "dropped": 1,
+     "clamped": 0,
+     "trail": [
+      "primary:validation_failed_after_retry",
+      "fallback_model:ok"
+     ]
+    }
+   },
+   {
+    "run_id": "run_04_seed644",
+    "master_seed": 644,
+    "verdict": "FAILED",
+    "attempts": 1,
+    "analysis_before": {
+     "n": 250,
+     "pass_rate": 0.56,
+     "pass_rate_ci95": [
+      0.498,
+      0.6202
+     ],
+     "collision_rate": 0.004,
+     "mean_completion_time_s": 3.656
+    },
+    "analysis_after": {
+     "n": 250,
+     "pass_rate": 0.856,
+     "pass_rate_ci95": [
+      0.8071,
+      0.8941
+     ],
+     "collision_rate": 0.02,
+     "mean_completion_time_s": 4.153
+    },
+    "verification_before": {
+     "n": 400,
+     "pass_rate": 0.725,
+     "pass_rate_ci95": [
+      0.6793,
+      0.7665
+     ],
+     "collision_rate": 0.0,
+     "mean_completion_time_s": 3.654
+    },
+    "verification_after": {
+     "n": 400,
+     "pass_rate": 0.8975,
+     "pass_rate_ci95": [
+      0.8639,
+      0.9235
+     ],
+     "collision_rate": 0.0125,
+     "mean_completion_time_s": 4.034
+    },
+    "estimated_cost_usd": 0.030477,
+    "wall_clock_total_s": 132.86,
+    "final_checks": {
+     "G1": "pass",
+     "G2": "pass",
+     "G3": "pass",
+     "G4": "pass",
+     "G5": "fail",
+     "G6": "pass"
+    },
+    "error": null,
+    "generator": {
+     "source": "llm",
+     "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+     "regions_used": 1,
+     "dropped": 2,
+     "clamped": 0,
+     "trail": [
+      "primary:ok"
+     ]
+    }
+   },
+   {
+    "run_id": "run_05_seed655",
+    "master_seed": 655,
+    "verdict": "FAILED",
+    "attempts": 3,
+    "analysis_before": {
+     "n": 250,
+     "pass_rate": 0.708,
+     "pass_rate_ci95": [
+      0.6488,
+      0.7609
+     ],
+     "collision_rate": 0.0,
+     "mean_completion_time_s": 3.631
+    },
+    "analysis_after": {
+     "n": 250,
+     "pass_rate": 0.88,
+     "pass_rate_ci95": [
+      0.8339,
+      0.9146
+     ],
+     "collision_rate": 0.0,
+     "mean_completion_time_s": 3.667
+    },
+    "verification_before": null,
+    "verification_after": null,
+    "estimated_cost_usd": 0.070119,
+    "wall_clock_total_s": 231.49,
+    "final_checks": {
+     "G1": "pass",
+     "G2": "pass",
+     "G3": "fail",
+     "G4": "pass",
+     "G5": "skipped_after_failure",
+     "G6": "pass"
+    },
+    "error": null,
+    "generator": {
+     "source": "llm",
+     "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+     "regions_used": 1,
+     "dropped": 4,
+     "clamped": 0,
+     "trail": [
+      "primary:ok"
+     ]
+    }
+   },
+   {
+    "run_id": "run_06_seed666",
+    "master_seed": 666,
+    "verdict": null,
+    "attempts": 0,
+    "analysis_before": null,
+    "analysis_after": null,
+    "verification_before": null,
+    "verification_after": null,
+    "estimated_cost_usd": 0.041558,
+    "wall_clock_total_s": 47.37,
+    "final_checks": null,
+    "error": "LLMValidationError: analyst: output failed validation after retry: 4 validation errors for HypothesisList\nhypotheses.1.levers.0.param\n  Value error, lever 'sensor_noise_m' is not a tunable parameter; allowed: ['grip_force', 'grasp_hold_steps', 'retry_count', 'lift_speed', 'lift_height'] [type=value_error, input_value='sensor_noise_m', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nhypotheses.2.levers.1.param\n  Value error, lever 'size_m' is not a tunable parameter; allowed: ['grip_force', 'grasp_hold_steps', 'retry_count', 'lift_speed', 'lift_height'] [type=value_error, input_value='size_m', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nhypotheses.3.levers.0.param\n  Value error, lever 'gripper_delay_steps' is not a tunable parameter; allowed: ['grip_force', 'grasp_hold_steps', 'retry_count', 'lift_speed', 'lift_height'] [type=value_error, input_value='gripper_delay_steps', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nhypotheses.3.levers.1.param\n  Value error, lever 'size_m' is not a tunable parameter; allowed: ['grip_force', 'grasp_hold_steps', 'retry_count', 'lift_speed', 'lift_height'] [type=value_error, input_value='size_m', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error",
+    "generator": {
+     "source": "llm",
+     "model": "nvidia/nemotron-3-super-120b-a12b",
+     "regions_used": 4,
+     "dropped": 0,
+     "clamped": 0,
+     "trail": [
+      "primary:validation_failed_after_retry",
+      "fallback_model:ok"
+     ]
+    }
+   },
+   {
+    "run_id": "run_07_seed677",
+    "master_seed": 677,
+    "verdict": "VERIFIED",
+    "attempts": 1,
+    "analysis_before": {
+     "n": 250,
+     "pass_rate": 0.568,
+     "pass_rate_ci95": [
+      0.506,
+      0.6279
+     ],
+     "collision_rate": 0.012,
+     "mean_completion_time_s": 3.65
+    },
+    "analysis_after": {
+     "n": 250,
+     "pass_rate": 0.96,
+     "pass_rate_ci95": [
+      0.9279,
+      0.9781
+     ],
+     "collision_rate": 0.012,
+     "mean_completion_time_s": 4.093
+    },
+    "verification_before": {
+     "n": 400,
+     "pass_rate": 0.6975,
+     "pass_rate_ci95": [
+      0.6508,
+      0.7405
+     ],
+     "collision_rate": 0.0,
+     "mean_completion_time_s": 3.655
+    },
+    "verification_after": {
+     "n": 400,
+     "pass_rate": 0.95,
+     "pass_rate_ci95": [
+      0.924,
+      0.9674
+     ],
+     "collision_rate": 0.0175,
+     "mean_completion_time_s": 4.019
+    },
+    "estimated_cost_usd": 0.033491,
+    "wall_clock_total_s": 149.08,
+    "final_checks": {
+     "G1": "pass",
+     "G2": "pass",
+     "G3": "pass",
+     "G4": "pass",
+     "G5": "pass",
+     "G6": "pass"
+    },
+    "error": null,
+    "generator": {
+     "source": "llm",
+     "model": "nvidia/nemotron-3-super-120b-a12b",
+     "regions_used": 2,
+     "dropped": 1,
+     "clamped": 0,
+     "trail": [
+      "primary:validation_failed_after_retry",
+      "fallback_model:ok"
+     ]
+    }
+   },
+   {
+    "run_id": "run_08_seed688",
+    "master_seed": 688,
+    "verdict": "VERIFIED",
+    "attempts": 1,
+    "analysis_before": {
+     "n": 250,
+     "pass_rate": 0.664,
+     "pass_rate_ci95": [
+      0.6034,
+      0.7197
+     ],
+     "collision_rate": 0.008,
+     "mean_completion_time_s": 3.635
+    },
+    "analysis_after": {
+     "n": 250,
+     "pass_rate": 0.96,
+     "pass_rate_ci95": [
+      0.9279,
+      0.9781
+     ],
+     "collision_rate": 0.012,
+     "mean_completion_time_s": 4.297
+    },
+    "verification_before": {
+     "n": 400,
+     "pass_rate": 0.68,
+     "pass_rate_ci95": [
+      0.6328,
+      0.7238
+     ],
+     "collision_rate": 0.0075,
+     "mean_completion_time_s": 3.648
+    },
+    "verification_after": {
+     "n": 400,
+     "pass_rate": 0.955,
+     "pass_rate_ci95": [
+      0.93,
+      0.9713
+     ],
+     "collision_rate": 0.0175,
+     "mean_completion_time_s": 4.349
+    },
+    "estimated_cost_usd": 0.02836,
+    "wall_clock_total_s": 130.62,
+    "final_checks": {
+     "G1": "pass",
+     "G2": "pass",
+     "G3": "pass",
+     "G4": "pass",
+     "G5": "pass",
+     "G6": "pass"
+    },
+    "error": null,
+    "generator": {
+     "source": "llm",
+     "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+     "regions_used": 1,
+     "dropped": 3,
+     "clamped": 0,
+     "trail": [
+      "primary:ok"
+     ]
+    }
+   }
+  ]
+ }
+]

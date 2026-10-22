@@ -1,0 +1,344 @@
+[
+ {
+  "id": "official_01_seed3101",
+  "badges": {
+   "pipeline_version": "v2",
+   "mode": "official",
+   "runner": "LOCAL FALLBACK, not Nebius",
+   "recorded": true
+  },
+  "verdict": "VERIFIED",
+  "master_seed": 3101,
+  "attempts_used": 2,
+  "generator_source": "llm",
+  "analysis": {
+   "before": {
+    "n": 250,
+    "pass_rate": 0.724,
+    "pass_rate_ci95": [
+     0.6655,
+     0.7757
+    ],
+    "collision_rate": 0.004,
+    "mean_completion_time_s": 3.647
+   },
+   "after": {
+    "n": 250,
+    "pass_rate": 0.948,
+    "pass_rate_ci95": [
+     0.9131,
+     0.9694
+    ],
+    "collision_rate": 0.008,
+    "mean_completion_time_s": 6.776
+   }
+  },
+  "verification": {
+   "before": {
+    "n": 400,
+    "pass_rate": 0.7125,
+    "pass_rate_ci95": [
+     0.6663,
+     0.7547
+    ],
+    "collision_rate": 0.0075,
+    "mean_completion_time_s": 3.649
+   },
+   "after": {
+    "n": 400,
+    "pass_rate": 0.9675,
+    "pass_rate_ci95": [
+     0.9452,
+     0.9809
+    ],
+    "collision_rate": 0.01,
+    "mean_completion_time_s": 6.825
+   }
+  }
+ },
+ {
+  "id": "official_02_seed3202",
+  "badges": {
+   "pipeline_version": "v2",
+   "mode": "official",
+   "runner": "LOCAL FALLBACK, not Nebius",
+   "recorded": true
+  },
+  "verdict": "VERIFIED",
+  "master_seed": 3202,
+  "attempts_used": 2,
+  "generator_source": "llm",
+  "analysis": {
+   "before": {
+    "n": 250,
+    "pass_rate": 0.684,
+    "pass_rate_ci95": [
+     0.624,
+     0.7385
+    ],
+    "collision_rate": 0.004,
+    "mean_completion_time_s": 3.68
+   },
+   "after": {
+    "n": 250,
+    "pass_rate": 0.904,
+    "pass_rate_ci95": [
+     0.8611,
+     0.9346
+    ],
+    "collision_rate": 0.008,
+    "mean_completion_time_s": 4.392
+   }
+  },
+  "verification": {
+   "before": {
+    "n": 400,
+    "pass_rate": 0.6875,
+    "pass_rate_ci95": [
+     0.6405,
+     0.731
+    ],
+    "collision_rate": 0.005,
+    "mean_completion_time_s": 3.646
+   },
+   "after": {
+    "n": 400,
+    "pass_rate": 0.955,
+    "pass_rate_ci95": [
+     0.93,
+     0.9713
+    ],
+    "collision_rate": 0.015,
+    "mean_completion_time_s": 4.337
+   }
+  }
+ },
+ {
+  "id": "official_03_seed3303",
+  "badges": {
+   "pipeline_version": "v2",
+   "mode": "official",
+   "runner": "LOCAL FALLBACK, not Nebius",
+   "recorded": true
+  },
+  "verdict": "FAILED",
+  "master_seed": 3303,
+  "attempts_used": 1,
+  "generator_source": "llm",
+  "analysis": {
+   "before": {
+    "n": 250,
+    "pass_rate": 0.708,
+    "pass_rate_ci95": [
+     0.6488,
+     0.7609
+    ],
+    "collision_rate": 0.008,
+    "mean_completion_time_s": 3.613
+   },
+   "after": {
+    "n": 250,
+    "pass_rate": 0.932,
+    "pass_rate_ci95": [
+     0.8938,
+     0.9571
+    ],
+    "collision_rate": 0.004,
+    "mean_completion_time_s": 4.05
+   }
+  },
+  "verification": {
+   "before": {
+    "n": 400,
+    "pass_rate": 0.69,
+    "pass_rate_ci95": [
+     0.643,
+     0.7333
+    ],
+    "collision_rate": 0.005,
+    "mean_completion_time_s": 3.658
+   },
+   "after": {
+    "n": 400,
+    "pass_rate": 0.87,
+    "pass_rate_ci95": [
+     0.8335,
+     0.8995
+    ],
+    "collision_rate": 0.005,
+    "mean_completion_time_s": 4.071
+   }
+  }
+ },
+ {
+  "id": "official_04_seed3404",
+  "badges": {
+   "pipeline_version": "v2",
+   "mode": "official",
+   "runner": "LOCAL FALLBACK, not Nebius",
+   "recorded": true
+  },
+  "verdict": "VERIFIED",
+  "master_seed": 3404,
+  "attempts_used": 1,
+  "generator_source": "llm",
+  "analysis": {
+   "before": {
+    "n": 250,
+    "pass_rate": 0.764,
+    "pass_rate_ci95": [
+     0.7076,
+     0.8124
+    ],
+    "collision_rate": 0.004,
+    "mean_completion_time_s": 3.646
+   },
+   "after": {
+    "n": 250,
+    "pass_rate": 0.968,
+    "pass_rate_ci95": [
+     0.9381,
+     0.9837
+    ],
+    "collision_rate": 0.0,
+    "mean_completion_time_s": 5.118
+   }
+  },
+  "verification": {
+   "before": {
+    "n": 400,
+    "pass_rate": 0.6925,
+    "pass_rate_ci95": [
+     0.6456,
+     0.7357
+    ],
+    "collision_rate": 0.01,
+    "mean_completion_time_s": 3.658
+   },
+   "after": {
+    "n": 400,
+    "pass_rate": 0.975,
+    "pass_rate_ci95": [
+     0.9546,
+     0.9864
+    ],
+    "collision_rate": 0.01,
+    "mean_completion_time_s": 5.11
+   }
+  }
+ },
+ {
+  "id": "official_05_seed3505",
+  "badges": {
+   "pipeline_version": "v2",
+   "mode": "official",
+   "runner": "LOCAL FALLBACK, not Nebius",
+   "recorded": true
+  },
+  "verdict": "VERIFIED",
+  "master_seed": 3505,
+  "attempts_used": 1,
+  "generator_source": "llm",
+  "analysis": {
+   "before": {
+    "n": 250,
+    "pass_rate": 0.652,
+    "pass_rate_ci95": [
+     0.5911,
+     0.7083
+    ],
+    "collision_rate": 0.004,
+    "mean_completion_time_s": 3.665
+   },
+   "after": {
+    "n": 250,
+    "pass_rate": 0.948,
+    "pass_rate_ci95": [
+     0.9131,
+     0.9694
+    ],
+    "collision_rate": 0.02,
+    "mean_completion_time_s": 5.507
+   }
+  },
+  "verification": {
+   "before": {
+    "n": 400,
+    "pass_rate": 0.7125,
+    "pass_rate_ci95": [
+     0.6663,
+     0.7547
+    ],
+    "collision_rate": 0.01,
+    "mean_completion_time_s": 3.665
+   },
+   "after": {
+    "n": 400,
+    "pass_rate": 0.9675,
+    "pass_rate_ci95": [
+     0.9452,
+     0.9809
+    ],
+    "collision_rate": 0.0075,
+    "mean_completion_time_s": 5.237
+   }
+  }
+ },
+ {
+  "id": "rehearsal_001",
+  "badges": {
+   "pipeline_version": "v1",
+   "mode": "rehearsal",
+   "runner": "LOCAL FALLBACK, not Nebius",
+   "recorded": true
+  },
+  "verdict": "VERIFIED",
+  "master_seed": null,
+  "attempts_used": 2,
+  "generator_source": "llm",
+  "analysis": {
+   "before": {
+    "n": 250,
+    "pass_rate": 0.752,
+    "pass_rate_ci95": [
+     0.6949,
+     0.8014
+    ],
+    "collision_rate": 0.008,
+    "mean_completion_time_s": 3.701
+   },
+   "after": {
+    "n": 250,
+    "pass_rate": 0.944,
+    "pass_rate_ci95": [
+     0.9082,
+     0.9664
+    ],
+    "collision_rate": 0.008,
+    "mean_completion_time_s": 4.431
+   }
+  },
+  "verification": {
+   "before": {
+    "n": 400,
+    "pass_rate": 0.69,
+    "pass_rate_ci95": [
+     0.643,
+     0.7333
+    ],
+    "collision_rate": 0.0025,
+    "mean_completion_time_s": 3.657
+   },
+   "after": {
+    "n": 400,
+    "pass_rate": 0.96,
+    "pass_rate_ci95": [
+     0.936,
+     0.9752
+    ],
+    "collision_rate": 0.005,
+    "mean_completion_time_s": 4.454
+   }
+  }
+ }
+]
