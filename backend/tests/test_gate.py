@@ -129,7 +129,7 @@ def test_regressions_above_budget_fail(world):
     assert status(rep, "G4") == CheckStatus.FAIL and rep.verdict == Verdict.FAILED
     assert len(rep.regressed_scenario_ids) == 5 and rep.strict_zero_budget["pass"] is False
     g5 = next(c for c in rep.checks if c.id == "G5")
-    assert g5.status == CheckStatus.NOT_RUN and g5.skipped_after_failure  # verification block not spent
+    assert g5.status == CheckStatus.SKIPPED_AFTER_FAILURE  # verification block not spent
 
 
 def test_fix_rate_below_threshold_fails(world):
@@ -261,7 +261,7 @@ def test_noop_patch_fails_g3_and_never_verifies(world):
     # an identical policy behaves like the baseline, so nothing is fixed
     assert dev.checks["G3"].status == CheckStatus.FAIL
     rep = gate.finalize(dev, patched, vset)
-    assert rep.verdict == Verdict.FAILED and rep.checks[4].skipped_after_failure
+    assert rep.verdict == Verdict.FAILED and rep.checks[4].status == CheckStatus.SKIPPED_AFTER_FAILURE
 
 
 def test_decide_verdict_precedence_unit():
@@ -283,16 +283,48 @@ def test_dev_failure_without_a_verification_set_is_failed_not_unverified(world):
     gate, dev, patched, _ = setup(StubRunner(), world, 42, with_vset=False)  # 5 regressions
     rep = gate.finalize(dev, patched, None)
     g5 = next(c for c in rep.checks if c.id == "G5")
-    assert g5.status == CheckStatus.NOT_RUN and g5.skipped_after_failure and rep.verdict == Verdict.FAILED
+    assert g5.status == CheckStatus.SKIPPED_AFTER_FAILURE and rep.verdict == Verdict.FAILED
 
 
 def test_diagnostic_g5_runs_on_rehearsal_only_and_never_rescues_a_failed_patch(world):
     gate, dev, patched, vset = setup(StubRunner(), world, 42)  # G4 fails
     rep = gate.finalize(dev, patched, vset, diagnostic_g5=True)
     g5 = next(c for c in rep.checks if c.id == "G5")
-    assert g5.status == CheckStatus.PASS and "DIAGNOSTIC" in g5.details and not g5.skipped_after_failure
+    assert g5.status == CheckStatus.PASS and "DIAGNOSTIC" in g5.details
     assert rep.verdict == Verdict.FAILED  # G4 still failed
     gate, dev, patched, vset = setup(StubRunner(), world, 42, rehearsal=False)  # a held-out block
     with pytest.raises(ValueError, match="never on a held-out block"):
         gate.finalize(dev, patched, vset, diagnostic_g5=True)
     assert vset.consumed is False  # the block was not touched
+
+
+# ---------------------------------------------------------------- verdict precedence: one test per line of the rule
+def test_precedence_1_g6_fail_gives_unverified_even_with_a_failed_check(world):
+    stub = StubRunner(fail=lambda p, scns: "FAILED" if round(p.grip_force) == BASE_GRIP and len(scns) == 30 else None)
+    rep = verdict_of(stub, world, 41)  # G3 fails AND the G1 re-run crashed (G6 fails)
+    assert status(rep, "G3") == CheckStatus.FAIL and status(rep, "G6") == CheckStatus.FAIL and rep.verdict == Verdict.UNVERIFIED
+
+
+def test_precedence_1_a_check_that_could_not_run_gives_unverified():
+    from app.core.schemas import GateCheck
+    cs = [GateCheck(id=i, name=i, status=CheckStatus.PASS) for i in ("G1", "G2", "G3", "G4", "G6")]
+    cs.append(GateCheck(id="G5", name="G5", status=CheckStatus.NOT_RUN))
+    assert decide_verdict(cs) == Verdict.UNVERIFIED
+
+
+def test_precedence_2_complete_execution_plus_failure_gives_failed_with_g5_skipped(world):
+    rep = verdict_of(StubRunner(), world, 41)  # G3 fails, everything finished
+    assert status(rep, "G6") == CheckStatus.PASS and status(rep, "G3") == CheckStatus.FAIL
+    assert status(rep, "G5") == CheckStatus.SKIPPED_AFTER_FAILURE and rep.verdict == Verdict.FAILED
+
+
+def test_precedence_3_verified_only_with_everything_passing_and_nothing_skipped():
+    from app.core.schemas import GateCheck
+    ok = [GateCheck(id=i, name=i, status=CheckStatus.PASS) for i in ("G1", "G2", "G3", "G4", "G5", "G6")]
+    assert decide_verdict(ok) == Verdict.VERIFIED
+    skipped_without_failure = [c if c.id != "G5" else GateCheck(id="G5", name="G5", status=CheckStatus.SKIPPED_AFTER_FAILURE) for c in ok]
+    assert decide_verdict(skipped_without_failure) == Verdict.UNVERIFIED  # inconsistent state is never VERIFIED
+
+
+def test_skipped_status_is_distinct_from_not_run():
+    assert CheckStatus.SKIPPED_AFTER_FAILURE != CheckStatus.NOT_RUN and CheckStatus.SKIPPED_AFTER_FAILURE.value == "skipped_after_failure"

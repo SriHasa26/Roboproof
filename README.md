@@ -41,11 +41,20 @@ The verdict is exactly one of VERIFIED, FAILED, UNVERIFIED, computed from simula
 | G5 held-out | on a fresh, code-only verification set of 400 scenarios from a single-use seed block: patched pass rate >= 0.90, improvement over the unpatched policy on the same set >= 0.10, **and** the patched Wilson 95% lower bound > the unpatched pass rate |
 | G6 complete | every run the gate relied on finished with no failed or timed-out shard |
 
-**Verdict:** UNVERIFIED if G6 is not a pass or any check could not run; otherwise FAILED if any check ran and failed; otherwise VERIFIED. A crash, timeout or missing result never counts as a pass.
+**Check statuses:** `pass`, `fail`, `not_run` (the check could not run: missing or incomplete data) and `skipped_after_failure` (deliberately not run because an earlier check already failed).
 
-**Why the regression budget is not zero:** with a budget of zero, even the best patch found by the ceiling search (3 regressions of 216 on dev set A) would be rejected, so VERIFIED would be practically unreachable. 2% is a documented compromise, not a physical law; the strict result is displayed so nobody has to take the budget on trust.
+**Verdict precedence** (each line has a test in `backend/tests/test_gate.py`):
+1. **UNVERIFIED** if G6 fails (incomplete execution) or any required check is `not_run`.
+2. Otherwise **FAILED** if any check that ran failed. Checks that are `skipped_after_failure` do not change this.
+3. Otherwise **VERIFIED** (and only if nothing was skipped).
 
-**Skipped after failure:** if G3 or G4 already failed on the analysis set, G5 is not run (`skipped_after_failure`), so the single-use verification block is not spent on a patch that is already rejected. That is a deliberate skip, not a check that "could not run": the verdict is FAILED, not UNVERIFIED. G5 is terminal: its details are never fed back to the fixer, and a failed G5 means a new run with a fresh seed block is needed.
+So an incomplete run is UNVERIFIED even if another check also failed, and a complete run with a failed G3 is FAILED with G5 `skipped_after_failure`. A crash, timeout or missing result never counts as a pass.
+
+**Regression budget (G4), decided by the project owner: 2%.** The budget is `floor(0.02 x previously passing)` (about 4 of 200). The strict zero-budget result and every regressed scenario id are always shown next to it. The strict check would reject even the best patch found by the ceiling search (3 regressions of 216 on dev set A; 1 of 188 in rehearsal_001), which is why a zero budget would make VERIFIED practically unreachable. The budget is a documented compromise, not a physical law.
+
+**Skipped after failure (approved):** if G3 or G4 already failed on the analysis set, G5 is `skipped_after_failure`, so the single-use verification block is not spent on a patch that is already rejected. G5 is terminal: its details are never fed back to the fixer, and a failed G5 means a new run with a fresh seed block is needed.
+
+**Diagnostic G5:** `finalize(..., diagnostic_g5=True)` runs G5 even though an earlier check failed, to show what it would have said. It exists for rehearsal blocks only (it is refused for held-out blocks) and can never change a verdict: a FAILED verdict stays FAILED.
 
 ## Layout
 

@@ -82,7 +82,7 @@ def gate_summary(label, rep):
     for c in rep.checks:
         obs = {k: v for k, v in c.observed.items() if k in ("fix_rate", "regressions", "previously_passing", "mismatches", "not_reproduced",
                                                             "patched_pass_rate", "unpatched_pass_rate", "improvement", "patched_wilson95_lower", "incomplete_runs")}
-        rows.append(f"{c.id}={c.status.value}{'(skipped)' if c.skipped_after_failure else ''} {obs if obs else ''}")
+        rows.append(f"{c.id}={c.status.value}{obs if obs else ''}")
     print(f"\n[{label}] VERDICT {rep.verdict.value}  (rehearsal={rep.rehearsal}, strict zero-budget: {rep.strict_zero_budget})")
     for r in rows:
         print("   ", r)

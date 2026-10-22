@@ -148,7 +148,10 @@ class ShardResult(Strict):
 class CheckStatus(str, Enum):
     PASS = "pass"
     FAIL = "fail"
-    NOT_RUN = "not_run"
+    NOT_RUN = "not_run"  # the check COULD NOT run (missing or incomplete data); this makes the verdict UNVERIFIED
+    # deliberately not run because an earlier check already FAILED (e.g. G5 after G3/G4, so the single-use verification
+    # block is not spent). Never changes a FAILED verdict.
+    SKIPPED_AFTER_FAILURE = "skipped_after_failure"
 
 
 class GateCheck(Strict):
@@ -158,9 +161,6 @@ class GateCheck(Strict):
     observed: dict[str, Any] = Field(default_factory=dict)
     threshold: dict[str, Any] = Field(default_factory=dict)
     details: str = ""
-    # True when the check was deliberately not run because an earlier check already FAILED (for example G5 is not run,
-    # and its single-use held-out block is not spent, after G3/G4 failed). This is NOT "could not run".
-    skipped_after_failure: bool = False
 
 
 class Verdict(str, Enum):

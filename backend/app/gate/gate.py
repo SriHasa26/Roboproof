@@ -10,8 +10,8 @@ Checks (PROJECT_BRIEF.md 3.3, thresholds in core/gate_config.py):
                       unpatched policy on the SAME set >= GATE_MIN_IMPROVEMENT, and the patched Wilson 95% lower bound >
                       the unpatched pass rate
   G6 complete         every run the gate relied on finished with no failed or timed-out shard
-Verdict: UNVERIFIED if G6 is not PASS or any check could not run (not_run, other than a deliberate skip after an earlier
-failure); otherwise FAILED if any check failed; otherwise VERIFIED. A crash, timeout or missing result is never a pass.
+Verdict: UNVERIFIED if G6 is not PASS or any check could not run (not_run); otherwise FAILED if any check failed (checks with
+status skipped_after_failure never change that); otherwise VERIFIED. A crash, timeout or missing result is never a pass.
 
 Two stages so the fixer can iterate without ever touching verification data: prepare() + dev_stage() compute G1 to G4 on the
 ANALYSIS set; finalize() runs G5 (once) and assembles the report. This module lives under app/gate/, the only place allowed to
@@ -29,7 +29,7 @@ from ..runner.base import JobRunner, RunResult
 from ..store.ledger import SeedBlockReusedError
 from .verification import VerificationSet
 
-PASS, FAIL, NOT_RUN = CheckStatus.PASS, CheckStatus.FAIL, CheckStatus.NOT_RUN
+PASS, FAIL, NOT_RUN, SKIPPED = CheckStatus.PASS, CheckStatus.FAIL, CheckStatus.NOT_RUN, CheckStatus.SKIPPED_AFTER_FAILURE
 
 
 def metrics_of(results: list[Result]) -> SetMetrics:
@@ -42,20 +42,24 @@ def metrics_of(results: list[Result]) -> SetMetrics:
         mean_completion_time_s=round(sum(r.completion_time_s for r in ok) / len(ok), 3) if ok else None)
 
 
-def _check(id_: str, name: str, status: CheckStatus, observed=None, threshold=None, details="", skipped=False) -> GateCheck:
-    return GateCheck(id=id_, name=name, status=status, observed=observed or {}, threshold=threshold or {}, details=details,
-                     skipped_after_failure=skipped)
+def _check(id_: str, name: str, status: CheckStatus, observed=None, threshold=None, details="") -> GateCheck:
+    return GateCheck(id=id_, name=name, status=status, observed=observed or {}, threshold=threshold or {}, details=details)
 
 
 def decide_verdict(checks: list[GateCheck]) -> Verdict:
+    """Precedence (each line has a test):
+    1. UNVERIFIED if G6 is not a pass, or any check is not_run (it could not run).
+    2. Otherwise FAILED if any check that ran failed (checks skipped_after_failure do not change this).
+    3. Otherwise VERIFIED, but only if nothing was skipped (a skip without a failure is inconsistent, so not VERIFIED).
+    """
     by = {c.id: c for c in checks}
     g6 = by.get("G6")
-    if g6 is None or g6.status != PASS:
-        return Verdict.UNVERIFIED
-    if any(c.status == NOT_RUN and not c.skipped_after_failure for c in checks):
+    if g6 is None or g6.status != PASS or any(c.status == NOT_RUN for c in checks):
         return Verdict.UNVERIFIED
     if any(c.status == FAIL for c in checks):
         return Verdict.FAILED
+    if any(c.status == SKIPPED for c in checks):
+        return Verdict.UNVERIFIED
     return Verdict.VERIFIED
 
 
@@ -178,12 +182,12 @@ class ProofGate:
             raise ValueError("diagnostic G5 is only allowed on rehearsal blocks, never on a held-out block")
         run_anyway = diagnostic_g5 and vset is not None and dev.complete
         if vset is None and dev_failed:
-            g5 = _check("G5", "Held-out generalization", NOT_RUN, skipped=True,
+            g5 = _check("G5", "Held-out generalization", SKIPPED,
                         details="skipped: an earlier check failed, so the single-use verification block was not spent")
         elif vset is None:
             g5 = _check("G5", "Held-out generalization", NOT_RUN, details="no verification set provided")
         elif dev_failed and not dev_ok and not run_anyway:
-            g5 = _check("G5", "Held-out generalization", NOT_RUN, skipped=True,
+            g5 = _check("G5", "Held-out generalization", SKIPPED,
                         details="skipped: an earlier check failed, so the single-use verification block was not spent")
         elif not dev_ok and not run_anyway:
             g5 = _check("G5", "Held-out generalization", NOT_RUN, details="earlier checks could not run or runs were incomplete")
