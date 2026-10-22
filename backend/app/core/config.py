@@ -23,6 +23,9 @@ class Settings:
     use_json_schema: bool
     llm_timeout_s: float
     db_path: str
+    dev_cache: bool = False
+    cache_dir: str = "backend/data/llm_cache"
+    max_calls_per_run: int = 12
 
     def require_llm(self, kind: str) -> tuple[str, str]:
         """Return (api_key, model_id) for 'fast' or 'reasoning', or fail loudly."""
@@ -54,4 +57,7 @@ def load_settings(env: dict | None = None, dotenv_path: str | Path | None = None
         use_json_schema=env.get("NEBIUS_USE_JSON_SCHEMA", "0") == "1",
         llm_timeout_s=float(env.get("LLM_TIMEOUT_S", "120")),
         db_path=env.get("ROBOPROOF_DB", "backend/data/roboproof.sqlite"),
+        dev_cache=env.get("LLM_DEV_CACHE", "0") == "1",
+        cache_dir=env.get("LLM_CACHE_DIR", "backend/data/llm_cache"),
+        max_calls_per_run=int(env.get("MAX_LLM_CALLS_PER_RUN", "12")),
     )

@@ -136,3 +136,41 @@ Everything below needs a real Nebius key and/or CLI profile. Nothing in the code
 ## 5. Local measurements so far (LocalRunner, not Nebius)
 
 200 dev scenarios, default policy, 10 shards, 12 CPUs on the development machine: 6.1 s wall-clock, all shards completed. These say nothing about Nebius timing or cost.
+
+## 6. CONFIRMED-BY-RUN (2026-10-22, Token Factory only; Serverless Jobs/Endpoints still untouched)
+
+Run with `scripts/list_models.py --filter nemotron --verbose` and `scripts/smoke_llm.py --schema-test`, key in `.env` (not shown anywhere).
+
+**Models visible to our key (Nemotron):** `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B`, `nvidia/Nemotron-3_5-Lightning`, `nvidia/nemotron-3-super-120b-a12b`, `nvidia/Nemotron-3.5-Super-VL`, `nvidia/Nemotron-3-Ultra-550b-a55b`.
+
+| Model | Context | Price per 1M tokens (from the API's own `pricing` field): prompt / completion |
+|---|---|---|
+| Nemotron-3-Nano-30B-A3B | 262,144 | $0.06 / $0.24 |
+| Nemotron-3_5-Lightning | 1,048,576 | $0.06 / $0.24 |
+| nemotron-3-super-120b-a12b | 262,144 | $0.30 / $0.90 |
+| Nemotron-3.5-Super-VL | 1,048,576 | $0.30 / $0.90 |
+| Nemotron-3-Ultra-550b-a55b | 1,048,576 | $1.00 / $3.00 (cached input $0.12) |
+
+**Choice (changeable in `.env`):**
+- `NEBIUS_MODEL_FAST = nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B`: the smallest text model that is explicitly a Nemotron "Nano", cheapest tier, used for volume (scenario regions). "Lightning" is the same price but its size and nature are not stated in the listing, so I did not pick it. The "Super-VL" is a vision-language model and is not needed.
+- `NEBIUS_MODEL_REASONING = nvidia/Nemotron-3-Ultra-550b-a55b`: an Ultra exists and is the largest listed (550B total / 55B active, per its id). Used for failure analysis and fix proposals.
+
+**Smoke results (real calls):**
+
+| Call | Latency | Prompt tokens | Completion tokens |
+|---|---|---|---|
+| Nano, short text | 4.48 s | 49 | 234 |
+| Ultra, short text | 2.03 s | 49 | 514 |
+| Nano, json_schema probe | 1.97 s | not recorded | not recorded |
+| Ultra, json_schema probe | 0.95 s | not recorded | not recorded |
+
+Completion tokens are far larger than the visible answer (about 25 words): both models appear to spend hidden reasoning tokens that are billed as completion tokens. Cost estimates must budget for this. Whether reasoning can be turned down through a request parameter is UNCONFIRMED (not tried).
+
+**K-item status:**
+- K1 (list models, choose IDs): CONFIRMED-BY-RUN.
+- K2 (`response_format` json_schema): CONFIRMED-BY-RUN **for a tiny schema** on both models (the API accepted it and the output validated strictly). Not yet tested with the larger nested schemas used by the analyst/fixer; the Pydantic validation and one-retry loop stay in place regardless. `NEBIUS_USE_JSON_SCHEMA` stays 0 unless set explicitly.
+- K3 (smoke call per model): CONFIRMED-BY-RUN.
+- K4 (latency, tokens, cost): partly confirmed (numbers above; pricing from the API). Rate limits UNCONFIRMED.
+- K5 to K11 (Nebius CLI, Container Registry, Serverless Jobs, Endpoints): still UNCONFIRMED, untouched.
+- K12 (real scenario-region proposal): pending, done in the rehearsal.
+

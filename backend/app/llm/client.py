@@ -1,18 +1,23 @@
 """LLM client for Nebius Token Factory (OpenAI-compatible).
 
-Every structured call is validated with Pydantic. On a validation failure we retry once,
-feeding the validation error back to the model, then raise LLMValidationError.
-Transport errors get one retry as well. Calls are logged (latency, tokens, model, outcome)
-without secrets or prompt bodies.
+Every structured call is validated with Pydantic (and an optional code-side `validator`, used for grounding checks).
+On a validation failure we retry once, feeding the error back to the model, then raise LLMValidationError.
+Transport errors get one retry as well.
 
-PENDING_KEY: nothing here has been run against the real API yet (see docs/NEBIUS_NOTES.md).
+Safety / cost controls:
+- The API key is never logged or returned; error text is masked.
+- MAX_LLM_CALLS_PER_RUN caps real network calls per client (a run uses one client). Retries count.
+- LLM_DEV_CACHE=1 enables an on-disk response cache for development only. Every record carries `cached`; official
+  recorded runs must use LLM_DEV_CACHE=0 (the default).
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Callable, Literal, TypeVar
 
 from pydantic import BaseModel, ValidationError
@@ -36,6 +41,10 @@ class LLMValidationError(LLMError):
     pass
 
 
+class LLMBudgetExceeded(LLMError):
+    pass
+
+
 @dataclass
 class CallRecord:
     purpose: str
@@ -47,6 +56,7 @@ class CallRecord:
     completion_tokens: int | None
     ok: bool
     error: str | None = None
+    cached: bool = False
 
 
 _THINK = re.compile(r"<think>.*?</think>", re.DOTALL)
@@ -77,6 +87,18 @@ def extract_json(text: str) -> Any:
     raise ValueError("no valid JSON found in model reply")
 
 
+def estimate_tokens(text: str) -> int:
+    """Rough token estimate (about 4 characters per token). An ESTIMATE, only for pre-run projections."""
+    return max(1, len(text) // 4)
+
+
+@dataclass
+class _Cached:
+    content: str
+    prompt_tokens: int | None
+    completion_tokens: int | None
+
+
 class LLMClient:
     def __init__(
         self,
@@ -88,6 +110,12 @@ class LLMClient:
         self._client = openai_client
         self.sink = sink
         self.records: list[CallRecord] = []
+        self.real_calls = 0
+
+    # ---- secrets
+    def mask(self, text: str) -> str:
+        key = self.settings.api_key
+        return text.replace(key, "***") if key and key in text else text
 
     @property
     def client(self):
@@ -103,27 +131,60 @@ class LLMClient:
             )
         return self._client
 
+    # ---- accounting
     def _log(self, rec: CallRecord) -> None:
         self.records.append(rec)
         if self.sink:
             self.sink(rec)
 
+    def usage_summary(self) -> dict:
+        real = [r for r in self.records if not r.cached]
+        return {
+            "calls_total": len(self.records), "calls_real": len(real), "calls_cached": len(self.records) - len(real),
+            "prompt_tokens": sum(r.prompt_tokens or 0 for r in real),
+            "completion_tokens": sum(r.completion_tokens or 0 for r in real),
+            "max_calls": self.settings.max_calls_per_run, "any_cached": any(r.cached for r in self.records),
+        }
+
+    # ---- dev cache
+    def _cache_path(self, model: str, messages: list[dict], kw: dict) -> Path:
+        h = hashlib.sha256(json.dumps({"m": model, "msgs": messages, "kw": kw}, sort_keys=True, default=str).encode()).hexdigest()
+        return Path(self.settings.cache_dir) / f"{h}.json"
+
+    def _cache_get(self, path: Path) -> _Cached | None:
+        if not self.settings.dev_cache or not path.exists():
+            return None
+        d = json.loads(path.read_text(encoding="utf-8"))
+        return _Cached(d["content"], d.get("prompt_tokens"), d.get("completion_tokens"))
+
+    def _cache_put(self, path: Path, content: str, pt, ct) -> None:
+        if not self.settings.dev_cache:
+            return
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps({"content": content, "prompt_tokens": pt, "completion_tokens": ct}), encoding="utf-8")
+
+    # ---- calls
     def _chat(self, purpose: str, kind: ModelKind, model: str, messages: list[dict], attempt: int, **kw) -> str:
         t0 = time.perf_counter()
+        path = self._cache_path(model, messages, kw)
+        hit = self._cache_get(path)
+        if hit is not None:
+            self._log(CallRecord(purpose, kind, model, attempt, 0.0, hit.prompt_tokens, hit.completion_tokens, True, cached=True))
+            return hit.content
+        if self.real_calls >= self.settings.max_calls_per_run:
+            raise LLMBudgetExceeded(f"MAX_LLM_CALLS_PER_RUN={self.settings.max_calls_per_run} reached before '{purpose}'")
+        self.real_calls += 1
         try:
             resp = self.client.chat.completions.create(model=model, messages=messages, **kw)
         except Exception as e:  # network, auth, rate limit...
             self._log(CallRecord(purpose, kind, model, attempt, time.perf_counter() - t0, None, None, False, type(e).__name__))
-            raise LLMTransportError(f"{type(e).__name__}: {e}") from e
+            raise LLMTransportError(self.mask(f"{type(e).__name__}: {e}")) from e
         usage = getattr(resp, "usage", None)
-        content = resp.choices[0].message.content
-        self._log(
-            CallRecord(
-                purpose, kind, model, attempt, time.perf_counter() - t0,
-                getattr(usage, "prompt_tokens", None), getattr(usage, "completion_tokens", None), True,
-            )
-        )
-        return content or ""
+        content = resp.choices[0].message.content or ""
+        pt, ct = getattr(usage, "prompt_tokens", None), getattr(usage, "completion_tokens", None)
+        self._log(CallRecord(purpose, kind, model, attempt, time.perf_counter() - t0, pt, ct, True))
+        self._cache_put(path, content, pt, ct)
+        return content
 
     def _chat_with_transport_retry(self, purpose, kind, model, messages, attempt, **kw) -> str:
         try:
@@ -137,20 +198,28 @@ class LLMClient:
         return self._chat_with_transport_retry(purpose, kind, model, msgs, 1, **kw)
 
     def complete_json(
-        self, purpose: str, kind: ModelKind, system: str, user: str, schema: type[T], **kw
+        self, purpose: str, kind: ModelKind, system: str, user: str, schema: type[T],
+        validator: Callable[[T], None] | None = None, **kw
     ) -> T:
-        """Call the model and return a validated `schema` instance, or raise LLMValidationError."""
+        """Call the model and return a validated `schema` instance, or raise LLMValidationError.
+
+        `validator` runs after schema validation and may raise ValueError (for example a grounding check); its message
+        is fed back to the model on the single retry.
+        """
         _, model = self.settings.require_llm(kind)
         schema_json = json.dumps(schema.model_json_schema())
         sys_full = f"{system}\n\nReply with a single JSON object matching this JSON Schema, and nothing else:\n{schema_json}"
         msgs = [{"role": "system", "content": sys_full}, {"role": "user", "content": user}]
-        if self.settings.use_json_schema:  # UNCONFIRMED for Nemotron; off by default
+        if self.settings.use_json_schema:  # only after it is confirmed for the chosen model (see docs/NEBIUS_NOTES.md)
             kw = {**kw, "response_format": {"type": "json_schema", "json_schema": {"name": schema.__name__, "schema": schema.model_json_schema()}}}
         last_err: str | None = None
         for attempt in (1, 2):
             text = self._chat_with_transport_retry(purpose, kind, model, msgs, attempt, **kw)
             try:
-                return schema.model_validate(extract_json(text))
+                obj = schema.model_validate(extract_json(text))
+                if validator is not None:
+                    validator(obj)
+                return obj
             except (ValueError, ValidationError) as e:
                 last_err = str(e)
                 self._mark_invalid(last_err)
