@@ -22,11 +22,12 @@ GOOD = {"regions": [
 
 class Fake:
     def __init__(self, replies):
-        self.replies, self.calls = list(replies), 0
+        self.replies, self.calls, self.sent = list(replies), 0, []
         self.chat = SimpleNamespace(completions=SimpleNamespace(create=self._create))
 
     def _create(self, **kw):
         self.calls += 1
+        self.sent.append(kw.get("messages"))
         r = self.replies.pop(0)
         return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=r))],
                                usage=SimpleNamespace(prompt_tokens=1, completion_tokens=1))
@@ -118,3 +119,58 @@ def test_coverage_part_spans_the_space():
     for ax, (lo, hi) in SCENARIO_BOUNDS.items():
         vals = [getattr(s, ax) for s in out.scenarios]
         assert min(vals) < lo + 0.1 * (hi - lo) and max(vals) > hi - 0.1 * (hi - lo)
+
+
+# ---------------------------------------------------------------- P4.5: region constraints
+from app.scenarios.proposal import MAX_AXES_PER_REGION, MIN_VOLUME_FRACTION, Region  # noqa: E402
+
+
+def region(**ranges):
+    return {"name": "r", "rationale": "r", "ranges": ranges}
+
+
+def test_at_most_three_axes_enforced():
+    Region.model_validate(region(mass_kg=[0.2, 1.0], friction=[0.1, 1.0], size_m=[0.03, 0.08]))
+    with pytest.raises(ValidationError, match="at most 3 axes"):
+        Region.model_validate(region(mass_kg=[0.2, 1.0], friction=[0.1, 1.0], size_m=[0.03, 0.08], sensor_noise_m=[0.0, 0.03]))
+    assert MAX_AXES_PER_REGION == 3
+
+
+def test_volume_floor_enforced_and_computed_as_a_fraction_of_the_space():
+    r = Region.model_validate(region(mass_kg=[0.05, 0.525]))  # half of the mass axis
+    assert r.volume_fraction() == pytest.approx(0.5)
+    ok = region(mass_kg=[0.05, 0.3], friction=[0.1, 0.4])  # 0.263 * 0.273 = 0.072
+    assert Region.model_validate(ok).volume_fraction() > MIN_VOLUME_FRACTION
+    with pytest.raises(ValidationError, match="covers only"):
+        Region.model_validate(region(mass_kg=[0.5, 0.55], friction=[0.2, 0.25]))  # 0.0526 * 0.0455 = 0.24%
+    # three narrow axes multiply to far below 2% even if each looks reasonable
+    with pytest.raises(ValidationError, match="covers only"):
+        Region.model_validate(region(mass_kg=[0.5, 0.7], friction=[0.2, 0.4], size_m=[0.05, 0.06]))
+
+
+def test_rationale_is_always_flagged_unverified():
+    r = Region.model_validate(region(mass_kg=[0.2, 1.0]))
+    assert r.unverified is True and r.model_dump()["unverified"] is True
+    with pytest.raises(ValidationError):
+        Region.model_validate({**region(mass_kg=[0.2, 1.0]), "unverified": False})
+    g, _ = gen_with([json.dumps(GOOD)])
+    out = g.generate(50, master_seed=2)
+    assert all(rg.unverified for rg in out.proposal.regions)
+
+
+def test_violating_region_goes_through_the_retry_path_then_fails_loudly():
+    too_many = {"regions": [{"name": "a", "rationale": "r", "ranges": {"mass_kg": [0.2, 1.0], "friction": [0.1, 1.0],
+                                                                          "size_m": [0.03, 0.08], "sensor_noise_m": [0.0, 0.03]}}]}
+    g, fake = gen_with([json.dumps(too_many), json.dumps(too_many)])
+    with pytest.raises(LLMValidationError, match="at most 3 axes"):
+        g.generate(50, master_seed=1)
+    assert fake.calls == 2
+    g, fake = gen_with([json.dumps(too_many), json.dumps(GOOD)])  # corrected on retry
+    assert g.generate(50, master_seed=1).source == "llm"
+    assert "at most 3 axes" in fake.sent[1][-1]["content"]
+
+
+def test_prompt_states_the_constraints():
+    from app.scenarios.generator import build_prompt
+    _, user = build_prompt()
+    assert "AT MOST 3" in user and "2%" in user and "unverified" in user

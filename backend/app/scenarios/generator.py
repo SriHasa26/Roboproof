@@ -70,6 +70,13 @@ def build_prompt() -> tuple[str, str]:
         "policy_parameters_for_context": {k: {"min": v[0], "max": v[1], "default": v[2]} for k, v in POLICY_BOUNDS.items()},
         "request": "Return 3 to 6 regions. Each: a short name, a one-sentence physical rationale, and ranges "
                    "[lo, hi] for the parameters that define the region (omitted parameters span their full range).",
+        "rules": [
+            "Constrain AT MOST 3 parameters per region; leave all others out.",
+            "Each region must cover at least 2% of the whole parameter space (the product of the constrained parameters' "
+            "relative widths), so do not use tiny ranges.",
+            "Stay inside each parameter's min and max.",
+            "Your rationale is treated as an unverified opinion and is only a hint for people reading the test plan.",
+        ],
     }, indent=1)
     return system, user
 
