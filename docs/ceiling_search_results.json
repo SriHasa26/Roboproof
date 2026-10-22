@@ -1,0 +1,1606 @@
+{
+ "n_policy_evaluations": 71,
+ "n_scenarios_per_eval": 300,
+ "total_simulations": 25500,
+ "wall_clock_s": 1832.8,
+ "jobs": 12,
+ "search_set": {
+  "n": 300,
+  "sweep_seed": 11,
+  "seed_base": 1000
+ },
+ "crosscheck_set": {
+  "n": 300,
+  "sweep_seed": 23,
+  "seed_base": 50000
+ },
+ "best_policy": {
+  "grip_force": 58.83757679621736,
+  "grasp_hold_steps": 86,
+  "retry_count": 3,
+  "lift_speed": 0.5887942168683215,
+  "lift_height": 0.11887021321575043
+ },
+ "cross": {
+  "default": {
+   "policy": {
+    "grip_force": 15.0,
+    "grasp_hold_steps": 10,
+    "retry_count": 0,
+    "lift_speed": 0.3,
+    "lift_height": 0.15
+   },
+   "A": {
+    "n": 300,
+    "pass_rate": 0.72,
+    "mean_time_s_success": 3.652124074074076,
+    "reasons": {
+     "MISSED_GRASP": 72,
+     "SLIPPED_ON_LIFT": 10,
+     "COLLISION": 2
+    },
+    "collisions": 2
+   },
+   "B": {
+    "n": 300,
+    "pass_rate": 0.7166666666666667,
+    "mean_time_s_success": 3.649612558139534,
+    "reasons": {
+     "SLIPPED_ON_LIFT": 13,
+     "MISSED_GRASP": 69,
+     "PLACED_OUTSIDE_ZONE": 2,
+     "COLLISION": 1
+    },
+    "collisions": 1
+   }
+  },
+  "best": {
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "A": {
+    "n": 300,
+    "pass_rate": 0.9666666666666667,
+    "mean_time_s_success": 3.826180000000001,
+    "reasons": {
+     "MISSED_GRASP": 5,
+     "PLACED_OUTSIDE_ZONE": 2,
+     "COLLISION": 3
+    },
+    "collisions": 3
+   },
+   "B": {
+    "n": 300,
+    "pass_rate": 0.98,
+    "mean_time_s_success": 3.795194897959185,
+    "reasons": {
+     "MISSED_GRASP": 3,
+     "PLACED_OUTSIDE_ZONE": 3
+    },
+    "collisions": 0
+   }
+  },
+  "top1": {
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "A": {
+    "n": 300,
+    "pass_rate": 0.9666666666666667,
+    "mean_time_s_success": 3.826180000000001,
+    "reasons": {
+     "MISSED_GRASP": 5,
+     "PLACED_OUTSIDE_ZONE": 2,
+     "COLLISION": 3
+    },
+    "collisions": 3
+   },
+   "B": {
+    "n": 300,
+    "pass_rate": 0.98,
+    "mean_time_s_success": 3.795194897959185,
+    "reasons": {
+     "MISSED_GRASP": 3,
+     "PLACED_OUTSIDE_ZONE": 3
+    },
+    "collisions": 0
+   }
+  },
+  "top2": {
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 120,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "A": {
+    "n": 300,
+    "pass_rate": 0.9666666666666667,
+    "mean_time_s_success": 3.9860893103448305,
+    "reasons": {
+     "MISSED_GRASP": 5,
+     "PLACED_OUTSIDE_ZONE": 2,
+     "COLLISION": 3
+    },
+    "collisions": 3
+   },
+   "B": {
+    "n": 300,
+    "pass_rate": 0.9766666666666667,
+    "mean_time_s_success": 3.9669802047781553,
+    "reasons": {
+     "MISSED_GRASP": 3,
+     "PLACED_OUTSIDE_ZONE": 3,
+     "DROPPED_IN_TRANSIT": 1
+    },
+    "collisions": 0
+   }
+  },
+  "top3": {
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.3,
+    "lift_height": 0.11887021321575043
+   },
+   "A": {
+    "n": 300,
+    "pass_rate": 0.9666666666666667,
+    "mean_time_s_success": 4.030934137931037,
+    "reasons": {
+     "MISSED_GRASP": 5,
+     "PLACED_OUTSIDE_ZONE": 2,
+     "COLLISION": 3
+    },
+    "collisions": 3
+   },
+   "B": {
+    "n": 300,
+    "pass_rate": 0.98,
+    "mean_time_s_success": 3.9973925170068023,
+    "reasons": {
+     "MISSED_GRASP": 3,
+     "PLACED_OUTSIDE_ZONE": 3
+    },
+    "collisions": 0
+   }
+  },
+  "top4": {
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.2,
+    "lift_height": 0.11887021321575043
+   },
+   "A": {
+    "n": 300,
+    "pass_rate": 0.9666666666666667,
+    "mean_time_s_success": 4.230634482758622,
+    "reasons": {
+     "MISSED_GRASP": 5,
+     "PLACED_OUTSIDE_ZONE": 2,
+     "COLLISION": 3
+    },
+    "collisions": 3
+   },
+   "B": {
+    "n": 300,
+    "pass_rate": 0.9733333333333334,
+    "mean_time_s_success": 4.1846452054794545,
+    "reasons": {
+     "MISSED_GRASP": 3,
+     "PLACED_OUTSIDE_ZONE": 5
+    },
+    "collisions": 0
+   }
+  },
+  "top5": {
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.15,
+    "lift_height": 0.11887021321575043
+   },
+   "A": {
+    "n": 300,
+    "pass_rate": 0.9666666666666667,
+    "mean_time_s_success": 4.4583362068965515,
+    "reasons": {
+     "MISSED_GRASP": 5,
+     "PLACED_OUTSIDE_ZONE": 2,
+     "COLLISION": 3
+    },
+    "collisions": 3
+   },
+   "B": {
+    "n": 300,
+    "pass_rate": 0.9733333333333334,
+    "mean_time_s_success": 4.4254708904109625,
+    "reasons": {
+     "MISSED_GRASP": 3,
+     "PLACED_OUTSIDE_ZONE": 5
+    },
+    "collisions": 0
+   }
+  }
+ },
+ "log": [
+  {
+   "tag": "default",
+   "policy": {
+    "grip_force": 15.0,
+    "grasp_hold_steps": 10,
+    "retry_count": 0,
+    "lift_speed": 0.3,
+    "lift_height": 0.15
+   },
+   "n": 300,
+   "pass_rate": 0.72,
+   "mean_time_s_success": 3.652124074074076,
+   "reasons": {
+    "MISSED_GRASP": 72,
+    "SLIPPED_ON_LIFT": 10,
+    "COLLISION": 2
+   },
+   "collisions": 2
+  },
+  {
+   "tag": "anchor",
+   "policy": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 10,
+    "retry_count": 0,
+    "lift_speed": 0.3,
+    "lift_height": 0.15
+   },
+   "n": 300,
+   "pass_rate": 0.7966666666666666,
+   "mean_time_s_success": 3.6520606694560684,
+   "reasons": {
+    "MISSED_GRASP": 54,
+    "PLACED_OUTSIDE_ZONE": 5,
+    "SLIPPED_ON_LIFT": 2
+   },
+   "collisions": 0
+  },
+  {
+   "tag": "anchor",
+   "policy": {
+    "grip_force": 15.0,
+    "grasp_hold_steps": 60,
+    "retry_count": 0,
+    "lift_speed": 0.3,
+    "lift_height": 0.15
+   },
+   "n": 300,
+   "pass_rate": 0.77,
+   "mean_time_s_success": 3.8639428571428573,
+   "reasons": {
+    "MISSED_GRASP": 53,
+    "COLLISION": 3,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "SLIPPED_ON_LIFT": 11
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "anchor",
+   "policy": {
+    "grip_force": 15.0,
+    "grasp_hold_steps": 10,
+    "retry_count": 3,
+    "lift_speed": 0.3,
+    "lift_height": 0.15
+   },
+   "n": 300,
+   "pass_rate": 0.8066666666666666,
+   "mean_time_s_success": 3.866323140495871,
+   "reasons": {
+    "COLLISION": 11,
+    "MISSED_GRASP": 40,
+    "SLIPPED_ON_LIFT": 7
+   },
+   "collisions": 11
+  },
+  {
+   "tag": "anchor",
+   "policy": {
+    "grip_force": 15.0,
+    "grasp_hold_steps": 10,
+    "retry_count": 0,
+    "lift_speed": 0.1,
+    "lift_height": 0.15
+   },
+   "n": 300,
+   "pass_rate": 0.7933333333333333,
+   "mean_time_s_success": 4.6228798319327735,
+   "reasons": {
+    "MISSED_GRASP": 56,
+    "PLACED_OUTSIDE_ZONE": 1,
+    "SLIPPED_ON_LIFT": 5
+   },
+   "collisions": 0
+  },
+  {
+   "tag": "anchor",
+   "policy": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "retry_count": 3,
+    "lift_speed": 0.1,
+    "lift_height": 0.15
+   },
+   "n": 300,
+   "pass_rate": 0.9666666666666667,
+   "mean_time_s_success": 5.187287586206896,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "anchor",
+   "policy": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 120,
+    "retry_count": 3,
+    "lift_speed": 0.05,
+    "lift_height": 0.2
+   },
+   "n": 300,
+   "pass_rate": 0.9566666666666667,
+   "mean_time_s_success": 8.300245644599304,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 5,
+    "TIMEOUT": 1
+   },
+   "collisions": 5
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 18.42011102565771,
+    "grasp_hold_steps": 77,
+    "retry_count": 1,
+    "lift_speed": 0.2537752899094264,
+    "lift_height": 0.1387293335774128
+   },
+   "n": 300,
+   "pass_rate": 0.8466666666666667,
+   "mean_time_s_success": 4.0307763779527574,
+   "reasons": {
+    "COLLISION": 7,
+    "MISSED_GRASP": 34,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "SLIPPED_ON_LIFT": 3
+   },
+   "collisions": 7
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 64.28886843899488,
+    "grasp_hold_steps": 109,
+    "retry_count": 1,
+    "lift_speed": 0.4090316414768225,
+    "lift_height": 0.12457569183889232
+   },
+   "n": 300,
+   "pass_rate": 0.89,
+   "mean_time_s_success": 3.907660674157305,
+   "reasons": {
+    "MISSED_GRASP": 27,
+    "PLACED_OUTSIDE_ZONE": 3,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 77.52216501217929,
+    "grasp_hold_steps": 110,
+    "retry_count": 2,
+    "lift_speed": 0.46400265339349756,
+    "lift_height": 0.17878842408058793
+   },
+   "n": 300,
+   "pass_rate": 0.9566666666666667,
+   "mean_time_s_success": 4.339734494773518,
+   "reasons": {
+    "MISSED_GRASP": 7,
+    "PLACED_OUTSIDE_ZONE": 3,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 66.94214437816774,
+    "grasp_hold_steps": 54,
+    "retry_count": 1,
+    "lift_speed": 0.20284456852508748,
+    "lift_height": 0.10658326421085086
+   },
+   "n": 300,
+   "pass_rate": 0.89,
+   "mean_time_s_success": 3.799670411985018,
+   "reasons": {
+    "MISSED_GRASP": 27,
+    "PLACED_OUTSIDE_ZONE": 5,
+    "COLLISION": 1
+   },
+   "collisions": 1
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 44.436263250893624,
+    "grasp_hold_steps": 52,
+    "retry_count": 2,
+    "lift_speed": 0.05706226530174362,
+    "lift_height": 0.16192547538468022
+   },
+   "n": 300,
+   "pass_rate": 0.9566666666666667,
+   "mean_time_s_success": 6.534247038327527,
+   "reasons": {
+    "MISSED_GRASP": 7,
+    "PLACED_OUTSIDE_ZONE": 3,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 32.38856008492935,
+    "grasp_hold_steps": 23,
+    "retry_count": 2,
+    "lift_speed": 0.2894222357728545,
+    "lift_height": 0.12499787593628746
+   },
+   "n": 300,
+   "pass_rate": 0.94,
+   "mean_time_s_success": 3.7360358156028357,
+   "reasons": {
+    "MISSED_GRASP": 8,
+    "PLACED_OUTSIDE_ZONE": 1,
+    "SLIPPED_ON_LIFT": 2,
+    "COLLISION": 7
+   },
+   "collisions": 7
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 20.706209092716467,
+    "grasp_hold_steps": 105,
+    "retry_count": 2,
+    "lift_speed": 0.3836903221767384,
+    "lift_height": 0.13627514466682306
+   },
+   "n": 300,
+   "pass_rate": 0.9,
+   "mean_time_s_success": 4.0557888888888876,
+   "reasons": {
+    "COLLISION": 8,
+    "MISSED_GRASP": 14,
+    "SLIPPED_ON_LIFT": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "DROPPED_IN_TRANSIT": 1
+   },
+   "collisions": 8
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 76.01148432347362,
+    "grasp_hold_steps": 68,
+    "retry_count": 1,
+    "lift_speed": 0.5452472794523221,
+    "lift_height": 0.12983545097546562
+   },
+   "n": 300,
+   "pass_rate": 0.89,
+   "mean_time_s_success": 3.7032333333333325,
+   "reasons": {
+    "MISSED_GRASP": 27,
+    "PLACED_OUTSIDE_ZONE": 4,
+    "COLLISION": 2
+   },
+   "collisions": 2
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 57.19961526003375,
+    "grasp_hold_steps": 38,
+    "retry_count": 1,
+    "lift_speed": 0.43546248922547043,
+    "lift_height": 0.10697299472683942
+   },
+   "n": 300,
+   "pass_rate": 0.8966666666666666,
+   "mean_time_s_success": 3.4653639405204464,
+   "reasons": {
+    "MISSED_GRASP": 26,
+    "PLACED_OUTSIDE_ZONE": 3,
+    "COLLISION": 2
+   },
+   "collisions": 2
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 41.98327422386606,
+    "grasp_hold_steps": 70,
+    "retry_count": 1,
+    "lift_speed": 0.4521823620971445,
+    "lift_height": 0.18712076615615758
+   },
+   "n": 300,
+   "pass_rate": 0.8866666666666667,
+   "mean_time_s_success": 4.033473684210528,
+   "reasons": {
+    "MISSED_GRASP": 27,
+    "PLACED_OUTSIDE_ZONE": 4,
+    "COLLISION": 2,
+    "SLIPPED_ON_LIFT": 1
+   },
+   "collisions": 2
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 51.61274447194533,
+    "grasp_hold_steps": 45,
+    "retry_count": 1,
+    "lift_speed": 0.3221563228543809,
+    "lift_height": 0.16749272810154248
+   },
+   "n": 300,
+   "pass_rate": 0.89,
+   "mean_time_s_success": 3.9761584269662955,
+   "reasons": {
+    "MISSED_GRASP": 27,
+    "PLACED_OUTSIDE_ZONE": 4,
+    "COLLISION": 2
+   },
+   "collisions": 2
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 55.672941713721734,
+    "grasp_hold_steps": 69,
+    "retry_count": 1,
+    "lift_speed": 0.05099129448375046,
+    "lift_height": 0.24850776519387607
+   },
+   "n": 300,
+   "pass_rate": 0.8966666666666666,
+   "mean_time_s_success": 8.891681412639405,
+   "reasons": {
+    "MISSED_GRASP": 27,
+    "PLACED_OUTSIDE_ZONE": 3,
+    "COLLISION": 1
+   },
+   "collisions": 1
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 43.953816585825166,
+    "grasp_hold_steps": 39,
+    "retry_count": 1,
+    "lift_speed": 0.10139526342203992,
+    "lift_height": 0.2761760181383382
+   },
+   "n": 300,
+   "pass_rate": 0.8966666666666666,
+   "mean_time_s_success": 6.579568773234201,
+   "reasons": {
+    "MISSED_GRASP": 27,
+    "PLACED_OUTSIDE_ZONE": 3,
+    "COLLISION": 1
+   },
+   "collisions": 1
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 79.23021256883776,
+    "grasp_hold_steps": 7,
+    "retry_count": 1,
+    "lift_speed": 0.4515355178004959,
+    "lift_height": 0.1285595328044707
+   },
+   "n": 300,
+   "pass_rate": 0.6766666666666666,
+   "mean_time_s_success": 3.4452990147783242,
+   "reasons": {
+    "MISSED_GRASP": 93,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 2
+   },
+   "collisions": 2
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 47.52873187733367,
+    "grasp_hold_steps": 50,
+    "retry_count": 2,
+    "lift_speed": 0.5771554205302186,
+    "lift_height": 0.27209885657916916
+   },
+   "n": 300,
+   "pass_rate": 0.9566666666666667,
+   "mean_time_s_success": 4.446891986062718,
+   "reasons": {
+    "MISSED_GRASP": 7,
+    "PLACED_OUTSIDE_ZONE": 3,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 51.570159890003715,
+    "grasp_hold_steps": 19,
+    "retry_count": 3,
+    "lift_speed": 0.06299783576947683,
+    "lift_height": 0.12442736410521536
+   },
+   "n": 300,
+   "pass_rate": 0.9666666666666667,
+   "mean_time_s_success": 5.392373793103449,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 26.121011982544687,
+    "grasp_hold_steps": 81,
+    "retry_count": 1,
+    "lift_speed": 0.10108870181659597,
+    "lift_height": 0.05321447193623259
+   },
+   "n": 300,
+   "pass_rate": 0.0,
+   "mean_time_s_success": 0.0,
+   "reasons": {
+    "COLLISION": 270,
+    "MISSED_GRASP": 29,
+    "PLACED_OUTSIDE_ZONE": 1
+   },
+   "collisions": 270
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 50.32368100802284,
+    "grasp_hold_steps": 59,
+    "retry_count": 2,
+    "lift_speed": 0.3602131251260439,
+    "lift_height": 0.27261477707492
+   },
+   "n": 300,
+   "pass_rate": 0.9566666666666667,
+   "mean_time_s_success": 4.804183275261325,
+   "reasons": {
+    "MISSED_GRASP": 7,
+    "PLACED_OUTSIDE_ZONE": 3,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 73.87976434029476,
+    "grasp_hold_steps": 23,
+    "retry_count": 3,
+    "lift_speed": 0.4832496444775309,
+    "lift_height": 0.20975656305574158
+   },
+   "n": 300,
+   "pass_rate": 0.9433333333333334,
+   "mean_time_s_success": 4.137749469964663,
+   "reasons": {
+    "MISSED_GRASP": 10,
+    "PLACED_OUTSIDE_ZONE": 3,
+    "COLLISION": 4
+   },
+   "collisions": 4
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 54.4705450618212,
+    "grasp_hold_steps": 66,
+    "retry_count": 3,
+    "lift_speed": 0.17829476341007627,
+    "lift_height": 0.19982899806739524
+   },
+   "n": 300,
+   "pass_rate": 0.9666666666666667,
+   "mean_time_s_success": 5.004697241379311,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 66.06822964037379,
+    "grasp_hold_steps": 16,
+    "retry_count": 2,
+    "lift_speed": 0.27155841154126564,
+    "lift_height": 0.24150908536657073
+   },
+   "n": 300,
+   "pass_rate": 0.9366666666666666,
+   "mean_time_s_success": 4.591708540925266,
+   "reasons": {
+    "MISSED_GRASP": 12,
+    "PLACED_OUTSIDE_ZONE": 4,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 10.078577046540545,
+    "grasp_hold_steps": 73,
+    "retry_count": 3,
+    "lift_speed": 0.3955913242996998,
+    "lift_height": 0.13033442386338018
+   },
+   "n": 300,
+   "pass_rate": 0.7933333333333333,
+   "mean_time_s_success": 4.021568487394958,
+   "reasons": {
+    "COLLISION": 15,
+    "MISSED_GRASP": 35,
+    "SLIPPED_ON_LIFT": 11,
+    "PLACED_OUTSIDE_ZONE": 1
+   },
+   "collisions": 15
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 54.18470419414169,
+    "grasp_hold_steps": 41,
+    "retry_count": 2,
+    "lift_speed": 0.12058942079312943,
+    "lift_height": 0.11999793604897317
+   },
+   "n": 300,
+   "pass_rate": 0.9566666666666667,
+   "mean_time_s_success": 4.402325435540071,
+   "reasons": {
+    "MISSED_GRASP": 7,
+    "PLACED_OUTSIDE_ZONE": 3,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 7.453878364768652,
+    "grasp_hold_steps": 10,
+    "retry_count": 2,
+    "lift_speed": 0.17743402176576895,
+    "lift_height": 0.17902064690943298
+   },
+   "n": 300,
+   "pass_rate": 0.74,
+   "mean_time_s_success": 4.527380180180179,
+   "reasons": {
+    "COLLISION": 12,
+    "MISSED_GRASP": 50,
+    "SLIPPED_ON_LIFT": 16
+   },
+   "collisions": 12
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 54.46771498046308,
+    "grasp_hold_steps": 106,
+    "retry_count": 1,
+    "lift_speed": 0.2252734315413098,
+    "lift_height": 0.12841668539095202
+   },
+   "n": 300,
+   "pass_rate": 0.8866666666666667,
+   "mean_time_s_success": 4.152238345864663,
+   "reasons": {
+    "MISSED_GRASP": 27,
+    "PLACED_OUTSIDE_ZONE": 4,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 13.838723339329647,
+    "grasp_hold_steps": 80,
+    "retry_count": 2,
+    "lift_speed": 0.31015267347464376,
+    "lift_height": 0.18957434923713684
+   },
+   "n": 300,
+   "pass_rate": 0.8433333333333334,
+   "mean_time_s_success": 4.421394071146246,
+   "reasons": {
+    "COLLISION": 9,
+    "MISSED_GRASP": 25,
+    "SLIPPED_ON_LIFT": 10,
+    "PLACED_OUTSIDE_ZONE": 3
+   },
+   "collisions": 9
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 76.88600852717138,
+    "grasp_hold_steps": 84,
+    "retry_count": 2,
+    "lift_speed": 0.5392240965174906,
+    "lift_height": 0.10394764402102973
+   },
+   "n": 300,
+   "pass_rate": 0.95,
+   "mean_time_s_success": 3.7343989473684225,
+   "reasons": {
+    "MISSED_GRASP": 8,
+    "PLACED_OUTSIDE_ZONE": 4,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 53.7624543740518,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.2390820503010419,
+    "lift_height": 0.2221986764282619
+   },
+   "n": 300,
+   "pass_rate": 0.9666666666666667,
+   "mean_time_s_success": 5.000415517241379,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 50.33004543519544,
+    "grasp_hold_steps": 49,
+    "retry_count": 0,
+    "lift_speed": 0.24417663858072725,
+    "lift_height": 0.2908711870301197
+   },
+   "n": 300,
+   "pass_rate": 0.86,
+   "mean_time_s_success": 4.974240310077519,
+   "reasons": {
+    "MISSED_GRASP": 38,
+    "PLACED_OUTSIDE_ZONE": 4
+   },
+   "collisions": 0
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 21.23926262095989,
+    "grasp_hold_steps": 14,
+    "retry_count": 1,
+    "lift_speed": 0.10553943565829016,
+    "lift_height": 0.11679973295906786
+   },
+   "n": 300,
+   "pass_rate": 0.8666666666666667,
+   "mean_time_s_success": 4.2534803846153855,
+   "reasons": {
+    "MISSED_GRASP": 33,
+    "PLACED_OUTSIDE_ZONE": 1,
+    "COLLISION": 6
+   },
+   "collisions": 6
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 73.58420915771934,
+    "grasp_hold_steps": 38,
+    "retry_count": 2,
+    "lift_speed": 0.18130962875522333,
+    "lift_height": 0.21699498109962623
+   },
+   "n": 300,
+   "pass_rate": 0.9466666666666667,
+   "mean_time_s_success": 4.94681478873239,
+   "reasons": {
+    "MISSED_GRASP": 7,
+    "PLACED_OUTSIDE_ZONE": 5,
+    "COLLISION": 4
+   },
+   "collisions": 4
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 14.574229074866189,
+    "grasp_hold_steps": 95,
+    "retry_count": 1,
+    "lift_speed": 0.15101321290028719,
+    "lift_height": 0.23956239141212277
+   },
+   "n": 300,
+   "pass_rate": 0.8166666666666667,
+   "mean_time_s_success": 5.560784081632655,
+   "reasons": {
+    "COLLISION": 8,
+    "MISSED_GRASP": 41,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "SLIPPED_ON_LIFT": 4
+   },
+   "collisions": 8
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 46.57119042704246,
+    "grasp_hold_steps": 53,
+    "retry_count": 1,
+    "lift_speed": 0.4797512412570947,
+    "lift_height": 0.14132126417586516
+   },
+   "n": 300,
+   "pass_rate": 0.89,
+   "mean_time_s_success": 3.6830194756554318,
+   "reasons": {
+    "MISSED_GRASP": 27,
+    "PLACED_OUTSIDE_ZONE": 4,
+    "COLLISION": 2
+   },
+   "collisions": 2
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 8.231801797594677,
+    "grasp_hold_steps": 116,
+    "retry_count": 0,
+    "lift_speed": 0.11625799269313078,
+    "lift_height": 0.16645313274884482
+   },
+   "n": 300,
+   "pass_rate": 0.6766666666666666,
+   "mean_time_s_success": 5.0692916256157625,
+   "reasons": {
+    "MISSED_GRASP": 87,
+    "SLIPPED_ON_LIFT": 8,
+    "PLACED_OUTSIDE_ZONE": 1,
+    "DROPPED_IN_TRANSIT": 1
+   },
+   "collisions": 0
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 20.58912061789503,
+    "grasp_hold_steps": 40,
+    "retry_count": 2,
+    "lift_speed": 0.5768130737424242,
+    "lift_height": 0.2840780560644612
+   },
+   "n": 300,
+   "pass_rate": 0.8833333333333333,
+   "mean_time_s_success": 4.487878867924524,
+   "reasons": {
+    "COLLISION": 10,
+    "MISSED_GRASP": 15,
+    "SLIPPED_ON_LIFT": 7,
+    "PLACED_OUTSIDE_ZONE": 3
+   },
+   "collisions": 10
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 10.542198188392641,
+    "grasp_hold_steps": 102,
+    "retry_count": 1,
+    "lift_speed": 0.49628807987677837,
+    "lift_height": 0.12408680446204982
+   },
+   "n": 300,
+   "pass_rate": 0.7333333333333333,
+   "mean_time_s_success": 3.8570809090909073,
+   "reasons": {
+    "COLLISION": 10,
+    "MISSED_GRASP": 58,
+    "SLIPPED_ON_LIFT": 10,
+    "PLACED_OUTSIDE_ZONE": 1,
+    "DROPPED_IN_TRANSIT": 1
+   },
+   "collisions": 10
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.9666666666666667,
+   "mean_time_s_success": 3.826180000000001,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 52.12313440057933,
+    "grasp_hold_steps": 89,
+    "retry_count": 0,
+    "lift_speed": 0.41462873577286685,
+    "lift_height": 0.130378878827062
+   },
+   "n": 300,
+   "pass_rate": 0.8533333333333334,
+   "mean_time_s_success": 3.7353179687500013,
+   "reasons": {
+    "MISSED_GRASP": 38,
+    "PLACED_OUTSIDE_ZONE": 6
+   },
+   "collisions": 0
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 17.110178199571315,
+    "grasp_hold_steps": 66,
+    "retry_count": 1,
+    "lift_speed": 0.3673939081279483,
+    "lift_height": 0.21047939760083922
+   },
+   "n": 300,
+   "pass_rate": 0.83,
+   "mean_time_s_success": 4.272572289156627,
+   "reasons": {
+    "COLLISION": 7,
+    "SLIPPED_ON_LIFT": 5,
+    "MISSED_GRASP": 37,
+    "PLACED_OUTSIDE_ZONE": 2
+   },
+   "collisions": 7
+  },
+  {
+   "tag": "random",
+   "policy": {
+    "grip_force": 42.40016460113763,
+    "grasp_hold_steps": 109,
+    "retry_count": 1,
+    "lift_speed": 0.208835406955184,
+    "lift_height": 0.13905541029502128
+   },
+   "n": 300,
+   "pass_rate": 0.8966666666666666,
+   "mean_time_s_success": 4.324163568773232,
+   "reasons": {
+    "MISSED_GRASP": 27,
+    "PLACED_OUTSIDE_ZONE": 3,
+    "COLLISION": 1
+   },
+   "collisions": 1
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 10.0,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.7866666666666666,
+   "mean_time_s_success": 3.8430983050847467,
+   "reasons": {
+    "COLLISION": 16,
+    "MISSED_GRASP": 37,
+    "SLIPPED_ON_LIFT": 9,
+    "PLACED_OUTSIDE_ZONE": 2
+   },
+   "collisions": 16
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 20.0,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.89,
+   "mean_time_s_success": 3.7942898876404496,
+   "reasons": {
+    "COLLISION": 13,
+    "MISSED_GRASP": 11,
+    "SLIPPED_ON_LIFT": 7,
+    "PLACED_OUTSIDE_ZONE": 2
+   },
+   "collisions": 13
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 30.0,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.9366666666666666,
+   "mean_time_s_success": 3.800283985765125,
+   "reasons": {
+    "COLLISION": 10,
+    "MISSED_GRASP": 8,
+    "PLACED_OUTSIDE_ZONE": 1
+   },
+   "collisions": 10
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 45.0,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.9633333333333334,
+   "mean_time_s_success": 3.8019197231833926,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 4
+   },
+   "collisions": 4
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 60.0,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.9633333333333334,
+   "mean_time_s_success": 3.820028373702423,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 4
+   },
+   "collisions": 4
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.9566666666666667,
+   "mean_time_s_success": 3.865840418118467,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 6
+   },
+   "collisions": 6
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 0,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.44333333333333336,
+   "mean_time_s_success": 3.418733082706767,
+   "reasons": {
+    "COLLISION": 26,
+    "MISSED_GRASP": 138,
+    "SLIPPED_ON_LIFT": 2,
+    "PLACED_OUTSIDE_ZONE": 1
+   },
+   "collisions": 26
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 10,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.69,
+   "mean_time_s_success": 3.4647555555555543,
+   "reasons": {
+    "MISSED_GRASP": 80,
+    "COLLISION": 11,
+    "PLACED_OUTSIDE_ZONE": 1,
+    "SLIPPED_ON_LIFT": 1
+   },
+   "collisions": 11
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 20,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.8633333333333333,
+   "mean_time_s_success": 3.4651096525096516,
+   "reasons": {
+    "COLLISION": 6,
+    "MISSED_GRASP": 33,
+    "PLACED_OUTSIDE_ZONE": 2
+   },
+   "collisions": 6
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 40,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.96,
+   "mean_time_s_success": 3.5876875000000004,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 3,
+    "COLLISION": 4
+   },
+   "collisions": 4
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 70,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.9633333333333334,
+   "mean_time_s_success": 3.741997577854673,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 4
+   },
+   "collisions": 4
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 120,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.9666666666666667,
+   "mean_time_s_success": 3.9860893103448305,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 86,
+    "retry_count": 0,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.8466666666666667,
+   "mean_time_s_success": 3.575691338582677,
+   "reasons": {
+    "MISSED_GRASP": 38,
+    "PLACED_OUTSIDE_ZONE": 8
+   },
+   "collisions": 0
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 86,
+    "retry_count": 1,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.8933333333333333,
+   "mean_time_s_success": 3.6728410447761197,
+   "reasons": {
+    "MISSED_GRASP": 27,
+    "PLACED_OUTSIDE_ZONE": 4,
+    "COLLISION": 1
+   },
+   "collisions": 1
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 86,
+    "retry_count": 2,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.9566666666666667,
+   "mean_time_s_success": 3.7880536585365867,
+   "reasons": {
+    "MISSED_GRASP": 7,
+    "PLACED_OUTSIDE_ZONE": 3,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.05,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.9666666666666667,
+   "mean_time_s_success": 6.0661351724137935,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.1,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.9666666666666667,
+   "mean_time_s_success": 4.820819310344829,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.15,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.9666666666666667,
+   "mean_time_s_success": 4.4583362068965515,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.2,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.9666666666666667,
+   "mean_time_s_success": 4.230634482758622,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.3,
+    "lift_height": 0.11887021321575043
+   },
+   "n": 300,
+   "pass_rate": 0.9666666666666667,
+   "mean_time_s_success": 4.030934137931037,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.1
+   },
+   "n": 300,
+   "pass_rate": 0.9633333333333334,
+   "mean_time_s_success": 3.7461920415224914,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 4
+   },
+   "collisions": 4
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.15
+   },
+   "n": 300,
+   "pass_rate": 0.96,
+   "mean_time_s_success": 3.985790972222225,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 5
+   },
+   "collisions": 5
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.2
+   },
+   "n": 300,
+   "pass_rate": 0.96,
+   "mean_time_s_success": 4.274564583333336,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 3,
+    "COLLISION": 4
+   },
+   "collisions": 4
+  },
+  {
+   "tag": "coord0",
+   "policy": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.3
+   },
+   "n": 300,
+   "pass_rate": 0.9666666666666667,
+   "mean_time_s_success": 4.8195275862068945,
+   "reasons": {
+    "MISSED_GRASP": 5,
+    "PLACED_OUTSIDE_ZONE": 2,
+    "COLLISION": 3
+   },
+   "collisions": 3
+  }
+ ]
+}
