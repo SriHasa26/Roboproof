@@ -197,27 +197,42 @@ class LLMClient:
             self.transcript.append({"purpose": purpose, "model_kind": kind, "model": model, "attempt": attempt,
                                     "cached": cached, "messages": messages, "reply": reply})
 
-    def _chat_with_transport_retry(self, purpose, kind, model, messages, attempt, **kw) -> str:
-        try:
-            return self._chat(purpose, kind, model, messages, attempt, **kw)
-        except LLMTransportError:
-            return self._chat(purpose, kind, model, messages, attempt, **kw)
+    def _chat_with_transport_retry(self, purpose, kind, model, messages, attempt, transport_retries: int = 1, **kw) -> str:
+        for left in range(transport_retries, -1, -1):
+            try:
+                return self._chat(purpose, kind, model, messages, attempt, **kw)
+            except LLMTransportError:
+                if left == 0:
+                    raise
+        raise AssertionError("unreachable")
 
-    def complete_text(self, purpose: str, kind: ModelKind, system: str, user: str, **kw) -> str:
-        _, model = self.settings.require_llm(kind)
+    def _resolve_model(self, kind: ModelKind, model: str | None) -> str:
+        """The model id to call: an explicit override (fallback chains), else the configured model for `kind`."""
+        if model is None:
+            return self.settings.require_llm(kind)[1]
+        if not self.settings.api_key:
+            from ..core.config import ConfigError
+
+            raise ConfigError("NEBIUS_API_KEY is not set (see .env.example)")
+        return model
+
+    def complete_text(self, purpose: str, kind: ModelKind, system: str, user: str, model: str | None = None,
+                      transport_retries: int = 1, **kw) -> str:
+        model = self._resolve_model(kind, model)
         msgs = [{"role": "system", "content": system}, {"role": "user", "content": user}]
-        return self._chat_with_transport_retry(purpose, kind, model, msgs, 1, **kw)
+        return self._chat_with_transport_retry(purpose, kind, model, msgs, 1, transport_retries, **kw)
 
     def complete_json(
         self, purpose: str, kind: ModelKind, system: str, user: str, schema: type[T],
-        validator: Callable[[T], None] | None = None, **kw
+        validator: Callable[[T], None] | None = None, model: str | None = None, transport_retries: int = 1, **kw
     ) -> T:
         """Call the model and return a validated `schema` instance, or raise LLMValidationError.
 
         `validator` runs after schema validation and may raise ValueError (for example a grounding check); its message
-        is fed back to the model on the single retry.
+        is fed back to the model on the single retry. `model` overrides the configured model (used by fallback chains);
+        pass `timeout=` (seconds) to bound each HTTP call, and `transport_retries=0` so a hung endpoint fails over at once.
         """
-        _, model = self.settings.require_llm(kind)
+        model = self._resolve_model(kind, model)
         schema_json = json.dumps(schema.model_json_schema())
         sys_full = f"{system}\n\nReply with a single JSON object matching this JSON Schema, and nothing else:\n{schema_json}"
         msgs = [{"role": "system", "content": sys_full}, {"role": "user", "content": user}]
@@ -225,7 +240,7 @@ class LLMClient:
             kw = {**kw, "response_format": {"type": "json_schema", "json_schema": {"name": schema.__name__, "schema": schema.model_json_schema()}}}
         last_err: str | None = None
         for attempt in (1, 2):
-            text = self._chat_with_transport_retry(purpose, kind, model, msgs, attempt, **kw)
+            text = self._chat_with_transport_retry(purpose, kind, model, msgs, attempt, transport_retries, **kw)
             try:
                 obj = schema.model_validate(extract_json(text))
                 if validator is not None:

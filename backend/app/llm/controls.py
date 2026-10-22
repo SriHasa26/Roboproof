@@ -10,6 +10,10 @@ Analyst and fixer (reasoning model, Nemotron Ultra): reasoning stays ON; the cap
 rehearsal_001 was 4,660 (analyst) and 1,261 / 1,916 (fixer) completion tokens including hidden reasoning.
 """
 GENERATOR_MAX_TOKENS = 1500
+GENERATOR_TIMEOUT_S = 60.0  # per HTTP call; a hung endpoint (the Nano hung for ~1 h on 2026-10-22) triggers the next fallback
+# Fallback Nemotron model (NEBIUS_MODEL_FALLBACK). Whether it honours enable_thinking=false is checked by run, so it gets a larger cap.
+GENERATOR_FALLBACK_MAX_TOKENS = 4000
+GENERATOR_FALLBACK_TIMEOUT_S = 90.0
 GENERATOR_EXTRA: dict = {"extra_body": {"chat_template_kwargs": {"enable_thinking": False}}}
 ANALYST_MAX_TOKENS = 10000
 FIXER_MAX_TOKENS = 6000

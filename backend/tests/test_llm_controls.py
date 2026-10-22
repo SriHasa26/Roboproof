@@ -35,9 +35,10 @@ def settings(tmp_path=None, **env):
     return load_settings({**base, **env})
 
 
-def test_defaults_cache_off_and_budget_12():
+def test_defaults_cache_off_and_budget_16():
     s = load_settings({})
-    assert s.dev_cache is False and s.max_calls_per_run == 12
+    # 16 leaves headroom for the generator fallback chain (up to 4 calls) + analyst (2) + fixer (up to 3 x 2)
+    assert s.dev_cache is False and s.max_calls_per_run == 16 and s.model_fallback is None
 
 
 def test_dev_cache_hit_is_flagged_cached_and_not_a_real_call(tmp_path):

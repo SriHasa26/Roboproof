@@ -21,9 +21,12 @@ from ..core.bounds import SCENARIO_BOUNDS
 from ..core.config import Settings
 from ..core.schemas import Scenario
 from ..core.seeds import DEV_SEED_BASE, check_seed
-from ..llm.client import LLMClient
-from ..llm.controls import GENERATOR_EXTRA, GENERATOR_MAX_TOKENS
-from .proposal import ScenarioProposal
+import time
+
+from ..llm.client import LLMBudgetExceeded, LLMClient, LLMTransportError, LLMValidationError
+from ..llm.controls import (GENERATOR_EXTRA, GENERATOR_FALLBACK_MAX_TOKENS, GENERATOR_FALLBACK_TIMEOUT_S, GENERATOR_MAX_TOKENS,
+                            GENERATOR_TIMEOUT_S)
+from .proposal import RawProposal, ScenarioProposal, triage
 from .sweep import AXES, latin_hypercube
 
 log = logging.getLogger(__name__)
@@ -51,8 +54,13 @@ class GeneratedScenarios(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     scenarios: list[Scenario]
-    source: Literal["llm", "fixture"]  # who produced the risky regions; never conflate the two
+    # who produced the risky regions; never conflate them. "coverage_only_fallback": every model failed, so the whole set is code-made coverage.
+    source: Literal["llm", "fixture", "coverage_only_fallback"]
+    model: str | None = None            # the model whose proposal was used (None for fixture / coverage-only)
     proposal: ScenarioProposal | None
+    dropped_regions: list[dict] = []    # regions rejected by validation, with the reason
+    clamped_values: list[dict] = []     # values moved into bounds by code (within 10% of the axis range)
+    generator_trail: list[dict] = []    # every model attempted, in order: outcome, seconds, error
     master_seed: int
     n_coverage: int
     n_targeted: int
@@ -96,15 +104,55 @@ class ScenarioGenerator:
         log.warning("No Nebius key/model configured: scenario regions come from a FIXTURE, not a model (PENDING_KEY)")
         return cls(llm=None, fixture_path=fixture_path)
 
-    def propose(self) -> tuple[ScenarioProposal, Literal["llm", "fixture"]]:
+    def _attempt(self, model_id: str, label: str, max_tokens: int, timeout_s: float, trail: list[dict]):
+        """One model, with validation + one retry. Returns a TriageResult with >= 1 valid region, or None (and a trail entry)."""
+        system, user = build_prompt()
+        t0 = time.perf_counter()
+        entry = {"stage": label, "model": model_id}
+
+        def need_valid(raw: RawProposal) -> None:
+            tri = triage(raw.regions)
+            if not tri.valid:
+                raise ValueError("no region is valid, so nothing can be used. Reasons: " + "; ".join(f"{d['name']}: {d['reason']}" for d in tri.dropped))
+
+        try:
+            raw = self.llm.complete_json("scenario_generation", "fast", system, user, RawProposal, validator=need_valid, model=model_id,
+                                         transport_retries=0, max_tokens=max_tokens, timeout=timeout_s, **GENERATOR_EXTRA)
+        except LLMBudgetExceeded:
+            raise  # a budget stop is loud, not a reason to fall back
+        except LLMTransportError as e:
+            trail.append({**entry, "outcome": "transport_error_or_timeout", "seconds": round(time.perf_counter() - t0, 2), "error": str(e)[:200]})
+            return None
+        except LLMValidationError as e:
+            trail.append({**entry, "outcome": "validation_failed_after_retry", "seconds": round(time.perf_counter() - t0, 2), "error": str(e)[:300]})
+            return None
+        tri = triage(raw.regions)
+        trail.append({**entry, "outcome": "ok", "seconds": round(time.perf_counter() - t0, 2), "regions_valid": len(tri.valid),
+                      "regions_dropped": len(tri.dropped)})
+        return tri
+
+    def propose(self) -> tuple[ScenarioProposal | None, str, str | None, list[dict], list[dict], list[dict]]:
+        """Returns (proposal, source, model, dropped, clamped, trail). Chain: primary fast model (thinking off) -> second Nemotron model
+        (NEBIUS_MODEL_FALLBACK) -> None, which the caller turns into a coverage-only set labelled source='coverage_only_fallback'."""
+        trail: list[dict] = []
         if self.llm is not None:
-            system, user = build_prompt()
-            return self.llm.complete_json("scenario_generation", "fast", system, user, ScenarioProposal,
-                                          max_tokens=GENERATOR_MAX_TOKENS, **GENERATOR_EXTRA), "llm"
+            st = self.llm.settings
+            chain = [("primary", st.model_fast, GENERATOR_MAX_TOKENS, GENERATOR_TIMEOUT_S)]
+            if st.model_fallback and st.model_fallback != st.model_fast:
+                chain.append(("fallback_model", st.model_fallback, GENERATOR_FALLBACK_MAX_TOKENS, GENERATOR_FALLBACK_TIMEOUT_S))
+            if not st.model_fast:
+                from ..core.config import ConfigError
+                raise ConfigError("NEBIUS_MODEL_FAST is not set; run scripts/list_models.py")
+            for label, model_id, mx, to in chain:
+                tri = self._attempt(model_id, label, mx, to, trail)
+                if tri is not None:
+                    return ScenarioProposal(regions=tri.valid), "llm", model_id, tri.dropped, tri.clamped, trail
+            trail.append({"stage": "coverage_only_fallback", "model": None, "outcome": "all models failed; using code-made coverage only"})
+            return None, "coverage_only_fallback", None, [], [], trail
         if self.fixture_path is None:
             raise ScenarioGenError("no LLM client and no fixture proposal configured")
         raw = json.loads(self.fixture_path.read_text(encoding="utf-8"))
-        return ScenarioProposal.model_validate(raw["proposal"]), "fixture"
+        return ScenarioProposal.model_validate(raw["proposal"]), "fixture", None, [], [], trail
 
     def generate(self, n: int, master_seed: int, targeted_fraction: float = 0.4,
                  seed_base: int = DEV_SEED_BASE, held_out: bool = False) -> GeneratedScenarios:
@@ -114,9 +162,11 @@ class ScenarioGenerator:
         check_seed(seed_base + n - 1, held_out)
         n_tgt = round(n * targeted_fraction)
         n_cov = n - n_tgt
-        proposal, source = None, "fixture"
+        proposal, source, model, dropped, clamped, trail = None, "fixture", None, [], [], []
         if n_tgt > 0:
-            proposal, source = self.propose()
+            proposal, source, model, dropped, clamped, trail = self.propose()
+            if proposal is None:  # coverage-only fallback: the whole set is code-made coverage
+                n_tgt, n_cov = 0, n
 
         scenarios: list[Scenario] = []
         if n_cov:
@@ -133,5 +183,5 @@ class ScenarioGenerator:
                     vals[ax] = int(round(v)) if ax == "gripper_delay_steps" else float(v)
                 seed = seed_base + n_cov + j
                 scenarios.append(Scenario(id=f"tgt-{seed}", seed=seed, tag=f"tgt:{region.name}", **vals))
-        return GeneratedScenarios(scenarios=scenarios, source=source, proposal=proposal,
-                                  master_seed=master_seed, n_coverage=n_cov, n_targeted=n_tgt)
+        return GeneratedScenarios(scenarios=scenarios, source=source, model=model, proposal=proposal, dropped_regions=dropped, clamped_values=clamped,
+                                  generator_trail=trail, master_seed=master_seed, n_coverage=n_cov, n_targeted=n_tgt)

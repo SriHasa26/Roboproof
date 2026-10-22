@@ -62,11 +62,13 @@ def test_out_of_range_proposal_rejected_by_schema():
             ScenarioProposal.model_validate(b)
 
 
-def test_malformed_json_retries_once_then_fails_loudly():
+def test_malformed_json_retries_once_then_falls_back_to_coverage_only_and_says_so():
     g, fake = gen_with(["not json at all", "{still bad"])
-    with pytest.raises(LLMValidationError):
-        g.generate(50, master_seed=1)
-    assert fake.calls == 2
+    out = g.generate(50, master_seed=1)
+    assert fake.calls == 2  # one call + the single validation retry on the only configured model
+    assert out.source == "coverage_only_fallback" and out.model is None and out.proposal is None
+    assert (out.n_coverage, out.n_targeted) == (50, 0) and len(out.scenarios) == 50 and all(s.tag == "cov" for s in out.scenarios)
+    assert out.generator_trail[0]["outcome"] == "validation_failed_after_retry" and out.generator_trail[-1]["stage"] == "coverage_only_fallback"
 
 
 def test_malformed_then_valid_recovers_with_one_retry():
@@ -159,16 +161,15 @@ def test_rationale_is_always_flagged_unverified():
     assert all(rg.unverified for rg in out.proposal.regions)
 
 
-def test_violating_region_goes_through_the_retry_path_then_fails_loudly():
+def test_all_regions_invalid_goes_through_the_retry_path_then_falls_back():
     too_many = {"regions": [{"name": "a", "rationale": "r", "ranges": {"mass_kg": [0.2, 1.0], "friction": [0.1, 1.0],
                                                                           "size_m": [0.03, 0.08], "sensor_noise_m": [0.0, 0.03]}}]}
     g, fake = gen_with([json.dumps(too_many), json.dumps(too_many)])
-    with pytest.raises(LLMValidationError, match="at most 3 axes"):
-        g.generate(50, master_seed=1)
-    assert fake.calls == 2
+    out = g.generate(50, master_seed=1)
+    assert fake.calls == 2 and out.source == "coverage_only_fallback"
+    assert "at most 3 axes" in fake.sent[1][-1]["content"]  # the reason was fed back on the retry
     g, fake = gen_with([json.dumps(too_many), json.dumps(GOOD)])  # corrected on retry
     assert g.generate(50, master_seed=1).source == "llm"
-    assert "at most 3 axes" in fake.sent[1][-1]["content"]
 
 
 def test_prompt_states_the_constraints():
@@ -185,3 +186,112 @@ def test_generator_sends_thinking_off_and_a_token_cap_but_analyst_fixer_do_not_d
     assert kw["extra_body"] == {"chat_template_kwargs": {"enable_thinking": False}} and kw["max_tokens"] == controls.GENERATOR_MAX_TOKENS
     assert "reasoning_effort" not in kw  # reasoning_effort="none" does not work on this model (see controls.py)
     assert controls.ANALYST_MAX_TOKENS >= 6000 and controls.FIXER_MAX_TOKENS >= 4000  # caps stop runaways only
+
+
+# ---------------------------------------------------------------- P4.6: partial acceptance, repair, fallback chain
+class FakeByModel:
+    """Routes replies by the `model` argument: {model_id: [reply | Exception, ...]}."""
+
+    def __init__(self, plan):
+        self.plan, self.calls_by_model, self.kws = {k: list(v) for k, v in plan.items()}, {}, []
+        self.chat = SimpleNamespace(completions=SimpleNamespace(create=self._create))
+
+    def _create(self, **kw):
+        m = kw["model"]
+        self.calls_by_model[m] = self.calls_by_model.get(m, 0) + 1
+        self.kws.append(kw)
+        r = self.plan[m].pop(0)
+        if isinstance(r, Exception):
+            raise r
+        return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=r))], usage=SimpleNamespace(prompt_tokens=1, completion_tokens=1))
+
+
+PRIMARY, FALLBACK = "nvidia/fast-primary", "nvidia/nemotron-fallback"
+
+
+def chain_gen(plan, fallback=FALLBACK):
+    env = {"NEBIUS_API_KEY": "k", "NEBIUS_MODEL_FAST": PRIMARY, "NEBIUS_MODEL_REASONING": "r"}
+    if fallback:
+        env["NEBIUS_MODEL_FALLBACK"] = fallback
+    fake = FakeByModel(plan)
+    return ScenarioGenerator(llm=LLMClient(load_settings(env), fake)), fake
+
+
+TINY = {"name": "tiny", "rationale": "r", "ranges": {"mass_kg": [0.5, 0.52], "friction": [0.5, 0.52]}}
+OKR = {"name": "ok", "rationale": "r", "ranges": {"mass_kg": [0.3, 0.9], "friction": [0.1, 0.6]}}
+
+
+def test_partial_acceptance_keeps_valid_regions_logs_the_dropped_one_and_does_not_retry():
+    g, fake = chain_gen({PRIMARY: [json.dumps({"regions": [OKR, TINY, {**OKR, "name": "ok2"}]})]})
+    out = g.generate(100, master_seed=1)
+    assert out.source == "llm" and out.model == PRIMARY and fake.calls_by_model == {PRIMARY: 1}
+    assert [r.name for r in out.proposal.regions] == ["ok", "ok2"]
+    assert len(out.dropped_regions) == 1 and out.dropped_regions[0]["name"] == "tiny" and "covers only" in out.dropped_regions[0]["reason"]
+    assert {s.tag for s in out.scenarios if s.tag != "cov"} == {"tgt:ok", "tgt:ok2"}  # nothing is sampled from the dropped region
+    t = out.generator_trail[0]
+    assert (t["outcome"], t["regions_valid"], t["regions_dropped"]) == ("ok", 2, 1)
+
+
+def test_at_least_one_valid_region_is_required_then_retry_then_next_model():
+    g, fake = chain_gen({PRIMARY: [json.dumps({"regions": [TINY]}), json.dumps({"regions": [TINY]})], FALLBACK: [json.dumps({"regions": [OKR]})]})
+    out = g.generate(50, master_seed=1)
+    assert fake.calls_by_model == {PRIMARY: 2, FALLBACK: 1}  # primary tried twice (validation retry), then the second model
+    assert out.source == "llm" and out.model == FALLBACK
+    assert [t["stage"] + ":" + t["outcome"] for t in out.generator_trail] == ["primary:validation_failed_after_retry", "fallback_model:ok"]
+
+
+def test_values_slightly_outside_bounds_are_clamped_and_logged_far_ones_are_invalid():
+    near = {"name": "near", "rationale": "r", "ranges": {"friction": [0.05, 0.6], "mass_kg": [0.3, 1.05]}}  # 0.05 below / above: within 10% of the range
+    far = {"name": "far", "rationale": "r", "ranges": {"friction": [-0.5, 0.6]}}
+    g, _ = chain_gen({PRIMARY: [json.dumps({"regions": [near, far]})]})
+    out = g.generate(60, master_seed=1)
+    assert [r.name for r in out.proposal.regions] == ["near"]
+    assert out.proposal.regions[0].ranges == {"friction": [0.1, 0.6], "mass_kg": [0.3, 1.0]}
+    assert {(c["axis"], c["end"], c["from"], c["to"]) for c in out.clamped_values} == {("friction", "lo", 0.05, 0.1), ("mass_kg", "hi", 1.05, 1.0)}
+    assert out.dropped_regions[0]["name"] == "far" and "outside allowed" in out.dropped_regions[0]["reason"]
+    for s in out.scenarios:  # every scenario respects the frozen bounds regardless
+        assert 0.1 <= s.friction <= 1.2 and 0.05 <= s.mass_kg <= 1.0
+
+
+def test_timeout_on_the_primary_triggers_the_next_nemotron_model_without_a_transport_retry():
+    g, fake = chain_gen({PRIMARY: [TimeoutError("hung endpoint")], FALLBACK: [json.dumps({"regions": [OKR]})]})
+    out = g.generate(50, master_seed=1)
+    assert fake.calls_by_model == {PRIMARY: 1, FALLBACK: 1}  # no second try on the hung model
+    assert out.source == "llm" and out.model == FALLBACK
+    assert out.generator_trail[0]["outcome"] == "transport_error_or_timeout" and out.generator_trail[1]["outcome"] == "ok"
+    from app.llm import controls
+    assert fake.kws[0]["timeout"] == controls.GENERATOR_TIMEOUT_S and fake.kws[1]["timeout"] == controls.GENERATOR_FALLBACK_TIMEOUT_S
+    assert fake.kws[0]["max_tokens"] == controls.GENERATOR_MAX_TOKENS and fake.kws[1]["max_tokens"] == controls.GENERATOR_FALLBACK_MAX_TOKENS
+
+
+def test_all_models_failing_gives_a_correctly_labelled_coverage_only_set():
+    g, fake = chain_gen({PRIMARY: [TimeoutError("x")], FALLBACK: [TimeoutError("y")]})
+    out = g.generate(80, master_seed=4)
+    assert out.source == "coverage_only_fallback" and out.model is None and out.proposal is None
+    assert (out.n_coverage, out.n_targeted, len(out.scenarios)) == (80, 0, 80)
+    assert [t["stage"] for t in out.generator_trail] == ["primary", "fallback_model", "coverage_only_fallback"]
+    again = ScenarioGenerator(fixture_path=FIX).generate(80, master_seed=4, targeted_fraction=0.0)  # it is the plain coverage sweep
+    assert [s.model_dump() for s in out.scenarios] == [s.model_dump() for s in again.scenarios]
+
+
+def test_no_fallback_model_configured_goes_straight_to_coverage_after_the_primary():
+    g, fake = chain_gen({PRIMARY: [TimeoutError("x")]}, fallback=None)
+    out = g.generate(50, master_seed=1)
+    assert out.source == "coverage_only_fallback" and fake.calls_by_model == {PRIMARY: 1}
+
+
+def test_budget_exhaustion_is_loud_not_a_fallback():
+    from app.llm.client import LLMBudgetExceeded
+    env = {"NEBIUS_API_KEY": "k", "NEBIUS_MODEL_FAST": PRIMARY, "NEBIUS_MODEL_REASONING": "r", "MAX_LLM_CALLS_PER_RUN": "1"}
+    fake = FakeByModel({PRIMARY: [json.dumps({"regions": [TINY]}), json.dumps({"regions": [OKR]})]})
+    g = ScenarioGenerator(llm=LLMClient(load_settings(env), fake))
+    with pytest.raises(LLMBudgetExceeded):
+        g.generate(50, master_seed=1)
+
+
+def test_source_and_model_are_recorded_in_the_output_object():
+    g, _ = chain_gen({PRIMARY: [json.dumps({"regions": [OKR]})]})
+    d = g.generate(50, master_seed=1).model_dump()
+    assert d["source"] == "llm" and d["model"] == PRIMARY and "generator_trail" in d and "dropped_regions" in d and "clamped_values" in d
+    fx = ScenarioGenerator(fixture_path=FIX).generate(50, master_seed=1).model_dump()
+    assert fx["source"] == "fixture" and fx["model"] is None

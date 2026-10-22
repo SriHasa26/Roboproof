@@ -1,9 +1,10 @@
 """Schema for the scenario generator's risky-region proposal (what the LLM is asked to return)."""
 from __future__ import annotations
 
-from typing import Literal
+from dataclasses import dataclass, field
+from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
 from ..core.bounds import SCENARIO_BOUNDS
 
@@ -63,3 +64,80 @@ class ScenarioProposal(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     regions: list[Region] = Field(min_length=1, max_length=8)
+
+
+# ---------------------------------------------------------------- lenient intake: partial acceptance + deterministic repair
+REPAIR_TOLERANCE = 0.10  # values up to 10% of an axis's range outside its bounds are clamped in code; further out is invalid
+MAX_REGIONS = 8
+
+
+class RawProposal(BaseModel):
+    """What the model's JSON is parsed into FIRST. Individual regions are triaged one by one by `triage`, so one bad region
+    does not discard the others."""
+    model_config = ConfigDict(extra="forbid")
+
+    regions: list[dict[str, Any]] = Field(min_length=1, max_length=12)
+
+
+@dataclass
+class TriageResult:
+    valid: list[Region] = field(default_factory=list)
+    dropped: list[dict] = field(default_factory=list)   # {"name", "reason"}
+    clamped: list[dict] = field(default_factory=list)   # {"region", "axis", "end", "from", "to"}
+
+
+def _is_num(x) -> bool:
+    return isinstance(x, (int, float)) and not isinstance(x, bool)
+
+
+def repair_ranges(name: str, ranges: Any) -> tuple[Any, list[dict]]:
+    """Clamp values slightly outside the frozen bounds into them (and log it). Does not fix lo > hi, wrong axes or wrong shapes."""
+    if not isinstance(ranges, dict):
+        return ranges, []
+    out, log = {}, []
+    for axis, rng in ranges.items():
+        if axis in SCENARIO_BOUNDS and isinstance(rng, (list, tuple)) and len(rng) == 2 and all(_is_num(v) for v in rng):
+            blo, bhi = SCENARIO_BOUNDS[axis]
+            tol = REPAIR_TOLERANCE * (bhi - blo)
+            lo, hi = float(rng[0]), float(rng[1])
+            if lo < blo and blo - lo <= tol:
+                log.append({"region": name, "axis": axis, "end": "lo", "from": lo, "to": blo})
+                lo = float(blo)
+            if hi > bhi and hi - bhi <= tol:
+                log.append({"region": name, "axis": axis, "end": "hi", "from": hi, "to": bhi})
+                hi = float(bhi)
+            out[axis] = [lo, hi]
+        else:
+            out[axis] = rng
+    return out, log
+
+
+def _reason(e: Exception) -> str:
+    if isinstance(e, ValidationError):
+        errs = e.errors()
+        msg = errs[0]["msg"] if errs else str(e)
+        return msg.replace("Value error, ", "")
+    return str(e)
+
+
+def triage(raw_regions: list[dict]) -> TriageResult:
+    """Validate each region on its own. Keep the valid ones, log every dropped region with its reason, log clamping.
+    Needs at least one valid region to be useful (callers decide)."""
+    res = TriageResult()
+    for i, raw in enumerate(raw_regions):
+        name = str(raw.get("name", f"region_{i}"))[:60] if isinstance(raw, dict) else f"region_{i}"
+        if not isinstance(raw, dict):
+            res.dropped.append({"name": name, "reason": "region is not a JSON object"})
+            continue
+        ranges, log = repair_ranges(name, raw.get("ranges"))
+        try:
+            region = Region.model_validate({**raw, "ranges": ranges})
+        except (ValidationError, ValueError) as e:
+            res.dropped.append({"name": name, "reason": _reason(e)})
+            continue
+        if len(res.valid) >= MAX_REGIONS:
+            res.dropped.append({"name": name, "reason": f"beyond the {MAX_REGIONS}-region limit"})
+            continue
+        res.valid.append(region)
+        res.clamped.extend(log)
+    return res
