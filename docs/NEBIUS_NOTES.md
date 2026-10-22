@@ -174,3 +174,11 @@ Completion tokens are far larger than the visible answer (about 25 words): both 
 - K5 to K11 (Nebius CLI, Container Registry, Serverless Jobs, Endpoints): still UNCONFIRMED, untouched.
 - K12 (real scenario-region proposal): pending, done in the rehearsal.
 
+## 7. CONFIRMED-BY-RUN (2026-10-22, rehearsal_001: real pipeline, LocalRunner)
+
+- **K12 (real scenario-region proposal from the fast model):** CONFIRMED-BY-RUN. One call, validated by Pydantic on the first try, `source: "llm"`.
+- **Prompt-based JSON works for our three schemas:** 4 real calls (scenario regions, analyst, two fixer calls), all validated without a retry. `NEBIUS_USE_JSON_SCHEMA` stayed 0. The larger schemas were therefore never sent to the API as `response_format`; whether the server accepts them is still UNCONFIRMED. n=4, so this says nothing about long-run reliability.
+- **Latency and tokens (real, from the run):** Nano scenario regions 32.5 s (989 prompt / 3,903 completion tokens); Ultra analyst 13.0 s (6,491 / 4,660); Ultra fixer 4.4 s (1,176 / 1,261) and 9.0 s (1,306 / 1,916). Completion tokens include hidden reasoning (the Nano's ~450-token JSON cost 3,903 completion tokens).
+- **Cost (ESTIMATE):** about $0.033 for the whole run: 9,962 prompt + 11,740 completion tokens x the per-token prices the API reports in `GET /models?verbose=true` ($0.06/$0.24 per 1M for Nano, $1/$3 per 1M for Ultra). Actual billing and the remaining balance were not checked: UNCONFIRMED.
+- **Still untouched and UNCONFIRMED:** K5 to K11 and K13/K14 (Nebius CLI, Container Registry, Serverless Jobs, Endpoints). Everything in the rehearsal ran on the local fallback runner.
+

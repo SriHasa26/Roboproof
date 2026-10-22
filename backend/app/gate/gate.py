@@ -163,18 +163,29 @@ class ProofGate:
         return DevStage(checks=checks, patched_run=run, regressed_ids=regressed, strict_zero_budget=strict, complete=complete)
 
     # ------------------------------------------------------------------ stage 2 (terminal)
-    def finalize(self, dev: DevStage, patched_policy: Policy, vset: VerificationSet | None) -> GateReport:
-        """Run G5 (only if the dev stage passed and there is a verification set), then G6 and the verdict."""
+    def finalize(self, dev: DevStage, patched_policy: Policy, vset: VerificationSet | None,
+                 diagnostic_g5: bool = False) -> GateReport:
+        """Run G5 (only if the dev stage passed and there is a verification set), then G6 and the verdict.
+
+        diagnostic_g5=True runs G5 even though an earlier check failed, to show what it would have said. It is refused for
+        held-out blocks (it would spend a single-use block on a rejected patch) and never changes a FAILED verdict.
+        """
         p = self._prepared
         verification_metrics: dict[str, SetMetrics] = {}
         dev_ok = dev.complete and all(dev.checks[k].status == PASS for k in ("G1", "G2", "G3", "G4"))
         dev_failed = dev.any_failed
-        if vset is None:
-            g5 = _check("G5", "Held-out generalization", NOT_RUN, details="no verification set provided")
-        elif dev_failed and not dev_ok:
+        if diagnostic_g5 and vset is not None and vset.held_out:
+            raise ValueError("diagnostic G5 is only allowed on rehearsal blocks, never on a held-out block")
+        run_anyway = diagnostic_g5 and vset is not None and dev.complete
+        if vset is None and dev_failed:
             g5 = _check("G5", "Held-out generalization", NOT_RUN, skipped=True,
                         details="skipped: an earlier check failed, so the single-use verification block was not spent")
-        elif not dev_ok:
+        elif vset is None:
+            g5 = _check("G5", "Held-out generalization", NOT_RUN, details="no verification set provided")
+        elif dev_failed and not dev_ok and not run_anyway:
+            g5 = _check("G5", "Held-out generalization", NOT_RUN, skipped=True,
+                        details="skipped: an earlier check failed, so the single-use verification block was not spent")
+        elif not dev_ok and not run_anyway:
             g5 = _check("G5", "Held-out generalization", NOT_RUN, details="earlier checks could not run or runs were incomplete")
         else:
             if vset.consumed:
@@ -198,7 +209,8 @@ class ProofGate:
                                       "improvement": round(mp.pass_rate - mb.pass_rate, 4), "n": mp.n, "conditions": conds},
                             threshold={"min_pass_rate": cfg.GATE_HELDOUT_TARGET, "min_improvement": cfg.GATE_MIN_IMPROVEMENT,
                                        "wilson_lower_must_exceed_unpatched_pass_rate": True},
-                            details=("failed: " + ", ".join(k for k, v in conds.items() if not v)) if not all(conds.values()) else "all conditions met")
+                            details=(("DIAGNOSTIC (an earlier check had already failed). " if run_anyway and not dev_ok else "")
+                                     + (("failed: " + ", ".join(k for k, v in conds.items() if not v)) if not all(conds.values()) else "all conditions met")))
 
         bad = [(label, r) for label, r in self._runs if not r.complete]
         g6 = _check("G6", "Complete execution", FAIL if bad else PASS,

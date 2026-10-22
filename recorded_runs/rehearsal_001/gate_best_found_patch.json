@@ -1,0 +1,185 @@
+{
+ "label": "REHEARSAL, NOT AN OFFICIAL RESULT. Verification used the rehearsal seed block; held-out seeds (>= 900000) were not generated or run. Scripted patches are labelled 'scripted example, not model output'.",
+ "patch": "ceiling-search best (found on dev sets), scripted",
+ "changes": {
+  "grip_force": 58.83757679621736,
+  "approach_speed": 0.3,
+  "lift_height": 0.11887021321575043,
+  "lift_speed": 0.5887942168683215,
+  "grasp_hold_steps": 86,
+  "place_slow_factor": 1.0,
+  "retry_count": 3
+ },
+ "targeting": "scripted rule: baseline failures with mass>0.5 and friction<0.4",
+ "report": {
+  "verdict": "VERIFIED",
+  "rehearsal": true,
+  "checks": [
+   {
+    "id": "G1",
+    "name": "Determinism",
+    "status": "pass",
+    "observed": {
+     "sample": 30,
+     "mismatches": 0
+    },
+    "threshold": {
+     "mismatches": 0
+    },
+    "details": "all outcomes identical",
+    "skipped_after_failure": false
+   },
+   {
+    "id": "G2",
+    "name": "Targeted failures reproduced",
+    "status": "pass",
+    "observed": {
+     "targeted": 15,
+     "not_reproduced": 0
+    },
+    "threshold": {
+     "not_reproduced": 0
+    },
+    "details": "all reproduced",
+    "skipped_after_failure": false
+   },
+   {
+    "id": "G3",
+    "name": "Targeted failures fixed",
+    "status": "pass",
+    "observed": {
+     "fixed": 14,
+     "targeted": 15,
+     "fix_rate": 0.9333
+    },
+    "threshold": {
+     "min_fix_rate": 0.7
+    },
+    "details": "",
+    "skipped_after_failure": false
+   },
+   {
+    "id": "G4",
+    "name": "No regressions",
+    "status": "pass",
+    "observed": {
+     "regressions": 1,
+     "previously_passing": 188,
+     "strict_zero_budget_pass": false
+    },
+    "threshold": {
+     "budget": 3,
+     "budget_frac": 0.02
+    },
+    "details": "regressed: ['cov-1043']",
+    "skipped_after_failure": false
+   },
+   {
+    "id": "G5",
+    "name": "Held-out generalization",
+    "status": "pass",
+    "observed": {
+     "patched_pass_rate": 0.975,
+     "patched_wilson95_lower": 0.9546,
+     "unpatched_pass_rate": 0.72,
+     "improvement": 0.255,
+     "n": 400,
+     "conditions": {
+      "target": true,
+      "improvement": true,
+      "wilson_lower_above_baseline": true
+     }
+    },
+    "threshold": {
+     "min_pass_rate": 0.9,
+     "min_improvement": 0.1,
+     "wilson_lower_must_exceed_unpatched_pass_rate": true
+    },
+    "details": "all conditions met",
+    "skipped_after_failure": false
+   },
+   {
+    "id": "G6",
+    "name": "Complete execution",
+    "status": "pass",
+    "observed": {
+     "runs": 6,
+     "incomplete_runs": [],
+     "failed_shards": 0,
+     "missing_scenarios": 0
+    },
+    "threshold": {},
+    "details": "all shards finished",
+    "skipped_after_failure": false
+   }
+  ],
+  "regressed_scenario_ids": [
+   "cov-1043"
+  ],
+  "strict_zero_budget": {
+   "regressions": 1,
+   "pass": false
+  },
+  "metrics": {
+   "analysis": {
+    "before": {
+     "n": 250,
+     "pass_rate": 0.752,
+     "pass_rate_ci95": [
+      0.6949,
+      0.8014
+     ],
+     "collision_rate": 0.008,
+     "mean_completion_time_s": 3.701
+    },
+    "after": {
+     "n": 250,
+     "pass_rate": 0.96,
+     "pass_rate_ci95": [
+      0.9279,
+      0.9781
+     ],
+     "collision_rate": 0.008,
+     "mean_completion_time_s": 3.821
+    }
+   },
+   "verification": {
+    "before": {
+     "n": 400,
+     "pass_rate": 0.72,
+     "pass_rate_ci95": [
+      0.6741,
+      0.7617
+     ],
+     "collision_rate": 0.0025,
+     "mean_completion_time_s": 3.648
+    },
+    "after": {
+     "n": 400,
+     "pass_rate": 0.975,
+     "pass_rate_ci95": [
+      0.9546,
+      0.9864
+     ],
+     "collision_rate": 0.01,
+     "mean_completion_time_s": 3.789
+    }
+   }
+  },
+  "verification_set": {
+   "block": "rehearsal",
+   "start": 800000,
+   "count": 400,
+   "sampler": "latin_hypercube",
+   "rehearsal": true
+  },
+  "config": {
+   "heldout_target": 0.9,
+   "min_improvement": 0.1,
+   "target_fix_rate": 0.7,
+   "regression_budget_frac": 0.02,
+   "determinism_sample": 30,
+   "heldout_size": 400
+  }
+ }
+}

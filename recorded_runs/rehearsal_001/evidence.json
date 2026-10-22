@@ -1,0 +1,1025 @@
+{
+ "n_scenarios": 250,
+ "items": [
+  {
+   "id": "E1",
+   "kind": "metrics",
+   "title": "Overall baseline metrics",
+   "data": {
+    "n": 250,
+    "n_fail": 62,
+    "pass_rate": 0.752,
+    "pass_rate_ci95": [
+     0.6949,
+     0.8014
+    ],
+    "collision_rate": 0.008,
+    "mean_completion_time_s_successes": 3.701
+   }
+  },
+  {
+   "id": "E2",
+   "kind": "reasons",
+   "title": "Failure reasons",
+   "data": {
+    "counts": {
+     "MISSED_GRASP": 51,
+     "SLIPPED_ON_LIFT": 7,
+     "COLLISION": 2,
+     "PLACED_OUTSIDE_ZONE": 2
+    }
+   }
+  },
+  {
+   "id": "E3",
+   "kind": "bin",
+   "title": "mass_kg in [0.05, 0.24]",
+   "data": {
+    "axis": "mass_kg",
+    "range": [
+     0.05,
+     0.24
+    ],
+    "n": 59,
+    "n_fail": 10,
+    "fail_rate": 0.1695,
+    "fail_rate_ci95": [
+     0.0948,
+     0.2846
+    ]
+   }
+  },
+  {
+   "id": "E4",
+   "kind": "bin",
+   "title": "mass_kg in [0.24, 0.43]",
+   "data": {
+    "axis": "mass_kg",
+    "range": [
+     0.24,
+     0.43
+    ],
+    "n": 50,
+    "n_fail": 8,
+    "fail_rate": 0.16,
+    "fail_rate_ci95": [
+     0.0834,
+     0.2851
+    ]
+   }
+  },
+  {
+   "id": "E5",
+   "kind": "bin",
+   "title": "mass_kg in [0.43, 0.62]",
+   "data": {
+    "axis": "mass_kg",
+    "range": [
+     0.43,
+     0.62
+    ],
+    "n": 40,
+    "n_fail": 13,
+    "fail_rate": 0.325,
+    "fail_rate_ci95": [
+     0.2008,
+     0.4798
+    ]
+   }
+  },
+  {
+   "id": "E6",
+   "kind": "bin",
+   "title": "mass_kg in [0.62, 0.81]",
+   "data": {
+    "axis": "mass_kg",
+    "range": [
+     0.62,
+     0.81
+    ],
+    "n": 40,
+    "n_fail": 12,
+    "fail_rate": 0.3,
+    "fail_rate_ci95": [
+     0.1807,
+     0.4543
+    ]
+   }
+  },
+  {
+   "id": "E7",
+   "kind": "bin",
+   "title": "mass_kg in [0.81, 1.0]",
+   "data": {
+    "axis": "mass_kg",
+    "range": [
+     0.81,
+     1.0
+    ],
+    "n": 61,
+    "n_fail": 19,
+    "fail_rate": 0.3115,
+    "fail_rate_ci95": [
+     0.2094,
+     0.4359
+    ]
+   }
+  },
+  {
+   "id": "E8",
+   "kind": "bin",
+   "title": "friction in [0.1, 0.32]",
+   "data": {
+    "axis": "friction",
+    "range": [
+     0.1,
+     0.32
+    ],
+    "n": 54,
+    "n_fail": 21,
+    "fail_rate": 0.3889,
+    "fail_rate_ci95": [
+     0.2704,
+     0.5221
+    ]
+   }
+  },
+  {
+   "id": "E9",
+   "kind": "bin",
+   "title": "friction in [0.32, 0.54]",
+   "data": {
+    "axis": "friction",
+    "range": [
+     0.32,
+     0.54
+    ],
+    "n": 37,
+    "n_fail": 8,
+    "fail_rate": 0.2162,
+    "fail_rate_ci95": [
+     0.1139,
+     0.372
+    ]
+   }
+  },
+  {
+   "id": "E10",
+   "kind": "bin",
+   "title": "friction in [0.54, 0.76]",
+   "data": {
+    "axis": "friction",
+    "range": [
+     0.54,
+     0.76
+    ],
+    "n": 55,
+    "n_fail": 9,
+    "fail_rate": 0.1636,
+    "fail_rate_ci95": [
+     0.0886,
+     0.2826
+    ]
+   }
+  },
+  {
+   "id": "E11",
+   "kind": "bin",
+   "title": "friction in [0.76, 0.98]",
+   "data": {
+    "axis": "friction",
+    "range": [
+     0.76,
+     0.98
+    ],
+    "n": 52,
+    "n_fail": 12,
+    "fail_rate": 0.2308,
+    "fail_rate_ci95": [
+     0.1372,
+     0.3613
+    ]
+   }
+  },
+  {
+   "id": "E12",
+   "kind": "bin",
+   "title": "friction in [0.98, 1.2]",
+   "data": {
+    "axis": "friction",
+    "range": [
+     0.98,
+     1.2
+    ],
+    "n": 52,
+    "n_fail": 12,
+    "fail_rate": 0.2308,
+    "fail_rate_ci95": [
+     0.1372,
+     0.3613
+    ]
+   }
+  },
+  {
+   "id": "E13",
+   "kind": "bin",
+   "title": "size_m in [0.03, 0.04]",
+   "data": {
+    "axis": "size_m",
+    "range": [
+     0.03,
+     0.04
+    ],
+    "n": 53,
+    "n_fail": 22,
+    "fail_rate": 0.4151,
+    "fail_rate_ci95": [
+     0.2926,
+     0.5491
+    ]
+   }
+  },
+  {
+   "id": "E14",
+   "kind": "bin",
+   "title": "size_m in [0.04, 0.05]",
+   "data": {
+    "axis": "size_m",
+    "range": [
+     0.04,
+     0.05
+    ],
+    "n": 46,
+    "n_fail": 11,
+    "fail_rate": 0.2391,
+    "fail_rate_ci95": [
+     0.1391,
+     0.3794
+    ]
+   }
+  },
+  {
+   "id": "E15",
+   "kind": "bin",
+   "title": "size_m in [0.05, 0.06]",
+   "data": {
+    "axis": "size_m",
+    "range": [
+     0.05,
+     0.06
+    ],
+    "n": 44,
+    "n_fail": 7,
+    "fail_rate": 0.1591,
+    "fail_rate_ci95": [
+     0.0793,
+     0.2937
+    ]
+   }
+  },
+  {
+   "id": "E16",
+   "kind": "bin",
+   "title": "size_m in [0.06, 0.07]",
+   "data": {
+    "axis": "size_m",
+    "range": [
+     0.06,
+     0.07
+    ],
+    "n": 34,
+    "n_fail": 10,
+    "fail_rate": 0.2941,
+    "fail_rate_ci95": [
+     0.1683,
+     0.4617
+    ]
+   }
+  },
+  {
+   "id": "E17",
+   "kind": "bin",
+   "title": "size_m in [0.07, 0.08]",
+   "data": {
+    "axis": "size_m",
+    "range": [
+     0.07,
+     0.08
+    ],
+    "n": 73,
+    "n_fail": 12,
+    "fail_rate": 0.1644,
+    "fail_rate_ci95": [
+     0.0966,
+     0.2657
+    ]
+   }
+  },
+  {
+   "id": "E18",
+   "kind": "bin",
+   "title": "pos_offset_x in [-0.08, -0.048]",
+   "data": {
+    "axis": "pos_offset_x",
+    "range": [
+     -0.08,
+     -0.048
+    ],
+    "n": 73,
+    "n_fail": 9,
+    "fail_rate": 0.1233,
+    "fail_rate_ci95": [
+     0.0662,
+     0.218
+    ]
+   }
+  },
+  {
+   "id": "E19",
+   "kind": "bin",
+   "title": "pos_offset_x in [-0.048, -0.016]",
+   "data": {
+    "axis": "pos_offset_x",
+    "range": [
+     -0.048,
+     -0.016
+    ],
+    "n": 41,
+    "n_fail": 14,
+    "fail_rate": 0.3415,
+    "fail_rate_ci95": [
+     0.2156,
+     0.4945
+    ]
+   }
+  },
+  {
+   "id": "E20",
+   "kind": "bin",
+   "title": "pos_offset_x in [-0.016, 0.016]",
+   "data": {
+    "axis": "pos_offset_x",
+    "range": [
+     -0.016,
+     0.016
+    ],
+    "n": 43,
+    "n_fail": 8,
+    "fail_rate": 0.186,
+    "fail_rate_ci95": [
+     0.0974,
+     0.3262
+    ]
+   }
+  },
+  {
+   "id": "E21",
+   "kind": "bin",
+   "title": "pos_offset_x in [0.016, 0.048]",
+   "data": {
+    "axis": "pos_offset_x",
+    "range": [
+     0.016,
+     0.048
+    ],
+    "n": 40,
+    "n_fail": 13,
+    "fail_rate": 0.325,
+    "fail_rate_ci95": [
+     0.2008,
+     0.4798
+    ]
+   }
+  },
+  {
+   "id": "E22",
+   "kind": "bin",
+   "title": "pos_offset_x in [0.048, 0.08]",
+   "data": {
+    "axis": "pos_offset_x",
+    "range": [
+     0.048,
+     0.08
+    ],
+    "n": 53,
+    "n_fail": 18,
+    "fail_rate": 0.3396,
+    "fail_rate_ci95": [
+     0.2269,
+     0.4741
+    ]
+   }
+  },
+  {
+   "id": "E23",
+   "kind": "bin",
+   "title": "pos_offset_y in [-0.08, -0.048]",
+   "data": {
+    "axis": "pos_offset_y",
+    "range": [
+     -0.08,
+     -0.048
+    ],
+    "n": 55,
+    "n_fail": 15,
+    "fail_rate": 0.2727,
+    "fail_rate_ci95": [
+     0.1728,
+     0.4023
+    ]
+   }
+  },
+  {
+   "id": "E24",
+   "kind": "bin",
+   "title": "pos_offset_y in [-0.048, -0.016]",
+   "data": {
+    "axis": "pos_offset_y",
+    "range": [
+     -0.048,
+     -0.016
+    ],
+    "n": 35,
+    "n_fail": 2,
+    "fail_rate": 0.0571,
+    "fail_rate_ci95": [
+     0.0158,
+     0.1861
+    ]
+   }
+  },
+  {
+   "id": "E25",
+   "kind": "bin",
+   "title": "pos_offset_y in [-0.016, 0.016]",
+   "data": {
+    "axis": "pos_offset_y",
+    "range": [
+     -0.016,
+     0.016
+    ],
+    "n": 61,
+    "n_fail": 8,
+    "fail_rate": 0.1311,
+    "fail_rate_ci95": [
+     0.068,
+     0.238
+    ]
+   }
+  },
+  {
+   "id": "E26",
+   "kind": "bin",
+   "title": "pos_offset_y in [0.016, 0.048]",
+   "data": {
+    "axis": "pos_offset_y",
+    "range": [
+     0.016,
+     0.048
+    ],
+    "n": 43,
+    "n_fail": 15,
+    "fail_rate": 0.3488,
+    "fail_rate_ci95": [
+     0.2242,
+     0.4983
+    ]
+   }
+  },
+  {
+   "id": "E27",
+   "kind": "bin",
+   "title": "pos_offset_y in [0.048, 0.08]",
+   "data": {
+    "axis": "pos_offset_y",
+    "range": [
+     0.048,
+     0.08
+    ],
+    "n": 56,
+    "n_fail": 22,
+    "fail_rate": 0.3929,
+    "fail_rate_ci95": [
+     0.2758,
+     0.5237
+    ]
+   }
+  },
+  {
+   "id": "E28",
+   "kind": "bin",
+   "title": "sensor_noise_m in [0.0, 0.006]",
+   "data": {
+    "axis": "sensor_noise_m",
+    "range": [
+     0.0,
+     0.006
+    ],
+    "n": 51,
+    "n_fail": 4,
+    "fail_rate": 0.0784,
+    "fail_rate_ci95": [
+     0.0309,
+     0.185
+    ]
+   }
+  },
+  {
+   "id": "E29",
+   "kind": "bin",
+   "title": "sensor_noise_m in [0.006, 0.012]",
+   "data": {
+    "axis": "sensor_noise_m",
+    "range": [
+     0.006,
+     0.012
+    ],
+    "n": 49,
+    "n_fail": 7,
+    "fail_rate": 0.1429,
+    "fail_rate_ci95": [
+     0.071,
+     0.2667
+    ]
+   }
+  },
+  {
+   "id": "E30",
+   "kind": "bin",
+   "title": "sensor_noise_m in [0.012, 0.018]",
+   "data": {
+    "axis": "sensor_noise_m",
+    "range": [
+     0.012,
+     0.018
+    ],
+    "n": 30,
+    "n_fail": 6,
+    "fail_rate": 0.2,
+    "fail_rate_ci95": [
+     0.095,
+     0.3731
+    ]
+   }
+  },
+  {
+   "id": "E31",
+   "kind": "bin",
+   "title": "sensor_noise_m in [0.018, 0.024]",
+   "data": {
+    "axis": "sensor_noise_m",
+    "range": [
+     0.018,
+     0.024
+    ],
+    "n": 51,
+    "n_fail": 16,
+    "fail_rate": 0.3137,
+    "fail_rate_ci95": [
+     0.2033,
+     0.4503
+    ]
+   }
+  },
+  {
+   "id": "E32",
+   "kind": "bin",
+   "title": "sensor_noise_m in [0.024, 0.03]",
+   "data": {
+    "axis": "sensor_noise_m",
+    "range": [
+     0.024,
+     0.03
+    ],
+    "n": 69,
+    "n_fail": 29,
+    "fail_rate": 0.4203,
+    "fail_rate_ci95": [
+     0.3111,
+     0.5379
+    ]
+   }
+  },
+  {
+   "id": "E33",
+   "kind": "bin",
+   "title": "gripper_delay_steps in [0.0, 4.0]",
+   "data": {
+    "axis": "gripper_delay_steps",
+    "range": [
+     0.0,
+     4.0
+    ],
+    "n": 41,
+    "n_fail": 6,
+    "fail_rate": 0.1463,
+    "fail_rate_ci95": [
+     0.0688,
+     0.2844
+    ]
+   }
+  },
+  {
+   "id": "E34",
+   "kind": "bin",
+   "title": "gripper_delay_steps in [4.0, 8.0]",
+   "data": {
+    "axis": "gripper_delay_steps",
+    "range": [
+     4.0,
+     8.0
+    ],
+    "n": 56,
+    "n_fail": 7,
+    "fail_rate": 0.125,
+    "fail_rate_ci95": [
+     0.0619,
+     0.2363
+    ]
+   }
+  },
+  {
+   "id": "E35",
+   "kind": "bin",
+   "title": "gripper_delay_steps in [8.0, 12.0]",
+   "data": {
+    "axis": "gripper_delay_steps",
+    "range": [
+     8.0,
+     12.0
+    ],
+    "n": 44,
+    "n_fail": 13,
+    "fail_rate": 0.2955,
+    "fail_rate_ci95": [
+     0.1816,
+     0.4422
+    ]
+   }
+  },
+  {
+   "id": "E36",
+   "kind": "bin",
+   "title": "gripper_delay_steps in [12.0, 16.0]",
+   "data": {
+    "axis": "gripper_delay_steps",
+    "range": [
+     12.0,
+     16.0
+    ],
+    "n": 35,
+    "n_fail": 13,
+    "fail_rate": 0.3714,
+    "fail_rate_ci95": [
+     0.2317,
+     0.5366
+    ]
+   }
+  },
+  {
+   "id": "E37",
+   "kind": "bin",
+   "title": "gripper_delay_steps in [16.0, 20.0]",
+   "data": {
+    "axis": "gripper_delay_steps",
+    "range": [
+     16.0,
+     20.0
+    ],
+    "n": 74,
+    "n_fail": 23,
+    "fail_rate": 0.3108,
+    "fail_rate_ci95": [
+     0.2169,
+     0.4234
+    ]
+   }
+  },
+  {
+   "id": "E38",
+   "kind": "interaction",
+   "title": "size_m in [0.03, 0.0467] x gripper_delay_steps in [13.3333, 20.0]",
+   "data": {
+    "axes": [
+     "size_m",
+     "gripper_delay_steps"
+    ],
+    "region": {
+     "size_m": [
+      0.03,
+      0.0467
+     ],
+     "gripper_delay_steps": [
+      13.3333,
+      20.0
+     ]
+    },
+    "n": 23,
+    "n_fail": 15,
+    "fail_rate": 0.6522,
+    "marginal_fail_rates": {
+     "size_m": 0.3452,
+     "gripper_delay_steps": 0.3152
+    },
+    "excess_over_max_marginal": 0.307
+   }
+  },
+  {
+   "id": "E39",
+   "kind": "interaction",
+   "title": "mass_kg in [0.6833, 1.0] x friction in [0.1, 0.4667]",
+   "data": {
+    "axes": [
+     "mass_kg",
+     "friction"
+    ],
+    "region": {
+     "mass_kg": [
+      0.6833,
+      1.0
+     ],
+     "friction": [
+      0.1,
+      0.4667
+     ]
+    },
+    "n": 18,
+    "n_fail": 11,
+    "fail_rate": 0.6111,
+    "marginal_fail_rates": {
+     "mass_kg": 0.2921,
+     "friction": 0.3418
+    },
+    "excess_over_max_marginal": 0.2693
+   }
+  },
+  {
+   "id": "E40",
+   "kind": "interaction",
+   "title": "size_m in [0.03, 0.0467] x pos_offset_y in [0.0267, 0.08]",
+   "data": {
+    "axes": [
+     "size_m",
+     "pos_offset_y"
+    ],
+    "region": {
+     "size_m": [
+      0.03,
+      0.0467
+     ],
+     "pos_offset_y": [
+      0.0267,
+      0.08
+     ]
+    },
+    "n": 19,
+    "n_fail": 12,
+    "fail_rate": 0.6316,
+    "marginal_fail_rates": {
+     "size_m": 0.3452,
+     "pos_offset_y": 0.3855
+    },
+    "excess_over_max_marginal": 0.2461
+   }
+  },
+  {
+   "id": "E41",
+   "kind": "interaction",
+   "title": "size_m in [0.03, 0.0467] x pos_offset_x in [0.0267, 0.08]",
+   "data": {
+    "axes": [
+     "size_m",
+     "pos_offset_x"
+    ],
+    "region": {
+     "size_m": [
+      0.03,
+      0.0467
+     ],
+     "pos_offset_x": [
+      0.0267,
+      0.08
+     ]
+    },
+    "n": 20,
+    "n_fail": 11,
+    "fail_rate": 0.55,
+    "marginal_fail_rates": {
+     "size_m": 0.3452,
+     "pos_offset_x": 0.3333
+    },
+    "excess_over_max_marginal": 0.2048
+   }
+  },
+  {
+   "id": "E42",
+   "kind": "interaction",
+   "title": "friction in [0.1, 0.4667] x pos_offset_y in [0.0267, 0.08]",
+   "data": {
+    "axes": [
+     "friction",
+     "pos_offset_y"
+    ],
+    "region": {
+     "friction": [
+      0.1,
+      0.4667
+     ],
+     "pos_offset_y": [
+      0.0267,
+      0.08
+     ]
+    },
+    "n": 25,
+    "n_fail": 14,
+    "fail_rate": 0.56,
+    "marginal_fail_rates": {
+     "friction": 0.3418,
+     "pos_offset_y": 0.3855
+    },
+    "excess_over_max_marginal": 0.1745
+   }
+  },
+  {
+   "id": "E43",
+   "kind": "interaction",
+   "title": "size_m in [0.03, 0.0467] x sensor_noise_m in [0.02, 0.03]",
+   "data": {
+    "axes": [
+     "size_m",
+     "sensor_noise_m"
+    ],
+    "region": {
+     "size_m": [
+      0.03,
+      0.0467
+     ],
+     "sensor_noise_m": [
+      0.02,
+      0.03
+     ]
+    },
+    "n": 31,
+    "n_fail": 17,
+    "fail_rate": 0.5484,
+    "marginal_fail_rates": {
+     "size_m": 0.3452,
+     "sensor_noise_m": 0.3818
+    },
+    "excess_over_max_marginal": 0.1666
+   }
+  },
+  {
+   "id": "E44",
+   "kind": "interaction",
+   "title": "friction in [0.1, 0.4667] x pos_offset_x in [-0.0267, 0.0267]",
+   "data": {
+    "axes": [
+     "friction",
+     "pos_offset_x"
+    ],
+    "region": {
+     "friction": [
+      0.1,
+      0.4667
+     ],
+     "pos_offset_x": [
+      -0.0267,
+      0.0267
+     ]
+    },
+    "n": 17,
+    "n_fail": 8,
+    "fail_rate": 0.4706,
+    "marginal_fail_rates": {
+     "friction": 0.3418,
+     "pos_offset_x": 0.2286
+    },
+    "excess_over_max_marginal": 0.1288
+   }
+  },
+  {
+   "id": "E45",
+   "kind": "interaction",
+   "title": "mass_kg in [0.3667, 0.6833] x gripper_delay_steps in [6.6667, 13.3333]",
+   "data": {
+    "axes": [
+     "mass_kg",
+     "gripper_delay_steps"
+    ],
+    "region": {
+     "mass_kg": [
+      0.3667,
+      0.6833
+     ],
+     "gripper_delay_steps": [
+      6.6667,
+      13.3333
+     ]
+    },
+    "n": 23,
+    "n_fail": 9,
+    "fail_rate": 0.3913,
+    "marginal_fail_rates": {
+     "mass_kg": 0.2676,
+     "gripper_delay_steps": 0.2658
+    },
+    "excess_over_max_marginal": 0.1237
+   }
+  },
+  {
+   "id": "E46",
+   "kind": "tree_leaf",
+   "title": "Failing region: sensor_noise_m > 0.0259 AND mass_kg > 0.4361 AND pos_offset_x > 0.0416",
+   "data": {
+    "region": {
+     "sensor_noise_m": [
+      0.0259,
+      0.03
+     ],
+     "mass_kg": [
+      0.4361,
+      1.0
+     ],
+     "pos_offset_x": [
+      0.0416,
+      0.08
+     ]
+    },
+    "path": [
+     "sensor_noise_m > 0.0259",
+     "mass_kg > 0.4361",
+     "pos_offset_x > 0.0416"
+    ],
+    "n": 15,
+    "n_fail": 11,
+    "fail_rate": 0.7333,
+    "fail_rate_ci95": [
+     0.4805,
+     0.891
+    ]
+   }
+  },
+  {
+   "id": "E47",
+   "kind": "tree_leaf",
+   "title": "Failing region: sensor_noise_m <= 0.0259 AND size_m <= 0.0345",
+   "data": {
+    "region": {
+     "sensor_noise_m": [
+      0.0,
+      0.0259
+     ],
+     "size_m": [
+      0.03,
+      0.0345
+     ]
+    },
+    "path": [
+     "sensor_noise_m <= 0.0259",
+     "size_m <= 0.0345"
+    ],
+    "n": 21,
+    "n_fail": 12,
+    "fail_rate": 0.5714,
+    "fail_rate_ci95": [
+     0.3655,
+     0.7553
+    ]
+   }
+  },
+  {
+   "id": "E48",
+   "kind": "tree_leaf",
+   "title": "Failing region: sensor_noise_m > 0.0259 AND mass_kg > 0.4361 AND pos_offset_x <= 0.0416",
+   "data": {
+    "region": {
+     "sensor_noise_m": [
+      0.0259,
+      0.03
+     ],
+     "mass_kg": [
+      0.4361,
+      1.0
+     ],
+     "pos_offset_x": [
+      -0.08,
+      0.0416
+     ]
+    },
+    "path": [
+     "sensor_noise_m > 0.0259",
+     "mass_kg > 0.4361",
+     "pos_offset_x <= 0.0416"
+    ],
+    "n": 16,
+    "n_fail": 9,
+    "fail_rate": 0.5625,
+    "fail_rate_ci95": [
+     0.3318,
+     0.769
+    ]
+   }
+  }
+ ]
+}

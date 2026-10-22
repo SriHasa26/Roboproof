@@ -105,12 +105,16 @@ class LLMClient:
         settings: Settings,
         openai_client: Any | None = None,
         sink: Callable[[CallRecord], None] | None = None,
+        keep_transcript: bool = False,
     ):
         self.settings = settings
         self._client = openai_client
         self.sink = sink
         self.records: list[CallRecord] = []
         self.real_calls = 0
+        # verbatim prompts and replies (for recorded runs). Contains no secrets: the key is never part of a message.
+        self.keep_transcript = keep_transcript
+        self.transcript: list[dict] = []
 
     # ---- secrets
     def mask(self, text: str) -> str:
@@ -170,6 +174,7 @@ class LLMClient:
         hit = self._cache_get(path)
         if hit is not None:
             self._log(CallRecord(purpose, kind, model, attempt, 0.0, hit.prompt_tokens, hit.completion_tokens, True, cached=True))
+            self._keep(purpose, kind, model, attempt, messages, hit.content, cached=True)
             return hit.content
         if self.real_calls >= self.settings.max_calls_per_run:
             raise LLMBudgetExceeded(f"MAX_LLM_CALLS_PER_RUN={self.settings.max_calls_per_run} reached before '{purpose}'")
@@ -184,7 +189,13 @@ class LLMClient:
         pt, ct = getattr(usage, "prompt_tokens", None), getattr(usage, "completion_tokens", None)
         self._log(CallRecord(purpose, kind, model, attempt, time.perf_counter() - t0, pt, ct, True))
         self._cache_put(path, content, pt, ct)
+        self._keep(purpose, kind, model, attempt, messages, content, cached=False)
         return content
+
+    def _keep(self, purpose, kind, model, attempt, messages, reply, cached) -> None:
+        if self.keep_transcript:
+            self.transcript.append({"purpose": purpose, "model_kind": kind, "model": model, "attempt": attempt,
+                                    "cached": cached, "messages": messages, "reply": reply})
 
     def _chat_with_transport_retry(self, purpose, kind, model, messages, attempt, **kw) -> str:
         try:

@@ -12,3 +12,5 @@ frontend/dist/
 *.db
 backend/data/
 .coverage
+.rehearsal_*.log
+.trap3_tmp.log

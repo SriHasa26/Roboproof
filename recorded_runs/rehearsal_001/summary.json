@@ -1,0 +1,206 @@
+{
+ "label": "REHEARSAL, NOT AN OFFICIAL RESULT. Verification used the rehearsal seed block; held-out seeds (>= 900000) were not generated or run. Scripted patches are labelled 'scripted example, not model output'.",
+ "run_id": "rehearsal_001",
+ "gate_config": {
+  "GATE_DETERMINISM_SAMPLE": 30,
+  "GATE_HELDOUT_SIZE": 400,
+  "GATE_HELDOUT_TARGET": 0.9,
+  "GATE_MIN_IMPROVEMENT": 0.1,
+  "GATE_REGRESSION_BUDGET_FRAC": 0.02,
+  "GATE_TARGET_FIX_RATE": 0.7
+ },
+ "models": {
+  "fast": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+  "reasoning": "nvidia/Nemotron-3-Ultra-550b-a55b"
+ },
+ "cpu_count": 12,
+ "projection_before_run": {
+  "generator_prompt_tokens_est": 515,
+  "max_llm_calls": 12,
+  "completion_token_ceilings": {
+   "generator": "model default",
+   "analyst": 6000,
+   "fixer_per_call": 4000
+  },
+  "note": "ESTIMATE: ~4 characters per token; the analyst and fixer prompts are sized after evidence exists"
+ },
+ "fixed_patch_runs": {
+  "best_found_patch": {
+   "verdict": "VERIFIED",
+   "checks": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G4": "pass",
+    "G5": "pass",
+    "G6": "pass"
+   }
+  },
+  "scripted_trap": {
+   "verdict": "FAILED",
+   "checks": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G4": "fail",
+    "G5": "fail",
+    "G6": "pass"
+   }
+  },
+  "noop_patch": {
+   "verdict": "FAILED",
+   "checks": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "fail",
+    "G4": "pass",
+    "G5": "fail",
+    "G6": "pass"
+   }
+  },
+  "crashed_shard": {
+   "verdict": "UNVERIFIED",
+   "checks": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "not_run",
+    "G4": "not_run",
+    "G5": "not_run",
+    "G6": "fail"
+   }
+  }
+ },
+ "timings_s": {
+  "1_generate_scenarios_llm": 32.53,
+  "2_baseline_run": 8.59,
+  "3_evidence": 0.03,
+  "4_gate_best_found_patch": 40.37,
+  "4_gate_scripted_trap": 42.57,
+  "4_gate_noop_patch": 40.77,
+  "4_gate_crashed_shard": 14.24,
+  "5_analyst_llm": 13.03,
+  "6_gate_prepare": 2.17,
+  "7_fixer_llm_attempt1": 4.7,
+  "8_dev_stage_attempt1": 9.92,
+  "7_fixer_llm_attempt2": 9.16,
+  "8_dev_stage_attempt2": 12.54,
+  "9_verification_g5": 34.61
+ },
+ "llm_usage": {
+  "calls_total": 4,
+  "calls_real": 4,
+  "calls_cached": 0,
+  "prompt_tokens": 9962,
+  "completion_tokens": 11740,
+  "max_calls": 12,
+  "any_cached": false
+ },
+ "llm_calls": [
+  {
+   "purpose": "scenario_generation",
+   "model_kind": "fast",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "attempt": 1,
+   "latency_s": 32.44579360700027,
+   "prompt_tokens": 989,
+   "completion_tokens": 3903,
+   "ok": true,
+   "error": null,
+   "cached": false
+  },
+  {
+   "purpose": "analyst",
+   "model_kind": "reasoning",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "latency_s": 12.949664702000064,
+   "prompt_tokens": 6491,
+   "completion_tokens": 4660,
+   "ok": true,
+   "error": null,
+   "cached": false
+  },
+  {
+   "purpose": "fixer",
+   "model_kind": "reasoning",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "latency_s": 4.382251290000113,
+   "prompt_tokens": 1176,
+   "completion_tokens": 1261,
+   "ok": true,
+   "error": null,
+   "cached": false
+  },
+  {
+   "purpose": "fixer",
+   "model_kind": "reasoning",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "latency_s": 9.01986342300006,
+   "prompt_tokens": 1306,
+   "completion_tokens": 1916,
+   "ok": true,
+   "error": null,
+   "cached": false
+  }
+ ],
+ "pricing_per_token_from_api": {
+  "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B": {
+   "prompt": 6e-08,
+   "completion": 2.4e-07
+  },
+  "nvidia/Nemotron-3-Ultra-550b-a55b": {
+   "prompt": 1e-06,
+   "completion": 3e-06
+  }
+ },
+ "estimated_cost_usd": 0.03348,
+ "cost_note": "ESTIMATE = tokens x per-token prices reported by GET /models?verbose=true; hidden reasoning tokens are included in completion tokens; actual billing UNCONFIRMED",
+ "full_pipeline": {
+  "verdict": "VERIFIED",
+  "checks": {
+   "G1": "pass",
+   "G2": "pass",
+   "G3": "pass",
+   "G4": "pass",
+   "G5": "pass",
+   "G6": "pass"
+  }
+ },
+ "any_cached": false,
+ "seed_ledger": [
+  [
+   "rehearsal_001:best_found_patch",
+   "rehearsal",
+   800000,
+   400,
+   "G5 verification set",
+   1
+  ],
+  [
+   "rehearsal_001:scripted_trap",
+   "rehearsal",
+   800400,
+   400,
+   "G5 verification set",
+   1
+  ],
+  [
+   "rehearsal_001:noop_patch",
+   "rehearsal",
+   800800,
+   400,
+   "G5 verification set",
+   1
+  ],
+  [
+   "rehearsal_001:full",
+   "rehearsal",
+   801200,
+   400,
+   "G5 verification set",
+   1
+  ]
+ ]
+}

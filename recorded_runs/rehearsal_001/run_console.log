@@ -1,0 +1,50 @@
+NEBIUS_API_KEY: set
+NEBIUS_MODEL_FAST: set
+NEBIUS_MODEL_REASONING: set
+projected: {"generator_prompt_tokens_est": 515, "max_llm_calls": 12, "completion_token_ceilings": {"generator": "model default", "analyst": 6000, "fixer_per_call": 4000}, "note": "ESTIMATE: ~4 characters per token; the analyst and fixer prompts are sized after evidence exists"}
+analysis set: 250 scenarios (150 coverage + 100 model-proposed regions), baseline pass 75.2%, 48 evidence items
+[best_found_patch] VERDICT VERIFIED  (rehearsal=True, strict zero-budget: {'regressions': 1, 'pass': False})
+    G1=pass {'mismatches': 0}
+    G2=pass {'not_reproduced': 0}
+    G3=pass {'fix_rate': 0.9333}
+    G4=pass {'regressions': 1, 'previously_passing': 188}
+    G5=pass {'patched_pass_rate': 0.975, 'patched_wilson95_lower': 0.9546, 'unpatched_pass_rate': 0.72, 'improvement': 0.255}
+    G6=pass {'incomplete_runs': []}
+[scripted_trap] VERDICT FAILED  (rehearsal=True, strict zero-budget: {'regressions': 6, 'pass': False})
+    G1=pass {'mismatches': 0}
+    G2=pass {'not_reproduced': 0}
+    G3=pass {'fix_rate': 0.9333}
+    G4=fail {'regressions': 6, 'previously_passing': 188}
+    G5=fail {'patched_pass_rate': 0.83, 'patched_wilson95_lower': 0.7901, 'unpatched_pass_rate': 0.7325, 'improvement': 0.0975}
+    G6=pass {'incomplete_runs': []}
+[noop_patch] VERDICT FAILED  (rehearsal=True, strict zero-budget: {'regressions': 0, 'pass': True})
+    G1=pass {'mismatches': 0}
+    G2=pass {'not_reproduced': 0}
+    G3=fail {'fix_rate': 0.0}
+    G4=pass {'regressions': 0, 'previously_passing': 188}
+    G5=fail {'patched_pass_rate': 0.7275, 'patched_wilson95_lower': 0.6819, 'unpatched_pass_rate': 0.7275, 'improvement': 0.0}
+    G6=pass {'incomplete_runs': []}
+[crashed_shard] VERDICT UNVERIFIED  (rehearsal=True, strict zero-budget: {'regressions': None, 'pass': None})
+    G1=pass {'mismatches': 0}
+    G2=pass {'not_reproduced': 0}
+    G3=not_run 
+    G4=not_run 
+    G5=not_run 
+    G6=fail {'incomplete_runs': ['patched_analysis']}
+analyst: 4 hypotheses; targeted failures chosen by code: 45
+attempt 1: model proposed {'grip_force': 30.0, 'grasp_hold_steps': 20.0, 'retry_count': 1.0, 'lift_speed': 0.2} (clamped: {'grip_force': False, 'grasp_hold_steps': False, 'retry_count': False, 'lift_speed': False}) -> G1..G4 = ['pass', 'pass', 'fail', 'pass']  fix_rate=0.5111 regressions=0
+attempt 2: model proposed {'grip_force': 40.0, 'grasp_hold_steps': 30.0, 'retry_count': 2.0, 'lift_speed': 0.15} (clamped: {'grip_force': False, 'grasp_hold_steps': False, 'retry_count': False, 'lift_speed': False}) -> G1..G4 = ['pass', 'pass', 'pass', 'pass']  fix_rate=0.7778 regressions=0
+[full pipeline (real models)] VERDICT VERIFIED  (rehearsal=True, strict zero-budget: {'regressions': 0, 'pass': True})
+    G1=pass {'mismatches': 0}
+    G2=pass {'not_reproduced': 0}
+    G3=pass {'fix_rate': 0.7778}
+    G4=pass {'regressions': 0, 'previously_passing': 188}
+    G5=pass {'patched_pass_rate': 0.96, 'patched_wilson95_lower': 0.936, 'unpatched_pass_rate': 0.69, 'improvement': 0.27}
+    G6=pass {'incomplete_runs': []}
+stage wall-clock (s): {'1_generate_scenarios_llm': 32.53, '2_baseline_run': 8.59, '3_evidence': 0.03, '4_gate_best_found_patch': 40.37, '4_gate_scripted_trap': 42.57, '4_gate_noop_patch': 40.77, '4_gate_crashed_shard': 14.24, '5_analyst_llm': 13.03, '6_gate_prepare': 2.17, '7_fixer_llm_attempt1': 4.7, '8_dev_stage_attempt1': 9.92, '7_fixer_llm_attempt2': 9.16, '8_dev_stage_attempt2': 12.54, '9_verification_g5': 34.61}
+llm usage: {'calls_total': 4, 'calls_real': 4, 'calls_cached': 0, 'prompt_tokens': 9962, 'completion_tokens': 11740, 'max_calls': 12, 'any_cached': False} | estimated cost USD: 0.03348
+  call scenario_generation  NVIDIA-Nemotron-3-Nano-30B-A3B   attempt=1  32.45s prompt=989 completion=3903 ok=True cached=False
+  call analyst              Nemotron-3-Ultra-550b-a55b       attempt=1  12.95s prompt=6491 completion=4660 ok=True cached=False
+  call fixer                Nemotron-3-Ultra-550b-a55b       attempt=1   4.38s prompt=1176 completion=1261 ok=True cached=False
+  call fixer                Nemotron-3-Ultra-550b-a55b       attempt=1   9.02s prompt=1306 completion=1916 ok=True cached=False
+artifacts: /app/recorded_runs/rehearsal_001

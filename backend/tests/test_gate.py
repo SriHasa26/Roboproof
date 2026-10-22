@@ -276,3 +276,23 @@ def test_decide_verdict_precedence_unit():
     assert decide_verdict(mk(**{**ok, "G5": "not_run"})) == Verdict.UNVERIFIED
     assert decide_verdict(mk(**{**ok, "G6": "fail", "G4": "fail"})) == Verdict.UNVERIFIED
     assert decide_verdict(mk(**{**ok, "G6": "not_run"})) == Verdict.UNVERIFIED
+
+
+# ---------------------------------------------------------------- rehearsal helpers
+def test_dev_failure_without_a_verification_set_is_failed_not_unverified(world):
+    gate, dev, patched, _ = setup(StubRunner(), world, 42, with_vset=False)  # 5 regressions
+    rep = gate.finalize(dev, patched, None)
+    g5 = next(c for c in rep.checks if c.id == "G5")
+    assert g5.status == CheckStatus.NOT_RUN and g5.skipped_after_failure and rep.verdict == Verdict.FAILED
+
+
+def test_diagnostic_g5_runs_on_rehearsal_only_and_never_rescues_a_failed_patch(world):
+    gate, dev, patched, vset = setup(StubRunner(), world, 42)  # G4 fails
+    rep = gate.finalize(dev, patched, vset, diagnostic_g5=True)
+    g5 = next(c for c in rep.checks if c.id == "G5")
+    assert g5.status == CheckStatus.PASS and "DIAGNOSTIC" in g5.details and not g5.skipped_after_failure
+    assert rep.verdict == Verdict.FAILED  # G4 still failed
+    gate, dev, patched, vset = setup(StubRunner(), world, 42, rehearsal=False)  # a held-out block
+    with pytest.raises(ValueError, match="never on a held-out block"):
+        gate.finalize(dev, patched, vset, diagnostic_g5=True)
+    assert vset.consumed is False  # the block was not touched
