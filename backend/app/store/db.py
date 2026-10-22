@@ -25,7 +25,8 @@ CREATE TABLE IF NOT EXISTS batches (
 );
 CREATE TABLE IF NOT EXISTS seed_ledger (
   id INTEGER PRIMARY KEY AUTOINCREMENT, run_id TEXT, block_name TEXT, start INTEGER, count INTEGER,
-  purpose TEXT, rehearsal INTEGER, created_at TEXT DEFAULT CURRENT_TIMESTAMP
+  purpose TEXT, rehearsal INTEGER, created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  status TEXT DEFAULT 'allocated', note TEXT
 );
 CREATE TABLE IF NOT EXISTS scenario_results (
   batch_id TEXT, scenario_id TEXT, seed INTEGER, tag TEXT,
@@ -43,6 +44,11 @@ class Database:
             Path(path).parent.mkdir(parents=True, exist_ok=True)
         self.conn = sqlite3.connect(path)
         self.conn.executescript(SCHEMA)
+        cols = {r[1] for r in self.conn.execute("PRAGMA table_info(seed_ledger)")}
+        for col, ddl in (('status', "ALTER TABLE seed_ledger ADD COLUMN status TEXT DEFAULT 'allocated'"), ('note', 'ALTER TABLE seed_ledger ADD COLUMN note TEXT')):
+            if col not in cols:  # databases created before P4.6
+                self.conn.execute(ddl)
+        self.conn.commit()
 
     def save_run(self, run: Run) -> None:
         self.conn.execute(

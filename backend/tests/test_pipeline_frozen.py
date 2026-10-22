@@ -12,7 +12,7 @@ from app.core.provenance import (FROZEN_FILES, OfficialRunRefused, REPO_ROOT, TA
 MSG = (
     "\n\nThe frozen pipeline changed ({what}).\n"
     "Prompts, generator, evidence, analyst, fixer, gate, gate config and the runner base are frozen once the git tag\n"
-    "'pipeline-frozen' exists: anything run before the tag is a rehearsal, and an OFFICIAL run refuses to start when these files\n"
+    "'pipeline-frozen-v2' exists: anything run before the tag is a rehearsal, and an OFFICIAL run refuses to start when these files\n"
     "differ from the tag. If the change is deliberate, re-freeze on purpose:\n"
     "  python scripts/refreeze_pipeline.py --i-understand-this-invalidates-rehearsals\n"
     "commit, create a new tag, and treat every earlier run as a rehearsal.\n"
@@ -44,9 +44,10 @@ def make_root(tmp_path):
 
 
 class FakeGit:
-    def __init__(self, root, status="", has_tag=True, tag_overrides=None, head="abc123", tag_commit="def456", available=True):
+    def __init__(self, root, status="", has_tag=True, tag_overrides=None, head="abc123", tag_commit="def456", available=True,
+                 protocol_commit="c0ffee1"):
         self.root, self.status, self.has_tag, self.over = root, status, has_tag, tag_overrides or {}
-        self.head, self.tag_commit, self.available = head, tag_commit, available
+        self.head, self.tag_commit, self.available, self.protocol_commit = head, tag_commit, available, protocol_commit
 
     def __call__(self, *args):
         if not self.available:
@@ -55,6 +56,8 @@ class FakeGit:
             return 0, self.head + "\n"
         if args == ("status", "--porcelain"):
             return 0, self.status
+        if args[:1] == ("log",):
+            return 0, (self.protocol_commit + "\n") if self.protocol_commit else ""
         if args[:2] == ("rev-parse", "--verify"):
             return (0, self.tag_commit + "\n") if self.has_tag else (128, "")
         if args[0] == "show":
@@ -76,6 +79,7 @@ def test_clean_tree_matching_tag_is_allowed_and_provenance_recorded(tmp_path):
     p = go(tmp_path)
     assert (p.commit, p.tag, p.tag_commit, p.image_build_id) == ("abc123", TAG, "def456", "sha256:abc")
     assert (p.model_fast, p.model_reasoning, p.runner_name, p.official) == ("fast-m", "reason-m", "local", True)
+    assert TAG == "pipeline-frozen-v2" and p.pipeline_version == "v2" and p.protocol_commit == "c0ffee1"
     assert len(p.pipeline_hash) == 64 and p.python
 
 
@@ -119,6 +123,21 @@ def test_unknown_image_build_id_is_refused(tmp_path):
 def test_no_git_means_no_official_run(tmp_path):
     with pytest.raises(OfficialRunRefused, match="cannot run git"):
         go(tmp_path, available=False)
+
+
+def test_uncommitted_protocol_is_refused(tmp_path):
+    with pytest.raises(OfficialRunRefused, match="OFFICIAL_PROTOCOL.md is not committed"):
+        go(tmp_path, protocol_commit="")
+
+
+def test_protocol_is_part_of_the_frozen_files():
+    assert "docs/OFFICIAL_PROTOCOL.md" in FROZEN_FILES and (REPO_ROOT / "docs" / "OFFICIAL_PROTOCOL.md").exists()
+
+
+@pytest.mark.parametrize("name", ["GATE_HELDOUT_TARGET", "GATE_TARGET_FIX_RATE", "GATE_REGRESSION_BUDGET_FRAC", "FIXER_N_CANDIDATES"])
+def test_threshold_overrides_in_the_environment_are_refused(tmp_path, name):
+    with pytest.raises(OfficialRunRefused, match="overrides are set in the environment"):
+        go(tmp_path, env={**ENV, name: "0.5"})
 
 
 def test_all_problems_are_listed_together(tmp_path):

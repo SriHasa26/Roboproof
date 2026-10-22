@@ -103,6 +103,7 @@ def test_unselected_candidates_never_reach_a_verification_set(tmp_path):
     assert [tag for g, n, tag, h in runner.calls if tag == "verify"] == ["verify", "verify"]
     rows = SeedLedger(db).rows()
     assert len(rows) == 1 and rows[0][1] == "rehearsal" and rows[0][5] == 1  # exactly one verification block, a rehearsal one
+    assert res["g5_executed"] is True and SeedLedger(db).status_rows()[0][4] == "used"  # G5 executed, so the run is final
 
 
 def test_second_attempt_sees_the_first_attempts_candidate_table_and_nothing_from_verification(tmp_path):
@@ -156,3 +157,9 @@ def test_coverage_only_fallback_still_runs_the_pipeline_when_the_generator_fails
 def test_recorded_runs_refuse_the_dev_cache(tmp_path):
     with pytest.raises(ValueError, match="LLM_DEV_CACHE"):
         run(tmp_path, [STRONG], LLM_DEV_CACHE="1")
+
+
+def test_a_run_that_never_reaches_g5_spends_no_verification_block(tmp_path):
+    res, fake, runner, db = run(tmp_path, [WEAK, WEAK, WEAK])  # three weak attempts: G3 fails every time, G5 is skipped
+    assert res["verdict"] == "FAILED" and res["n_attempts"] == 3 and res["g5_executed"] is False and res["checks"]["G5"] == "skipped_after_failure"
+    assert SeedLedger(db).rows() == [] and not [c for c in runner.calls if c[2] == "verify"]

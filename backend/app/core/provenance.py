@@ -1,6 +1,6 @@
 """Pipeline freeze fingerprint and the guard for OFFICIAL runs.
 
-After the git tag `pipeline-frozen`, the prompts, evidence, analyst, fixer, gate and their config are fixed. Anything run
+After the git tag `pipeline-frozen-v2` (v1: `pipeline-frozen`), the prompts, evidence, analyst, fixer, gate and their config are fixed. Anything run
 before the tag is a rehearsal. An official run (official=True) refuses to start unless:
   - the working tree is clean,
   - the tag exists and the current hash of the frozen files equals the hash of those files AT THE TAG,
@@ -18,7 +18,9 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Callable
 
-TAG = "pipeline-frozen"
+TAG = "pipeline-frozen-v2"   # pipeline v1 was tagged "pipeline-frozen" (reliability_001, rehearsal_001)
+PIPELINE_VERSION = "v2"
+PROTOCOL_REL = "docs/OFFICIAL_PROTOCOL.md"
 HASH_FILE_REL = "backend/app/core/FROZEN_PIPELINE_HASH.txt"
 FROZEN_FILES = [
     "backend/app/pipeline.py",
@@ -29,7 +31,7 @@ FROZEN_FILES = [
     "backend/app/analysis/evidence.py", "backend/app/analysis/analyst.py", "backend/app/analysis/fixer.py",
     "backend/app/analysis/models.py",
     "backend/app/gate/gate.py", "backend/app/gate/verification.py",
-    "backend/app/store/ledger.py",
+    "backend/app/store/ledger.py", "docs/OFFICIAL_PROTOCOL.md",
     "backend/app/runner/base.py", "backend/app/runner/local.py",
 ]
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -104,6 +106,8 @@ class Provenance:
     runner_name: str | None
     official: bool
     python: str
+    pipeline_version: str = PIPELINE_VERSION
+    protocol_commit: str | None = None  # commit that last changed docs/OFFICIAL_PROTOCOL.md
 
     def as_dict(self) -> dict:
         return asdict(self)
@@ -134,6 +138,13 @@ def official_preflight(env: dict, root: Path = REPO_ROOT, git: GitFn | None = No
     committed = read_committed_hash(root)
     if committed != current:
         problems.append(f"FROZEN_PIPELINE_HASH.txt ({(committed or 'missing')[:12]}) does not match the frozen files ({current[:12]})")
+    rc, protocol_commit = git("log", "-1", "--format=%H", "--", PROTOCOL_REL)
+    protocol_commit = protocol_commit.strip()
+    if rc != 0 or not protocol_commit:
+        problems.append(f"{PROTOCOL_REL} is not committed: the official protocol must be written and committed before any official run")
+    overrides = sorted(k for k in env if k.startswith("GATE_") or k == "FIXER_N_CANDIDATES")
+    if overrides:
+        problems.append(f"threshold/pipeline overrides are set in the environment ({', '.join(overrides)}); the official protocol fixes these values")
     image = env.get("ROBOPROOF_IMAGE_ID")
     if not image:
         problems.append("ROBOPROOF_IMAGE_ID is not set (run via scripts/dock.sh so the image build id is recorded)")
@@ -141,7 +152,7 @@ def official_preflight(env: dict, root: Path = REPO_ROOT, git: GitFn | None = No
         raise OfficialRunRefused("official run refused:\n  - " + "\n  - ".join(problems))
     return Provenance(commit=head, tag=TAG, tag_commit=tag_commit, pipeline_hash=current, image_build_id=image,
                       model_fast=model_fast, model_reasoning=model_reasoning, runner_name=runner_name, official=True,
-                      python=platform.python_version())
+                      python=platform.python_version(), protocol_commit=protocol_commit)
 
 
 def describe_unofficial(env: dict, model_fast: str | None, model_reasoning: str | None, runner_name: str | None,
@@ -152,4 +163,5 @@ def describe_unofficial(env: dict, model_fast: str | None, model_reasoning: str 
     rc2, status = git("status", "--porcelain")
     return {"commit": head.strip() if rc == 0 else None, "working_tree_clean": (rc2 == 0 and not status.strip()) if rc2 == 0 else None,
             "pipeline_hash": compute_pipeline_hash(root), "image_build_id": env.get("ROBOPROOF_IMAGE_ID"), "model_fast": model_fast,
-            "model_reasoning": model_reasoning, "runner_name": runner_name, "official": False, "python": platform.python_version()}
+            "model_reasoning": model_reasoning, "runner_name": runner_name, "official": False, "python": platform.python_version(),
+            "pipeline_version": PIPELINE_VERSION, "tag_expected": TAG}

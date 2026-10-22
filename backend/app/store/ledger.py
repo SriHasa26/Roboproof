@@ -56,5 +56,25 @@ class SeedLedger:
         self.record_use(run_id, block, start, count, purpose, rehearsal)
         return start
 
+    def retire(self, run_id: str, reason: str) -> int:
+        """Mark this run's exclusive blocks as RETIRED UNUSED: the run died of an infrastructure error before G5 executed. The block is
+        never used again (the single-use rule still holds: a repeat run allocates a fresh block); the ledger just records that no verdict
+        was ever based on it. Returns the number of blocks marked. Blocks already marked used are left alone."""
+        cur = self.db.conn.execute(
+            "UPDATE seed_ledger SET status='retired_unused', note=? WHERE run_id=? AND block_name IN ('rehearsal','held_out') AND status='allocated'",
+            (reason, run_id))
+        self.db.conn.commit()
+        return cur.rowcount
+
+    def mark_used(self, run_id: str) -> int:
+        """Mark this run's exclusive blocks as USED: G5 executed on them, so the run is final."""
+        cur = self.db.conn.execute(
+            "UPDATE seed_ledger SET status='used' WHERE run_id=? AND block_name IN ('rehearsal','held_out') AND status='allocated'", (run_id,))
+        self.db.conn.commit()
+        return cur.rowcount
+
     def rows(self) -> list[tuple]:
         return self.db.conn.execute("SELECT run_id, block_name, start, count, purpose, rehearsal FROM seed_ledger ORDER BY id").fetchall()
+
+    def status_rows(self) -> list[tuple]:
+        return self.db.conn.execute("SELECT run_id, block_name, start, count, status, note FROM seed_ledger ORDER BY id").fetchall()

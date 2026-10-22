@@ -107,3 +107,36 @@ def test_only_the_gate_allocates_or_uses_heldout_blocks():
                     if "held_out" in consts:
                         offenders.append(f"{f.relative_to(ROOT)}:{node.lineno}")
     assert not offenders, offenders
+
+
+# ---------------------------------------------------------------- P4.6: used / retired_unused statuses
+def test_blocks_are_marked_used_or_retired_unused_and_never_reused():
+    L = ledger()
+    a = L.allocate("run-a", "held_out", 400, "G5")
+    b = L.allocate("run-b", "held_out", 400, "G5")
+    assert L.retire("run-a", "G5 did not execute") == 1 and L.mark_used("run-b") == 1
+    st = {r[0]: r[4:] for r in L.status_rows()}
+    assert st["run-a"] == ("retired_unused", "G5 did not execute") and st["run-b"] == ("used", None)
+    assert L.retire("run-b", "late") == 0 and L.mark_used("run-a") == 0  # a block already settled is left alone
+    with pytest.raises(SeedBlockReusedError):  # retired is NOT free: the single-use rule still holds
+        L.record_use("repeat-of-a", "held_out", a, 400, "G5")
+    assert L.allocate("run-a_repeat1", "held_out", 400, "G5") == b + 400  # the repeat gets a fresh block
+
+
+def test_dev_blocks_are_untouched_by_retire():
+    L = ledger()
+    L.record_use("x", "dev", 1000, 300, "sweep")
+    assert L.retire("x", "n/a") == 0
+
+
+def test_database_migrates_a_ledger_created_before_status_columns(tmp_path):
+    import sqlite3
+    path = tmp_path / "old.sqlite"
+    c = sqlite3.connect(path)
+    c.execute("CREATE TABLE seed_ledger (id INTEGER PRIMARY KEY AUTOINCREMENT, run_id TEXT, block_name TEXT, start INTEGER, count INTEGER, "
+              "purpose TEXT, rehearsal INTEGER, created_at TEXT DEFAULT CURRENT_TIMESTAMP)")
+    c.execute("INSERT INTO seed_ledger (run_id, block_name, start, count, purpose, rehearsal) VALUES ('old','rehearsal',800000,400,'G5',1)")
+    c.commit()
+    c.close()
+    db = Database(str(path))
+    assert [r[4] for r in SeedLedger(db).status_rows()] == ["allocated"]  # old rows survive and get the default status

@@ -127,8 +127,9 @@ def run_pipeline(settings: Settings, runner: JobRunner, db: Database, ledger: Se
     client = LLMClient(settings, openai_client=openai_client, sink=lambda rec: db.log_llm_call(rec, cfg.run_id), keep_transcript=True)
     T = Timer()
     res: dict = {"run_id": cfg.run_id, "label": label, "official": cfg.official, "rehearsal": cfg.rehearsal, "master_seed": cfg.master_seed,
-                 "provenance": prov, "verdict": None, "error": None, "attempts": [], "n_attempts": 0}
+                 "provenance": prov, "verdict": None, "error": None, "attempts": [], "n_attempts": 0, "g5_executed": False}
     t_start = time.perf_counter()
+    vset = None
     try:
         with T("generate_scenarios_llm"):
             gen = ScenarioGenerator(llm=client).generate(cfg.n, cfg.master_seed)
@@ -214,6 +215,13 @@ def run_pipeline(settings: Settings, runner: JobRunner, db: Database, ledger: Se
         with T("verification_g5"):
             vset = make_verification_set(ledger, cfg.run_id, rehearsal=cfg.rehearsal) if dev.passed else None
             report = gate.finalize(dev, last, vset)
+        g5 = next(c for c in report.checks if c.id == "G5")
+        res["g5_executed"] = g5.status.value in ("pass", "fail")  # the verification runs completed and G5 produced a verdict
+        if vset is not None:  # protocol: a run where G5 executed is final; otherwise its block is retired unused (never reused)
+            if res["g5_executed"]:
+                ledger.mark_used(cfg.run_id)
+            else:
+                ledger.retire(cfg.run_id, "G5 did not execute (verification run incomplete)")
         _dump(out / "gate_report.json", {"label": label, "attempts": res["attempts"], "report": report.model_dump(mode="json")})
         res["verdict"] = report.verdict.value
         res["checks"] = {c.id: c.status.value for c in report.checks}
@@ -223,6 +231,8 @@ def run_pipeline(settings: Settings, runner: JobRunner, db: Database, ledger: Se
         res["verification_set"] = report.verification_set
     except (LLMError, RuntimeError, ValueError) as e:
         res["error"] = f"{type(e).__name__}: {client.mask(str(e))}"
+        if vset is not None and not res["g5_executed"]:
+            ledger.retire(cfg.run_id, f"run aborted before G5 executed: {type(e).__name__}")
     finally:
         usage = client.usage_summary()
         pricing = pricing if pricing is not None else fetch_pricing(settings, {settings.model_fast, settings.model_reasoning})
