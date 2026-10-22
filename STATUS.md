@@ -2,8 +2,8 @@
 
 | Part | State |
 |---|---|
-| 1. Official batch (K=5, per docs/OFFICIAL_PROTOCOL.md) | IN PROGRESS |
-| 2. Export data for the static dashboard | next |
+| 1. Official batch (K=5, per docs/OFFICIAL_PROTOCOL.md) | DONE: 4 of 5 VERIFIED, recorded in recorded_runs/official_001 |
+| 2. Export data for the static dashboard | IN PROGRESS |
 | 3. Static dashboard (frontend/) | next |
 | 4. Submission pack (README, SUBMISSION.md, LIMITATIONS.md) | next |
 
