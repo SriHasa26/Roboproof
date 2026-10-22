@@ -1,0 +1,39 @@
+{
+ "label": "scripted example, not model output",
+ "status": "PROVISIONAL CANDIDATE, pending user approval. Does NOT meet the original bar (fix >= 80% of targeted failures on dev set A AND >= 10 regressions); see docs/SIM_FIDELITY.md 'Scripted trap'.",
+ "kind": "scripted_trap_candidate",
+ "changes": {
+  "grip_force": 80,
+  "grasp_hold_steps": 60
+ },
+ "justification": "SCRIPTED EXAMPLE, NOT MODEL OUTPUT. The obvious fix for heavy, slippery cubes: maximum grip force and a longer grasp hold. It helps overall and fixes most targeted failures but breaks some scenarios that passed before and still misses the held-out target.",
+ "measured_on_dev_sets": {
+  "A": {
+   "pass": 0.84,
+   "fix_rate_targeted": 0.7058823529411765,
+   "targeted_n": 34,
+   "regressions": 8,
+   "previously_passing": 216,
+   "mean_time_s": 3.859109523809525,
+   "pass_under_deadline": {
+    "5.0": 0.84,
+    "6.0": 0.84,
+    "8.0": 0.84
+   }
+  },
+  "B": {
+   "pass": 0.8366666666666667,
+   "fix_rate_targeted": 0.8148148148148148,
+   "targeted_n": 27,
+   "regressions": 9,
+   "previously_passing": 215,
+   "mean_time_s": 3.85854980079681,
+   "pass_under_deadline": {
+    "5.0": 0.8366666666666667,
+    "6.0": 0.8366666666666667,
+    "8.0": 0.8366666666666667
+   }
+  }
+ },
+ "targeted_definition": "mass_kg > 0.5 and friction < 0.4 and failing under the default policy"
+}

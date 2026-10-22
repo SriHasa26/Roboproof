@@ -1,0 +1,263 @@
+{
+ "deadlines_s": [
+  5.0,
+  6.0,
+  8.0
+ ],
+ "patches": {
+  "default": {
+   "changes": {},
+   "A": {
+    "pass": 0.72,
+    "fix_rate_targeted": 0.0,
+    "targeted_n": 34,
+    "regressions": 0,
+    "previously_passing": 216,
+    "mean_time_s": 3.652124074074076,
+    "pass_under_deadline": {
+     "5.0": 0.72,
+     "6.0": 0.72,
+     "8.0": 0.72
+    }
+   },
+   "B": {
+    "pass": 0.7166666666666667,
+    "fix_rate_targeted": 0.0,
+    "targeted_n": 27,
+    "regressions": 0,
+    "previously_passing": 215,
+    "mean_time_s": 3.649612558139534,
+    "pass_under_deadline": {
+     "5.0": 0.7166666666666667,
+     "6.0": 0.7166666666666667,
+     "8.0": 0.7166666666666667
+    }
+   }
+  },
+  "grip 80 only": {
+   "changes": {
+    "grip_force": 80
+   },
+   "A": {
+    "pass": 0.8033333333333333,
+    "fix_rate_targeted": 0.6176470588235294,
+    "targeted_n": 34,
+    "regressions": 3,
+    "previously_passing": 216,
+    "mean_time_s": 3.654446473029047,
+    "pass_under_deadline": {
+     "5.0": 0.8033333333333333,
+     "6.0": 0.8033333333333333,
+     "8.0": 0.8033333333333333
+    }
+   },
+   "B": {
+    "pass": 0.79,
+    "fix_rate_targeted": 0.7037037037037037,
+    "targeted_n": 27,
+    "regressions": 2,
+    "previously_passing": 215,
+    "mean_time_s": 3.6452350210970454,
+    "pass_under_deadline": {
+     "5.0": 0.79,
+     "6.0": 0.79,
+     "8.0": 0.79
+    }
+   }
+  },
+  "hold 60 only": {
+   "changes": {
+    "grasp_hold_steps": 60
+   },
+   "A": {
+    "pass": 0.77,
+    "fix_rate_targeted": 0.0,
+    "targeted_n": 34,
+    "regressions": 4,
+    "previously_passing": 216,
+    "mean_time_s": 3.8639428571428573,
+    "pass_under_deadline": {
+     "5.0": 0.77,
+     "6.0": 0.77,
+     "8.0": 0.77
+    }
+   },
+   "B": {
+    "pass": 0.7833333333333333,
+    "fix_rate_targeted": 0.1111111111111111,
+    "targeted_n": 27,
+    "regressions": 3,
+    "previously_passing": 215,
+    "mean_time_s": 3.8560821276595725,
+    "pass_under_deadline": {
+     "5.0": 0.7833333333333333,
+     "6.0": 0.7833333333333333,
+     "8.0": 0.7833333333333333
+    }
+   }
+  },
+  "retries 3 only": {
+   "changes": {
+    "retry_count": 3
+   },
+   "A": {
+    "pass": 0.8066666666666666,
+    "fix_rate_targeted": 0.029411764705882353,
+    "targeted_n": 34,
+    "regressions": 0,
+    "previously_passing": 216,
+    "mean_time_s": 3.866323140495871,
+    "pass_under_deadline": {
+     "5.0": 0.7566666666666667,
+     "6.0": 0.7866666666666666,
+     "8.0": 0.8033333333333333
+    }
+   },
+   "B": {
+    "pass": 0.8166666666666667,
+    "fix_rate_targeted": 0.07407407407407407,
+    "targeted_n": 27,
+    "regressions": 0,
+    "previously_passing": 215,
+    "mean_time_s": 3.8858681632653047,
+    "pass_under_deadline": {
+     "5.0": 0.7566666666666667,
+     "6.0": 0.79,
+     "8.0": 0.8166666666666667
+    }
+   }
+  },
+  "grip 80 + hold 60": {
+   "changes": {
+    "grip_force": 80,
+    "grasp_hold_steps": 60
+   },
+   "A": {
+    "pass": 0.84,
+    "fix_rate_targeted": 0.7058823529411765,
+    "targeted_n": 34,
+    "regressions": 8,
+    "previously_passing": 216,
+    "mean_time_s": 3.859109523809525,
+    "pass_under_deadline": {
+     "5.0": 0.84,
+     "6.0": 0.84,
+     "8.0": 0.84
+    }
+   },
+   "B": {
+    "pass": 0.8366666666666667,
+    "fix_rate_targeted": 0.8148148148148148,
+    "targeted_n": 27,
+    "regressions": 9,
+    "previously_passing": 215,
+    "mean_time_s": 3.85854980079681,
+    "pass_under_deadline": {
+     "5.0": 0.8366666666666667,
+     "6.0": 0.8366666666666667,
+     "8.0": 0.8366666666666667
+    }
+   }
+  },
+  "grip 80 + hold 60 + retries 3": {
+   "changes": {
+    "grip_force": 80,
+    "grasp_hold_steps": 60,
+    "retry_count": 3
+   },
+   "A": {
+    "pass": 0.9566666666666667,
+    "fix_rate_targeted": 0.8529411764705882,
+    "targeted_n": 34,
+    "regressions": 3,
+    "previously_passing": 216,
+    "mean_time_s": 4.1374846689895515,
+    "pass_under_deadline": {
+     "5.0": 0.86,
+     "6.0": 0.9066666666666666,
+     "8.0": 0.94
+    }
+   },
+   "B": {
+    "pass": 0.9766666666666667,
+    "fix_rate_targeted": 0.9629629629629629,
+    "targeted_n": 27,
+    "regressions": 1,
+    "previously_passing": 215,
+    "mean_time_s": 4.138140273037541,
+    "pass_under_deadline": {
+     "5.0": 0.8566666666666667,
+     "6.0": 0.9366666666666666,
+     "8.0": 0.9666666666666667
+    }
+   }
+  },
+  "grip 40 + hold 30": {
+   "changes": {
+    "grip_force": 40,
+    "grasp_hold_steps": 30
+   },
+   "A": {
+    "pass": 0.8466666666666667,
+    "fix_rate_targeted": 0.6176470588235294,
+    "targeted_n": 34,
+    "regressions": 2,
+    "previously_passing": 216,
+    "mean_time_s": 3.736875590551182,
+    "pass_under_deadline": {
+     "5.0": 0.8466666666666667,
+     "6.0": 0.8466666666666667,
+     "8.0": 0.8466666666666667
+    }
+   },
+   "B": {
+    "pass": 0.8633333333333333,
+    "fix_rate_targeted": 0.8148148148148148,
+    "targeted_n": 27,
+    "regressions": 0,
+    "previously_passing": 215,
+    "mean_time_s": 3.728942084942083,
+    "pass_under_deadline": {
+     "5.0": 0.8633333333333333,
+     "6.0": 0.8633333333333333,
+     "8.0": 0.8633333333333333
+    }
+   }
+  },
+  "best found (ceiling search)": {
+   "changes": {
+    "grip_force": 58.83757679621736,
+    "grasp_hold_steps": 86,
+    "retry_count": 3,
+    "lift_speed": 0.5887942168683215,
+    "lift_height": 0.11887021321575043
+   },
+   "A": {
+    "pass": 0.9666666666666667,
+    "fix_rate_targeted": 0.8529411764705882,
+    "targeted_n": 34,
+    "regressions": 0,
+    "previously_passing": 216,
+    "mean_time_s": 3.826180000000001,
+    "pass_under_deadline": {
+     "5.0": 0.89,
+     "6.0": 0.94,
+     "8.0": 0.9633333333333334
+    }
+   },
+   "B": {
+    "pass": 0.98,
+    "fix_rate_targeted": 0.9629629629629629,
+    "targeted_n": 27,
+    "regressions": 0,
+    "previously_passing": 215,
+    "mean_time_s": 3.795194897959185,
+    "pass_under_deadline": {
+     "5.0": 0.9166666666666666,
+     "6.0": 0.9533333333333334,
+     "8.0": 0.9766666666666667
+    }
+   }
+  }
+ }
+}

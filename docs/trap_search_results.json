@@ -1,0 +1,1727 @@
+{
+ "all_candidates": [
+  {
+   "changes": {
+    "lift_height": 0.065
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "lift_height": 0.065,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "lift_height": 0.07
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "lift_height": 0.07,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "lift_height": 0.08
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "lift_height": 0.1
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "lift_height": 0.1,
+    "retry_count": 3
+   },
+   "fix_rate": 0.029411764705882353,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "retry_count": 3
+   },
+   "fix_rate": 0.029411764705882353,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "lift_speed": 0.6,
+    "lift_height": 0.065
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "lift_speed": 0.6,
+    "lift_height": 0.065,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "lift_speed": 0.6,
+    "lift_height": 0.07
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "lift_speed": 0.6,
+    "lift_height": 0.07,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "lift_speed": 0.6,
+    "lift_height": 0.08
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "lift_speed": 0.6,
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "lift_speed": 0.6,
+    "lift_height": 0.1
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "lift_speed": 0.6,
+    "lift_height": 0.1,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "lift_speed": 0.6
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "lift_speed": 0.6,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30,
+    "lift_height": 0.065
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30,
+    "lift_height": 0.065,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30,
+    "lift_height": 0.07
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30,
+    "lift_height": 0.07,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30,
+    "lift_height": 0.08
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30,
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30,
+    "lift_height": 0.1
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30,
+    "lift_height": 0.1,
+    "retry_count": 3
+   },
+   "fix_rate": 0.029411764705882353,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30
+   },
+   "fix_rate": 0.029411764705882353,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30,
+    "retry_count": 3
+   },
+   "fix_rate": 0.058823529411764705,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.065
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.065,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.07
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.07,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.08
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.1
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.1,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60,
+    "lift_height": 0.065
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60,
+    "lift_height": 0.065,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60,
+    "lift_height": 0.07
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60,
+    "lift_height": 0.07,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60,
+    "lift_height": 0.08
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60,
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60,
+    "lift_height": 0.1
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60,
+    "lift_height": 0.1,
+    "retry_count": 3
+   },
+   "fix_rate": 0.029411764705882353,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60,
+    "retry_count": 3
+   },
+   "fix_rate": 0.058823529411764705,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.065
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.065,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.07
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.07,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.08
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.1
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.1,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "lift_height": 0.065
+   },
+   "fix_rate": 0.029411764705882353,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "lift_height": 0.065,
+    "retry_count": 3
+   },
+   "fix_rate": 0.029411764705882353,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "lift_height": 0.07
+   },
+   "fix_rate": 0.058823529411764705,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "lift_height": 0.07,
+    "retry_count": 3
+   },
+   "fix_rate": 0.058823529411764705,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "lift_height": 0.08
+   },
+   "fix_rate": 0.23529411764705882,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.29411764705882354,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "lift_height": 0.1
+   },
+   "fix_rate": 0.5588235294117647,
+   "regressions": 3
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "lift_height": 0.1,
+    "retry_count": 3
+   },
+   "fix_rate": 0.6470588235294118,
+   "regressions": 2
+  },
+  {
+   "changes": {
+    "grip_force": 40.0
+   },
+   "fix_rate": 0.6176470588235294,
+   "regressions": 5
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "retry_count": 3
+   },
+   "fix_rate": 0.7352941176470589,
+   "regressions": 0
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "lift_speed": 0.6,
+    "lift_height": 0.065
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "lift_speed": 0.6,
+    "lift_height": 0.065,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "lift_speed": 0.6,
+    "lift_height": 0.07
+   },
+   "fix_rate": 0.029411764705882353,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "lift_speed": 0.6,
+    "lift_height": 0.07,
+    "retry_count": 3
+   },
+   "fix_rate": 0.029411764705882353,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "lift_speed": 0.6,
+    "lift_height": 0.08
+   },
+   "fix_rate": 0.029411764705882353,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "lift_speed": 0.6,
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.029411764705882353,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "lift_speed": 0.6,
+    "lift_height": 0.1
+   },
+   "fix_rate": 0.2647058823529412,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "lift_speed": 0.6,
+    "lift_height": 0.1,
+    "retry_count": 3
+   },
+   "fix_rate": 0.29411764705882354,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "lift_speed": 0.6
+   },
+   "fix_rate": 0.35294117647058826,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "lift_speed": 0.6,
+    "retry_count": 3
+   },
+   "fix_rate": 0.4411764705882353,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30,
+    "lift_height": 0.065
+   },
+   "fix_rate": 0.4411764705882353,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30,
+    "lift_height": 0.065,
+    "retry_count": 3
+   },
+   "fix_rate": 0.5,
+   "regressions": 51
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30,
+    "lift_height": 0.07
+   },
+   "fix_rate": 0.5,
+   "regressions": 13
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30,
+    "lift_height": 0.07,
+    "retry_count": 3
+   },
+   "fix_rate": 0.5588235294117647,
+   "regressions": 12
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30,
+    "lift_height": 0.08
+   },
+   "fix_rate": 0.5588235294117647,
+   "regressions": 2
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30,
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.7058823529411765,
+   "regressions": 0
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30,
+    "lift_height": 0.1
+   },
+   "fix_rate": 0.6176470588235294,
+   "regressions": 1
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30,
+    "lift_height": 0.1,
+    "retry_count": 3
+   },
+   "fix_rate": 0.7941176470588235,
+   "regressions": 0
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30
+   },
+   "fix_rate": 0.6176470588235294,
+   "regressions": 2
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30,
+    "retry_count": 3
+   },
+   "fix_rate": 0.7941176470588235,
+   "regressions": 0
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.065
+   },
+   "fix_rate": 0.2647058823529412,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.065,
+    "retry_count": 3
+   },
+   "fix_rate": 0.3235294117647059,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.07
+   },
+   "fix_rate": 0.4411764705882353,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.07,
+    "retry_count": 3
+   },
+   "fix_rate": 0.5,
+   "regressions": 38
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.08
+   },
+   "fix_rate": 0.4411764705882353,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.5294117647058824,
+   "regressions": 5
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.1
+   },
+   "fix_rate": 0.4411764705882353,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.1,
+    "retry_count": 3
+   },
+   "fix_rate": 0.6176470588235294,
+   "regressions": 0
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6
+   },
+   "fix_rate": 0.47058823529411764,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "retry_count": 3
+   },
+   "fix_rate": 0.6470588235294118,
+   "regressions": 0
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "lift_height": 0.065
+   },
+   "fix_rate": 0.6470588235294118,
+   "regressions": 5
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "lift_height": 0.065,
+    "retry_count": 3
+   },
+   "fix_rate": 0.7941176470588235,
+   "regressions": 2
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "lift_height": 0.07
+   },
+   "fix_rate": 0.6470588235294118,
+   "regressions": 5
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "lift_height": 0.07,
+    "retry_count": 3
+   },
+   "fix_rate": 0.7941176470588235,
+   "regressions": 2
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "lift_height": 0.08
+   },
+   "fix_rate": 0.6470588235294118,
+   "regressions": 5
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.7941176470588235,
+   "regressions": 1
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "lift_height": 0.1
+   },
+   "fix_rate": 0.6764705882352942,
+   "regressions": 7
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "lift_height": 0.1,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8235294117647058,
+   "regressions": 2
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60
+   },
+   "fix_rate": 0.6764705882352942,
+   "regressions": 3
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8235294117647058,
+   "regressions": 1
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.065
+   },
+   "fix_rate": 0.5,
+   "regressions": 1
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.065,
+    "retry_count": 3
+   },
+   "fix_rate": 0.6470588235294118,
+   "regressions": 0
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.07
+   },
+   "fix_rate": 0.5,
+   "regressions": 2
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.07,
+    "retry_count": 3
+   },
+   "fix_rate": 0.6470588235294118,
+   "regressions": 0
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.08
+   },
+   "fix_rate": 0.5294117647058824,
+   "regressions": 3
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.6764705882352942,
+   "regressions": 1
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.1
+   },
+   "fix_rate": 0.5588235294117647,
+   "regressions": 2
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.1,
+    "retry_count": 3
+   },
+   "fix_rate": 0.7352941176470589,
+   "regressions": 0
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6
+   },
+   "fix_rate": 0.5882352941176471,
+   "regressions": 4
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "retry_count": 3
+   },
+   "fix_rate": 0.7647058823529411,
+   "regressions": 2
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "lift_height": 0.065
+   },
+   "fix_rate": 0.058823529411764705,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "lift_height": 0.065,
+    "retry_count": 3
+   },
+   "fix_rate": 0.058823529411764705,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "lift_height": 0.07
+   },
+   "fix_rate": 0.08823529411764706,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "lift_height": 0.07,
+    "retry_count": 3
+   },
+   "fix_rate": 0.08823529411764706,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "lift_height": 0.08
+   },
+   "fix_rate": 0.4117647058823529,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.47058823529411764,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "lift_height": 0.1
+   },
+   "fix_rate": 0.6176470588235294,
+   "regressions": 6
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "lift_height": 0.1,
+    "retry_count": 3
+   },
+   "fix_rate": 0.7352941176470589,
+   "regressions": 2
+  },
+  {
+   "changes": {
+    "grip_force": 80.0
+   },
+   "fix_rate": 0.6176470588235294,
+   "regressions": 3
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "retry_count": 3
+   },
+   "fix_rate": 0.7352941176470589,
+   "regressions": 1
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "lift_speed": 0.6,
+    "lift_height": 0.065
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "lift_speed": 0.6,
+    "lift_height": 0.065,
+    "retry_count": 3
+   },
+   "fix_rate": 0.0,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "lift_speed": 0.6,
+    "lift_height": 0.07
+   },
+   "fix_rate": 0.058823529411764705,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "lift_speed": 0.6,
+    "lift_height": 0.07,
+    "retry_count": 3
+   },
+   "fix_rate": 0.058823529411764705,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "lift_speed": 0.6,
+    "lift_height": 0.08
+   },
+   "fix_rate": 0.08823529411764706,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "lift_speed": 0.6,
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.08823529411764706,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "lift_speed": 0.6,
+    "lift_height": 0.1
+   },
+   "fix_rate": 0.4117647058823529,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "lift_speed": 0.6,
+    "lift_height": 0.1,
+    "retry_count": 3
+   },
+   "fix_rate": 0.47058823529411764,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "lift_speed": 0.6
+   },
+   "fix_rate": 0.47058823529411764,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "lift_speed": 0.6,
+    "retry_count": 3
+   },
+   "fix_rate": 0.5588235294117647,
+   "regressions": 47
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_height": 0.065
+   },
+   "fix_rate": 0.5,
+   "regressions": 52
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_height": 0.065,
+    "retry_count": 3
+   },
+   "fix_rate": 0.5588235294117647,
+   "regressions": 51
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_height": 0.07
+   },
+   "fix_rate": 0.5882352941176471,
+   "regressions": 14
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_height": 0.07,
+    "retry_count": 3
+   },
+   "fix_rate": 0.7352941176470589,
+   "regressions": 12
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_height": 0.08
+   },
+   "fix_rate": 0.7058823529411765,
+   "regressions": 4
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 1
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_height": 0.1
+   },
+   "fix_rate": 0.7058823529411765,
+   "regressions": 2
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_height": 0.1,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 0
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30
+   },
+   "fix_rate": 0.7058823529411765,
+   "regressions": 6
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 0
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.065
+   },
+   "fix_rate": 0.3235294117647059,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.065,
+    "retry_count": 3
+   },
+   "fix_rate": 0.38235294117647056,
+   "regressions": null
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.07
+   },
+   "fix_rate": 0.5588235294117647,
+   "regressions": 39
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.07,
+    "retry_count": 3
+   },
+   "fix_rate": 0.6470588235294118,
+   "regressions": 38
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.08
+   },
+   "fix_rate": 0.5882352941176471,
+   "regressions": 5
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.7352941176470589,
+   "regressions": 4
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.1
+   },
+   "fix_rate": 0.7058823529411765,
+   "regressions": 2
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "lift_height": 0.1,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 0
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6
+   },
+   "fix_rate": 0.7058823529411765,
+   "regressions": 3
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 1
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_height": 0.065
+   },
+   "fix_rate": 0.7058823529411765,
+   "regressions": 7
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_height": 0.065,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 0
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_height": 0.07
+   },
+   "fix_rate": 0.7058823529411765,
+   "regressions": 7
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_height": 0.07,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 1
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_height": 0.08
+   },
+   "fix_rate": 0.7058823529411765,
+   "regressions": 6
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 1
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_height": 0.1
+   },
+   "fix_rate": 0.7058823529411765,
+   "regressions": 8
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_height": 0.1,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 0
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60
+   },
+   "fix_rate": 0.7058823529411765,
+   "regressions": 8
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 3
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.065
+   },
+   "fix_rate": 0.7058823529411765,
+   "regressions": 4
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.065,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 1
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.07
+   },
+   "fix_rate": 0.7058823529411765,
+   "regressions": 5
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.07,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 1
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.08
+   },
+   "fix_rate": 0.7058823529411765,
+   "regressions": 7
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 0
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.1
+   },
+   "fix_rate": 0.7058823529411765,
+   "regressions": 7
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.1,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 0
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6
+   },
+   "fix_rate": 0.7058823529411765,
+   "regressions": 5
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 1
+  }
+ ],
+ "n_candidates": 179,
+ "targeted_n": 34,
+ "default_passing_n": 216,
+ "closest": [
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 3
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "lift_height": 0.1,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8235294117647058,
+   "regressions": 2
+  },
+  {
+   "changes": {
+    "grip_force": 40.0,
+    "grasp_hold_steps": 60,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8235294117647058,
+   "regressions": 1
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 1
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 30,
+    "lift_speed": 0.6,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 1
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_height": 0.07,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 1
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_height": 0.08,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 1
+  },
+  {
+   "changes": {
+    "grip_force": 80.0,
+    "grasp_hold_steps": 60,
+    "lift_speed": 0.6,
+    "lift_height": 0.065,
+    "retry_count": 3
+   },
+   "fix_rate": 0.8529411764705882,
+   "regressions": 1
+  }
+ ],
+ "selection_rule": "fix>=0.8, regressions>=10, fewest changed params, then fix, then regressions"
+}
