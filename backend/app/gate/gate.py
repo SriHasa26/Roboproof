@@ -20,6 +20,7 @@ pass held_out=True.
 from __future__ import annotations
 
 import math
+import time
 from dataclasses import dataclass, field
 
 from ..core import gate_config as cfg
@@ -88,6 +89,13 @@ class ProofGate:
     rehearsal: bool = False
     _prepared: dict = field(default_factory=dict)
     _runs: list = field(default_factory=list)  # (label, RunResult) of every run the verdict relies on
+    timings: dict = field(default_factory=dict)  # seconds per gate sub-stage
+
+    def _timed_run(self, label: str, *a, **kw) -> RunResult:
+        t0 = time.perf_counter()
+        rr = self.runner.run(*a, **kw)
+        self.timings[label] = round(time.perf_counter() - t0, 2)
+        return rr
 
     # ------------------------------------------------------------------ stage 1 (patch independent)
     def prepare(self, baseline_policy: Policy, scenarios: list[Scenario], baseline_run: RunResult, targeted_ids: list[str]) -> None:
@@ -105,7 +113,7 @@ class ProofGate:
         if not baseline_run.complete or not sample:
             g1 = _check("G1", "Determinism", NOT_RUN, details="baseline incomplete or empty sample")
         else:
-            rr = self.runner.run(baseline_policy, sample, shards=min(self.shards, len(sample)))
+            rr = self._timed_run('g1_fresh_process_rerun_s', baseline_policy, sample, shards=min(self.shards, len(sample)))
             self._runs.append(("g1_rerun", rr))
             if not rr.complete:
                 g1 = _check("G1", "Determinism", NOT_RUN, details="re-run incomplete", threshold={"sample": len(sample)})
@@ -121,7 +129,7 @@ class ProofGate:
         elif not baseline_run.complete:
             g2 = _check("G2", "Targeted failures reproduced", NOT_RUN, details="baseline incomplete")
         else:
-            rr = self.runner.run(baseline_policy, [by_id[i] for i in p["targeted"]], shards=min(self.shards, len(p["targeted"])))
+            rr = self._timed_run("g2_targeted_rerun_s", baseline_policy, [by_id[i] for i in p["targeted"]], shards=min(self.shards, len(p["targeted"])))
             self._runs.append(("g2_rerun", rr))
             if not rr.complete:
                 g2 = _check("G2", "Targeted failures reproduced", NOT_RUN, details="re-run incomplete")
@@ -140,7 +148,7 @@ class ProofGate:
         if not p:
             raise RuntimeError("call prepare() first")
         scenarios, base = p["scenarios"], p["base"]
-        run = self.runner.run(patched_policy, scenarios, shards=self.shards)
+        run = self._timed_run(f'dev_patched_analysis_run_{len([k for k in self.timings if k.startswith("dev_patched")]) + 1}_s', patched_policy, scenarios, shards=self.shards)
         self._runs = [r for r in self._runs if r[0] != "patched_analysis"] + [("patched_analysis", run)]
         passing_before = [i for i, r in base.items() if r.success]
         strict = {"regressions": None, "pass": None}
@@ -196,8 +204,8 @@ class ProofGate:
                 raise SeedBlockReusedError(f"verification set [{vset.start}, {vset.start + vset.count}) was already used for G5")
             vset.consumed = True
             held = vset.held_out
-            base_run = self.runner.run(p["policy"], vset.scenarios, shards=self.shards, held_out=held)
-            new_run = self.runner.run(patched_policy, vset.scenarios, shards=self.shards, held_out=held)
+            base_run = self._timed_run('g5_unpatched_run_s', p["policy"], vset.scenarios, shards=self.shards, held_out=held)
+            new_run = self._timed_run('g5_patched_run_s', patched_policy, vset.scenarios, shards=self.shards, held_out=held)
             self._runs += [("verify_unpatched", base_run), ("verify_patched", new_run)]
             if not (base_run.complete and new_run.complete):
                 g5 = _check("G5", "Held-out generalization", NOT_RUN, details="verification run incomplete")
@@ -237,4 +245,5 @@ class ProofGate:
                                "rehearsal": vset.rehearsal} if vset else {}),
             config={"heldout_target": cfg.GATE_HELDOUT_TARGET, "min_improvement": cfg.GATE_MIN_IMPROVEMENT, "target_fix_rate": cfg.GATE_TARGET_FIX_RATE,
                     "regression_budget_frac": cfg.GATE_REGRESSION_BUDGET_FRAC, "determinism_sample": cfg.GATE_DETERMINISM_SAMPLE,
-                    "heldout_size": cfg.GATE_HELDOUT_SIZE})
+                    "heldout_size": cfg.GATE_HELDOUT_SIZE},
+            timings_s=dict(self.timings))

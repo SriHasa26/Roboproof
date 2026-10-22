@@ -186,6 +186,7 @@ class GateReport(Strict):
     metrics: dict[str, dict[str, SetMetrics]] = Field(default_factory=dict)  # {"analysis": {"before":..,"after":..}, "verification": {...}}
     verification_set: dict[str, Any] = Field(default_factory=dict)
     config: dict[str, Any] = Field(default_factory=dict)
+    timings_s: dict[str, float] = Field(default_factory=dict)  # wall-clock of each gate sub-stage (G1/G2 re-runs, patched run, G5 runs)
 
 
 class Run(Strict):
