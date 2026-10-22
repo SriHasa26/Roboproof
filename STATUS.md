@@ -4,7 +4,7 @@
 |---|---|
 | 1. Official batch (K=5, per docs/OFFICIAL_PROTOCOL.md) | DONE: 4 of 5 VERIFIED, recorded in recorded_runs/official_001 |
 | 2. Export data for the static dashboard | DONE (frontend/public/data, 677 KiB) |
-| 3. Static dashboard (frontend/) | IN PROGRESS |
+| 3. Static dashboard (frontend/) | DONE (build passes; Overview, Run, Trap, Limits pages checked visually via headless Edge screenshots; Runs list page not screenshotted) |
 | 4. Submission pack (README, SUBMISSION.md, LIMITATIONS.md) | next |
 
 Notes

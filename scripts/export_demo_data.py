@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "backend"))
 
 from app.core.bounds import SCENARIO_BOUNDS  # noqa: E402
+from app.core.stats import wilson  # noqa: E402
 
 REC = ROOT / "recorded_runs"
 OUT = ROOT / "frontend" / "public" / "data"
@@ -126,7 +127,12 @@ def study(dirname: str, pv: str) -> dict:
     s = jl(REC / dirname / "summary.json")
     rows = [{k: r.get(k) for k in ("run_id", "master_seed", "verdict", "attempts", "analysis_before", "analysis_after", "verification_before", "verification_after",
                                    "estimated_cost_usd", "wall_clock_total_s", "final_checks", "error")} | {"generator": r.get("generator")} for r in s["runs"]]
-    return {"name": dirname, "pipeline_version": pv, "note": s.get("note"), "aggregate": s["aggregate"], "runs": rows}
+    agg = s["aggregate"]
+    if "verified_rate" not in agg:  # studies summarised by an older script version lack it: derive it from the stored verdict counts
+        n, k = agg["runs"], agg["verdict_counts"]["VERIFIED"]
+        lo, hi = wilson(k, n)
+        agg["verified_rate"] = {"verified": k, "of_runs": n, "rate": round(k / n, 4), "wilson95": [round(lo, 4), round(hi, 4)]}
+    return {"name": dirname, "pipeline_version": pv, "note": s.get("note"), "aggregate": agg, "runs": rows}
 
 
 def make_replays(run_dir: Path, run: dict, n_try: int = 25) -> dict | None:

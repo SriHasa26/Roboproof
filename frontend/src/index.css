@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; color: #d8dfd4; font-family: 'IBM Plex Sans', system-ui, sans-serif; background-color: #090b0a;
+  /* graph-paper grid + a soft vignette: the "lab report" paper */
+  background-image:
+    radial-gradient(1200px 600px at 12% -10%, rgba(242,177,52,0.07), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(91,227,154,0.05), transparent 60%),
+    linear-gradient(rgba(139,153,143,0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139,153,143,0.055) 1px, transparent 1px);
+  background-size: auto, auto, 28px 28px, 28px 28px;
+  background-attachment: fixed;
+}
+::selection { background: rgba(242,177,52,0.35); }
+a { color: inherit; }
+.tick { font-variant-numeric: tabular-nums; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes stamp { 0% { opacity: 0; transform: scale(1.7) rotate(-9deg); } 60% { opacity: 1; transform: scale(0.96) rotate(-4deg); } 100% { opacity: 1; transform: scale(1) rotate(-4deg); } }
+@keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.rise { animation: rise .6s cubic-bezier(.2,.7,.2,1) both; }
+.stamp-in { animation: stamp .55s cubic-bezier(.2,.8,.2,1) .15s both; }
+.grow { transform-origin: left center; animation: grow .9s cubic-bezier(.2,.7,.2,1) .2s both; }
+@media (prefers-reduced-motion: reduce) { .rise, .stamp-in, .grow { animation: none; } html { scroll-behavior: auto; } }
+
+.panel { background: linear-gradient(180deg, rgba(20,26,23,.92), rgba(15,19,17,.92)); border: 1px solid #1f2924; }
+.hair { border-color: #1f2924; }
+details > summary { cursor: pointer; list-style: none; }
+details > summary::-webkit-details-marker { display: none; }

@@ -58,6 +58,15 @@
       0.5199
      ]
     }
+   },
+   "verified_rate": {
+    "verified": 1,
+    "of_runs": 5,
+    "rate": 0.2,
+    "wilson95": [
+     0.0362,
+     0.6245
+    ]
    }
   },
   "runs": [
