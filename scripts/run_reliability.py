@@ -188,12 +188,13 @@ def main():
     ledger = SeedLedger(db)
     pricing = fetch_pricing(settings, {settings.model_fast, settings.model_reasoning, settings.model_fallback} - {None})
     print("pricing from API:", pricing)
+    print("MODE: REHEARSAL (rehearsal seed block, held-out seeds are never touched; NOT an official result; LocalRunner, not Nebius)")
     rows, n429, stop = [], 0, None
     for i, seed in enumerate(a.seeds, 1):
         rid = f"run_{i:02d}_seed{seed}"
         res = run_pipeline(settings, LocalRunner(), db, ledger, PipelineConfig(rid, out, seed, n=a.n, rehearsal=True), env=dict(os.environ), pricing=pricing)
         rows.append(row(res))
-        print(f"{rid}: verdict={res.get('verdict')} attempts={res.get('n_attempts')} gen={(res.get('generator') or {}).get('source')} error={res.get('error')} "
+        print(f"[REHEARSAL] {rid}: verdict={res.get('verdict')} attempts={res.get('n_attempts')} gen={(res.get('generator') or {}).get('source')} error={res.get('error')} "
               f"cost={res.get('estimated_cost_usd')} wall={res.get('wall_clock_total_s')}s", flush=True)
         if is_infra(res.get("error")) and not res.get("g5_executed"):  # infrastructure failure: one re-run allowed, the original stays in the study
             rid2 = rid + "_infra_retry1"

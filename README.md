@@ -86,13 +86,13 @@ scripts/dock.sh test            # test suite inside the image
 
 ## Run the pipeline
 
-A live run on rehearsal seeds (not held-out, so it can be repeated; it does spend Token Factory credits, roughly $0.03 estimated). Set `LLM_DEV_CACHE=0` in `.env`.
+A live run on rehearsal seeds (not held-out, so it can be repeated; it does spend Token Factory credits, about $0.03 estimated). Set `LLM_DEV_CACHE=0` in `.env`.
 
 ```bash
-scripts/dock.sh python scripts/run_rehearsal.py --name my_run --master-seed 11
+scripts/dock.sh python scripts/run_reliability.py --seeds 701 --out recorded_runs/my_run
 ```
 
-Artifacts land in `recorded_runs/my_run/`, including `gate_report.json`. Official runs (`scripts/run_official.py`) refuse to start unless the tree is clean and the frozen pipeline hash matches tag `pipeline-frozen-v2`; they spend single-use held-out seeds and are not meant to be re-run.
+It prints `MODE: REHEARSAL` and takes about 3.5 minutes (one measured run: 3m45s, $0.031 estimated). Artifacts land in `recorded_runs/my_run/run_01_seed701/` (including `gate_report.json`) with a `summary.md`. Official runs (`scripts/run_official.py`) refuse to start unless the tree is clean and the frozen pipeline hash matches tag `pipeline-frozen-v2`; they spend single-use held-out seeds and are not meant to be re-run.
 
 ## Dashboard (static, no backend)
 

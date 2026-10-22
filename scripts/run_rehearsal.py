@@ -89,6 +89,7 @@ def gate_summary(label, rep):
 
 
 def main():
+    sys.exit("DEPRECATED: this is the pipeline-v1 rehearsal script and no longer matches the v2 fixer API. Use: scripts/dock.sh python scripts/run_reliability.py --seeds 701 --out recorded_runs/<name>")
     ap = argparse.ArgumentParser()
     ap.add_argument("--name", default="rehearsal_001")
     ap.add_argument("--n", type=int, default=250)
