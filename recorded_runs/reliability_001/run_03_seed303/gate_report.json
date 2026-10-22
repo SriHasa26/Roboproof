@@ -1,0 +1,346 @@
+{
+ "label": "REHEARSAL, NOT AN OFFICIAL RESULT. Verification used the rehearsal seed block; held-out seeds were not run.",
+ "attempts": [
+  {
+   "attempt": 1,
+   "model_proposal": {
+    "changes": {
+     "grip_force": 25.0,
+     "retry_count": 1.0,
+     "lift_speed": 0.2
+    },
+    "rationale": "Increase grip_force to address H1 (insufficient normal force for heavy cubes at low friction). Add one retry_count to address H2 and H4 (perception errors on small cubes with high sensor noise or long gripper delay). Decrease lift_speed to address H3 (inertial load during lift causing SLIPPED_ON_LIFT for heavy cubes). These are minimal changes targeting each failure mechanism without altering unrelated parameters.",
+    "expected_effect": "Reduced MISSED_GRASP in low-friction high-mass region (H1), reduced MISSED_GRASP in small-cube high-noise and high-delay regions (H2, H4), and reduced SLIPPED_ON_LIFT for heavy cubes (H3). Overall pass rate should improve while preserving currently passing scenarios."
+   },
+   "clamped": {
+    "grip_force": false,
+    "retry_count": false,
+    "lift_speed": false
+   },
+   "patched_policy": {
+    "grip_force": 25.0,
+    "approach_speed": 0.3,
+    "lift_height": 0.15,
+    "lift_speed": 0.2,
+    "grasp_hold_steps": 10,
+    "place_slow_factor": 1.0,
+    "retry_count": 1
+   },
+   "dev_checks": {
+    "G1": {
+     "id": "G1",
+     "name": "Determinism",
+     "status": "pass",
+     "observed": {
+      "sample": 30,
+      "mismatches": 0
+     },
+     "threshold": {
+      "mismatches": 0
+     },
+     "details": "all outcomes identical"
+    },
+    "G2": {
+     "id": "G2",
+     "name": "Targeted failures reproduced",
+     "status": "pass",
+     "observed": {
+      "targeted": 78,
+      "not_reproduced": 0
+     },
+     "threshold": {
+      "not_reproduced": 0
+     },
+     "details": "all reproduced"
+    },
+    "G3": {
+     "id": "G3",
+     "name": "Targeted failures fixed",
+     "status": "fail",
+     "observed": {
+      "fixed": 43,
+      "targeted": 78,
+      "fix_rate": 0.5513
+     },
+     "threshold": {
+      "min_fix_rate": 0.7
+     },
+     "details": ""
+    },
+    "G4": {
+     "id": "G4",
+     "name": "No regressions",
+     "status": "pass",
+     "observed": {
+      "regressions": 0,
+      "previously_passing": 154,
+      "strict_zero_budget_pass": true
+     },
+     "threshold": {
+      "budget": 3,
+      "budget_frac": 0.02
+     },
+     "details": "none"
+    }
+   },
+   "regressed_scenario_ids": [],
+   "dev_stage_passed": false
+  },
+  {
+   "attempt": 2,
+   "model_proposal": {
+    "changes": {
+     "grip_force": 40.0,
+     "retry_count": 2.0,
+     "lift_speed": 0.15
+    },
+    "rationale": "The previous attempt (grip_force=25, retry_count=1, lift_speed=0.2) improved pass rate to 0.804 but the fix rate (0.551) remains below the 0.7 threshold. Further increasing grip_force better addresses H1 (low-friction heavy cubes), raising retry_count to 2 strengthens recovery for H2/H4 (small cubes with noise/delay), and lowering lift_speed to 0.15 further reduces inertial slip for H3 (heavy cubes). All changes stay within bounds and prior regressions were zero.",
+    "expected_effect": "Additional reduction in MISSED_GRASP and SLIPPED_ON_LIFT failures, pushing the fix rate above 0.7 while maintaining zero regressions on passing scenarios."
+   },
+   "clamped": {
+    "grip_force": false,
+    "retry_count": false,
+    "lift_speed": false
+   },
+   "patched_policy": {
+    "grip_force": 40.0,
+    "approach_speed": 0.3,
+    "lift_height": 0.15,
+    "lift_speed": 0.15,
+    "grasp_hold_steps": 10,
+    "place_slow_factor": 1.0,
+    "retry_count": 2
+   },
+   "dev_checks": {
+    "G1": {
+     "id": "G1",
+     "name": "Determinism",
+     "status": "pass",
+     "observed": {
+      "sample": 30,
+      "mismatches": 0
+     },
+     "threshold": {
+      "mismatches": 0
+     },
+     "details": "all outcomes identical"
+    },
+    "G2": {
+     "id": "G2",
+     "name": "Targeted failures reproduced",
+     "status": "pass",
+     "observed": {
+      "targeted": 78,
+      "not_reproduced": 0
+     },
+     "threshold": {
+      "not_reproduced": 0
+     },
+     "details": "all reproduced"
+    },
+    "G3": {
+     "id": "G3",
+     "name": "Targeted failures fixed",
+     "status": "pass",
+     "observed": {
+      "fixed": 68,
+      "targeted": 78,
+      "fix_rate": 0.8718
+     },
+     "threshold": {
+      "min_fix_rate": 0.7
+     },
+     "details": ""
+    },
+    "G4": {
+     "id": "G4",
+     "name": "No regressions",
+     "status": "pass",
+     "observed": {
+      "regressions": 0,
+      "previously_passing": 154,
+      "strict_zero_budget_pass": true
+     },
+     "threshold": {
+      "budget": 3,
+      "budget_frac": 0.02
+     },
+     "details": "none"
+    }
+   },
+   "regressed_scenario_ids": [],
+   "dev_stage_passed": true
+  }
+ ],
+ "report": {
+  "verdict": "VERIFIED",
+  "rehearsal": true,
+  "checks": [
+   {
+    "id": "G1",
+    "name": "Determinism",
+    "status": "pass",
+    "observed": {
+     "sample": 30,
+     "mismatches": 0
+    },
+    "threshold": {
+     "mismatches": 0
+    },
+    "details": "all outcomes identical"
+   },
+   {
+    "id": "G2",
+    "name": "Targeted failures reproduced",
+    "status": "pass",
+    "observed": {
+     "targeted": 78,
+     "not_reproduced": 0
+    },
+    "threshold": {
+     "not_reproduced": 0
+    },
+    "details": "all reproduced"
+   },
+   {
+    "id": "G3",
+    "name": "Targeted failures fixed",
+    "status": "pass",
+    "observed": {
+     "fixed": 68,
+     "targeted": 78,
+     "fix_rate": 0.8718
+    },
+    "threshold": {
+     "min_fix_rate": 0.7
+    },
+    "details": ""
+   },
+   {
+    "id": "G4",
+    "name": "No regressions",
+    "status": "pass",
+    "observed": {
+     "regressions": 0,
+     "previously_passing": 154,
+     "strict_zero_budget_pass": true
+    },
+    "threshold": {
+     "budget": 3,
+     "budget_frac": 0.02
+    },
+    "details": "none"
+   },
+   {
+    "id": "G5",
+    "name": "Held-out generalization",
+    "status": "pass",
+    "observed": {
+     "patched_pass_rate": 0.95,
+     "patched_wilson95_lower": 0.924,
+     "unpatched_pass_rate": 0.7075,
+     "improvement": 0.2425,
+     "n": 400,
+     "conditions": {
+      "target": true,
+      "improvement": true,
+      "wilson_lower_above_baseline": true
+     }
+    },
+    "threshold": {
+     "min_pass_rate": 0.9,
+     "min_improvement": 0.1,
+     "wilson_lower_must_exceed_unpatched_pass_rate": true
+    },
+    "details": "all conditions met"
+   },
+   {
+    "id": "G6",
+    "name": "Complete execution",
+    "status": "pass",
+    "observed": {
+     "runs": 6,
+     "incomplete_runs": [],
+     "failed_shards": 0,
+     "missing_scenarios": 0
+    },
+    "threshold": {},
+    "details": "all shards finished"
+   }
+  ],
+  "regressed_scenario_ids": [],
+  "strict_zero_budget": {
+   "regressions": 0,
+   "pass": true
+  },
+  "metrics": {
+   "analysis": {
+    "before": {
+     "n": 250,
+     "pass_rate": 0.616,
+     "pass_rate_ci95": [
+      0.5544,
+      0.6741
+     ],
+     "collision_rate": 0.008,
+     "mean_completion_time_s": 3.646
+    },
+    "after": {
+     "n": 250,
+     "pass_rate": 0.932,
+     "pass_rate_ci95": [
+      0.8938,
+      0.9571
+     ],
+     "collision_rate": 0.028,
+     "mean_completion_time_s": 4.301
+    }
+   },
+   "verification": {
+    "before": {
+     "n": 400,
+     "pass_rate": 0.7075,
+     "pass_rate_ci95": [
+      0.6611,
+      0.7499
+     ],
+     "collision_rate": 0.0025,
+     "mean_completion_time_s": 3.637
+    },
+    "after": {
+     "n": 400,
+     "pass_rate": 0.95,
+     "pass_rate_ci95": [
+      0.924,
+      0.9674
+     ],
+     "collision_rate": 0.0075,
+     "mean_completion_time_s": 4.297
+    }
+   }
+  },
+  "verification_set": {
+   "block": "rehearsal",
+   "start": 802000,
+   "count": 400,
+   "sampler": "latin_hypercube",
+   "rehearsal": true
+  },
+  "config": {
+   "heldout_target": 0.9,
+   "min_improvement": 0.1,
+   "target_fix_rate": 0.7,
+   "regression_budget_frac": 0.02,
+   "determinism_sample": 30,
+   "heldout_size": 400
+  },
+  "timings_s": {
+   "g1_fresh_process_rerun_s": 1.02,
+   "g2_targeted_rerun_s": 1.05,
+   "dev_patched_analysis_run_1_s": 15.12,
+   "dev_patched_analysis_run_2_s": 20.75,
+   "g5_unpatched_run_s": 22.66,
+   "g5_patched_run_s": 35.61
+  }
+ }
+}

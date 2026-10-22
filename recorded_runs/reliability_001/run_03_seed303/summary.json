@@ -1,0 +1,379 @@
+{
+ "run_id": "run_03_seed303",
+ "label": "REHEARSAL, NOT AN OFFICIAL RESULT. Verification used the rehearsal seed block; held-out seeds were not run.",
+ "official": false,
+ "rehearsal": true,
+ "master_seed": 303,
+ "provenance": {
+  "commit": "ca951df0b4453e7ddf05794aa5b0c05a488f1962",
+  "working_tree_clean": false,
+  "pipeline_hash": "e783a88f68025ef01ff455e114ec7c6cfd2a1a803ed5468ee85f07d822d0861d",
+  "image_build_id": "sha256:75d76a1c492894f195aec0990a29a5f8f886c13cac90f8fa23f8d07fa6bcedab",
+  "model_fast": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+  "model_reasoning": "nvidia/Nemotron-3-Ultra-550b-a55b",
+  "runner_name": "local",
+  "official": false,
+  "python": "3.11.17"
+ },
+ "verdict": "VERIFIED",
+ "error": null,
+ "attempts": [
+  {
+   "attempt": 1,
+   "model_proposal": {
+    "changes": {
+     "grip_force": 25.0,
+     "retry_count": 1.0,
+     "lift_speed": 0.2
+    },
+    "rationale": "Increase grip_force to address H1 (insufficient normal force for heavy cubes at low friction). Add one retry_count to address H2 and H4 (perception errors on small cubes with high sensor noise or long gripper delay). Decrease lift_speed to address H3 (inertial load during lift causing SLIPPED_ON_LIFT for heavy cubes). These are minimal changes targeting each failure mechanism without altering unrelated parameters.",
+    "expected_effect": "Reduced MISSED_GRASP in low-friction high-mass region (H1), reduced MISSED_GRASP in small-cube high-noise and high-delay regions (H2, H4), and reduced SLIPPED_ON_LIFT for heavy cubes (H3). Overall pass rate should improve while preserving currently passing scenarios."
+   },
+   "clamped": {
+    "grip_force": false,
+    "retry_count": false,
+    "lift_speed": false
+   },
+   "patched_policy": {
+    "grip_force": 25.0,
+    "approach_speed": 0.3,
+    "lift_height": 0.15,
+    "lift_speed": 0.2,
+    "grasp_hold_steps": 10,
+    "place_slow_factor": 1.0,
+    "retry_count": 1
+   },
+   "dev_checks": {
+    "G1": {
+     "id": "G1",
+     "name": "Determinism",
+     "status": "pass",
+     "observed": {
+      "sample": 30,
+      "mismatches": 0
+     },
+     "threshold": {
+      "mismatches": 0
+     },
+     "details": "all outcomes identical"
+    },
+    "G2": {
+     "id": "G2",
+     "name": "Targeted failures reproduced",
+     "status": "pass",
+     "observed": {
+      "targeted": 78,
+      "not_reproduced": 0
+     },
+     "threshold": {
+      "not_reproduced": 0
+     },
+     "details": "all reproduced"
+    },
+    "G3": {
+     "id": "G3",
+     "name": "Targeted failures fixed",
+     "status": "fail",
+     "observed": {
+      "fixed": 43,
+      "targeted": 78,
+      "fix_rate": 0.5513
+     },
+     "threshold": {
+      "min_fix_rate": 0.7
+     },
+     "details": ""
+    },
+    "G4": {
+     "id": "G4",
+     "name": "No regressions",
+     "status": "pass",
+     "observed": {
+      "regressions": 0,
+      "previously_passing": 154,
+      "strict_zero_budget_pass": true
+     },
+     "threshold": {
+      "budget": 3,
+      "budget_frac": 0.02
+     },
+     "details": "none"
+    }
+   },
+   "regressed_scenario_ids": [],
+   "dev_stage_passed": false
+  },
+  {
+   "attempt": 2,
+   "model_proposal": {
+    "changes": {
+     "grip_force": 40.0,
+     "retry_count": 2.0,
+     "lift_speed": 0.15
+    },
+    "rationale": "The previous attempt (grip_force=25, retry_count=1, lift_speed=0.2) improved pass rate to 0.804 but the fix rate (0.551) remains below the 0.7 threshold. Further increasing grip_force better addresses H1 (low-friction heavy cubes), raising retry_count to 2 strengthens recovery for H2/H4 (small cubes with noise/delay), and lowering lift_speed to 0.15 further reduces inertial slip for H3 (heavy cubes). All changes stay within bounds and prior regressions were zero.",
+    "expected_effect": "Additional reduction in MISSED_GRASP and SLIPPED_ON_LIFT failures, pushing the fix rate above 0.7 while maintaining zero regressions on passing scenarios."
+   },
+   "clamped": {
+    "grip_force": false,
+    "retry_count": false,
+    "lift_speed": false
+   },
+   "patched_policy": {
+    "grip_force": 40.0,
+    "approach_speed": 0.3,
+    "lift_height": 0.15,
+    "lift_speed": 0.15,
+    "grasp_hold_steps": 10,
+    "place_slow_factor": 1.0,
+    "retry_count": 2
+   },
+   "dev_checks": {
+    "G1": {
+     "id": "G1",
+     "name": "Determinism",
+     "status": "pass",
+     "observed": {
+      "sample": 30,
+      "mismatches": 0
+     },
+     "threshold": {
+      "mismatches": 0
+     },
+     "details": "all outcomes identical"
+    },
+    "G2": {
+     "id": "G2",
+     "name": "Targeted failures reproduced",
+     "status": "pass",
+     "observed": {
+      "targeted": 78,
+      "not_reproduced": 0
+     },
+     "threshold": {
+      "not_reproduced": 0
+     },
+     "details": "all reproduced"
+    },
+    "G3": {
+     "id": "G3",
+     "name": "Targeted failures fixed",
+     "status": "pass",
+     "observed": {
+      "fixed": 68,
+      "targeted": 78,
+      "fix_rate": 0.8718
+     },
+     "threshold": {
+      "min_fix_rate": 0.7
+     },
+     "details": ""
+    },
+    "G4": {
+     "id": "G4",
+     "name": "No regressions",
+     "status": "pass",
+     "observed": {
+      "regressions": 0,
+      "previously_passing": 154,
+      "strict_zero_budget_pass": true
+     },
+     "threshold": {
+      "budget": 3,
+      "budget_frac": 0.02
+     },
+     "details": "none"
+    }
+   },
+   "regressed_scenario_ids": [],
+   "dev_stage_passed": true
+  }
+ ],
+ "n_attempts": 2,
+ "generator_value": {
+  "cov": {
+   "n": 150,
+   "n_fail": 38,
+   "fail_rate": 0.2533,
+   "wilson95": [
+    0.1905,
+    0.3285
+   ]
+  },
+  "tgt": {
+   "n": 100,
+   "n_fail": 58,
+   "fail_rate": 0.58,
+   "wilson95": [
+    0.4821,
+    0.672
+   ]
+  },
+  "per_region_fail": {
+   "LowFrictionWetSurface": "18/25",
+   "HeavyCube": "14/25",
+   "LargeDelayBlindSpot": "17/25",
+   "LargePosOffset": "9/25"
+  }
+ },
+ "n_hypotheses": 4,
+ "n_targeted": 78,
+ "checks": {
+  "G1": "pass",
+  "G2": "pass",
+  "G3": "pass",
+  "G4": "pass",
+  "G5": "pass",
+  "G6": "pass"
+ },
+ "strict_zero_budget": {
+  "regressions": 0,
+  "pass": true
+ },
+ "metrics": {
+  "analysis": {
+   "before": {
+    "n": 250,
+    "pass_rate": 0.616,
+    "pass_rate_ci95": [
+     0.5544,
+     0.6741
+    ],
+    "collision_rate": 0.008,
+    "mean_completion_time_s": 3.646
+   },
+   "after": {
+    "n": 250,
+    "pass_rate": 0.932,
+    "pass_rate_ci95": [
+     0.8938,
+     0.9571
+    ],
+    "collision_rate": 0.028,
+    "mean_completion_time_s": 4.301
+   }
+  },
+  "verification": {
+   "before": {
+    "n": 400,
+    "pass_rate": 0.7075,
+    "pass_rate_ci95": [
+     0.6611,
+     0.7499
+    ],
+    "collision_rate": 0.0025,
+    "mean_completion_time_s": 3.637
+   },
+   "after": {
+    "n": 400,
+    "pass_rate": 0.95,
+    "pass_rate_ci95": [
+     0.924,
+     0.9674
+    ],
+    "collision_rate": 0.0075,
+    "mean_completion_time_s": 4.297
+   }
+  }
+ },
+ "gate_timings_s": {
+  "g1_fresh_process_rerun_s": 1.02,
+  "g2_targeted_rerun_s": 1.05,
+  "dev_patched_analysis_run_1_s": 15.12,
+  "dev_patched_analysis_run_2_s": 20.75,
+  "g5_unpatched_run_s": 22.66,
+  "g5_patched_run_s": 35.61
+ },
+ "verification_set": {
+  "block": "rehearsal",
+  "start": 802000,
+  "count": 400,
+  "sampler": "latin_hypercube",
+  "rehearsal": true
+ },
+ "timings_s": {
+  "generate_scenarios_llm": 3.51,
+  "baseline_run": 13.77,
+  "evidence": 0.01,
+  "analyst_llm": 10.63,
+  "gate_prepare_g1_g2": 2.07,
+  "fixer_llm_attempt1": 3.79,
+  "dev_stage_attempt1": 15.12,
+  "fixer_llm_attempt2": 5.41,
+  "dev_stage_attempt2": 20.75,
+  "verification_g5": 58.32
+ },
+ "wall_clock_total_s": 133.47,
+ "llm_usage": {
+  "calls_total": 4,
+  "calls_real": 4,
+  "calls_cached": 0,
+  "prompt_tokens": 10139,
+  "completion_tokens": 6820,
+  "max_calls": 12,
+  "any_cached": false
+ },
+ "llm_calls": [
+  {
+   "purpose": "scenario_generation",
+   "model_kind": "fast",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "attempt": 1,
+   "latency_s": 3.4824522079998133,
+   "prompt_tokens": 965,
+   "completion_tokens": 293,
+   "ok": true,
+   "error": null,
+   "cached": false
+  },
+  {
+   "purpose": "analyst",
+   "model_kind": "reasoning",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "latency_s": 10.592396879999797,
+   "prompt_tokens": 6441,
+   "completion_tokens": 3634,
+   "ok": true,
+   "error": null,
+   "cached": false
+  },
+  {
+   "purpose": "fixer",
+   "model_kind": "reasoning",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "latency_s": 3.756840367001132,
+   "prompt_tokens": 1307,
+   "completion_tokens": 1217,
+   "ok": true,
+   "error": null,
+   "cached": false
+  },
+  {
+   "purpose": "fixer",
+   "model_kind": "reasoning",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "latency_s": 5.382435348999934,
+   "prompt_tokens": 1426,
+   "completion_tokens": 1676,
+   "ok": true,
+   "error": null,
+   "cached": false
+  }
+ ],
+ "pricing_per_token_from_api": {
+  "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B": {
+   "prompt": 6e-08,
+   "completion": 2.4e-07
+  },
+  "nvidia/Nemotron-3-Ultra-550b-a55b": {
+   "prompt": 1e-06,
+   "completion": 3e-06
+  }
+ },
+ "estimated_cost_usd": 0.028883,
+ "llm_seconds": 23.21,
+ "cost_note": "ESTIMATE = tokens x per-token prices from GET /models?verbose=true; hidden reasoning tokens are included in completion tokens; actual billing UNCONFIRMED"
+}

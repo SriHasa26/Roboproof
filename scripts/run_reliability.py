@@ -43,7 +43,7 @@ def row(res: dict) -> dict:
     failed_by_attempt = [[cid for cid, ch in at["dev_checks"].items() if ch["status"] == "fail"] for at in res.get("attempts", [])]
     return {
         "run_id": res["run_id"], "master_seed": res["master_seed"], "verdict": res.get("verdict"), "error": res.get("error"),
-        "attempts": res.get("n_attempts"), "failed_checks_per_attempt": failed_by_attempt,
+        "attempts": res.get("n_attempts"), "failed_checks_per_attempt": failed_by_attempt, "final_checks": res.get("checks"),
         "analysis_before": a.get("before"), "analysis_after": a.get("after"), "verification_before": v.get("before"), "verification_after": v.get("after"),
         "prompt_tokens": u.get("prompt_tokens"), "completion_tokens": u.get("completion_tokens"), "llm_calls": u.get("calls_real"),
         "llm_seconds": res.get("llm_seconds"), "wall_clock_total_s": res.get("wall_clock_total_s"), "timings_s": res.get("timings_s"),
@@ -51,6 +51,11 @@ def row(res: dict) -> dict:
         "generator_value": res.get("generator_value"), "n_hypotheses": res.get("n_hypotheses"), "n_targeted": res.get("n_targeted"),
         "final_patch": res["attempts"][-1]["model_proposal"]["changes"] if res.get("attempts") else None,
     }
+
+
+def fc(r) -> str:
+    c = r.get('final_checks')
+    return ' '.join(f"{k}={v.replace('skipped_after_failure', 'skipped')}" for k, v in c.items()) if c else 'n/a'
 
 
 def fmt_rate(m) -> str:
@@ -85,10 +90,10 @@ def summarize(rows: list[dict], out: Path, note: str) -> None:
 
     L = ["# reliability_001: REHEARSAL STUDY, NOT AN OFFICIAL RESULT", "", note, "",
          f"Runs: {len(rows)}. Verdicts: {verdicts}. Attempts needed (runs with a verdict): {att}.", "",
-         "| Run | Seed | Verdict | Attempts | Failed checks per attempt | Analysis pass before -> after | Verification pass before -> after | Tokens (p/c) | Wall s (LLM s) | Est. cost |",
-         "|---|---|---|---|---|---|---|---|---|---|"]
+         "| Run | Seed | Verdict | Attempts | Dev-stage checks failed, per attempt | Final G1-G6 | Analysis pass before -> after | Verification pass before -> after | Tokens (p/c) | Wall s (LLM s) | Est. cost |",
+         "|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in rows:
-        L.append(f"| {r['run_id']} | {r['master_seed']} | {r['verdict'] or 'ERROR: ' + str(r['error'])[:80]} | {r['attempts']} | {r['failed_checks_per_attempt']} | "
+        L.append(f"| {r['run_id']} | {r['master_seed']} | {r['verdict'] or 'ERROR: ' + str(r['error'])[:80]} | {r['attempts']} | {r['failed_checks_per_attempt']} | {fc(r)} | "
                  f"{fmt_rate(r['analysis_before'])} -> {fmt_rate(r['analysis_after'])} | {fmt_rate(r['verification_before'])} -> {fmt_rate(r['verification_after'])} | "
                  f"{r['prompt_tokens']}/{r['completion_tokens']} | {r['wall_clock_total_s']} ({r['llm_seconds']}) | {r['estimated_cost_usd']} |")
     L += ["", "Pass rates are shown with Wilson 95% intervals. Cost is an ESTIMATE (tokens x the per-token prices the API reports); actual billing UNCONFIRMED.", "",
@@ -107,7 +112,16 @@ def main():
     ap.add_argument("--seeds", type=int, nargs="+", default=[101, 202, 303, 404, 505])
     ap.add_argument("--out", default=str(ROOT / "recorded_runs" / "reliability_001"))
     ap.add_argument("--n", type=int, default=250)
+    ap.add_argument("--resummarize", action="store_true", help="rebuild summary.md/json from the saved run_*/summary.json files; runs nothing")
     a = ap.parse_args()
+    if a.resummarize:
+        out = Path(a.out)
+        rows = [row(json.loads(f.read_text(encoding="utf-8"))) for f in sorted(out.glob("run_*/summary.json"))]
+        summarize(rows, out, "Rebuilt from the saved run files (nothing re-run). Master seeds fixed in advance (101 202 303 404 505); no run was re-rolled for its verdict. "
+                  "Runs with no verdict failed in the scenario generator (validation failed after its single retry): that is not an infrastructure error, so they were not re-run. "
+                  "LocalRunner (labelled fallback, not Nebius). Rehearsal seed blocks only; held-out seeds were never run.")
+        print("rebuilt", out)
+        return
     settings = load_settings(dotenv_path=ROOT / ".env")
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)

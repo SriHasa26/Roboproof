@@ -1,0 +1,74 @@
+{
+ "run_id": "run_05_seed505",
+ "label": "REHEARSAL, NOT AN OFFICIAL RESULT. Verification used the rehearsal seed block; held-out seeds were not run.",
+ "official": false,
+ "rehearsal": true,
+ "master_seed": 505,
+ "provenance": {
+  "commit": "ca951df0b4453e7ddf05794aa5b0c05a488f1962",
+  "working_tree_clean": false,
+  "pipeline_hash": "e783a88f68025ef01ff455e114ec7c6cfd2a1a803ed5468ee85f07d822d0861d",
+  "image_build_id": "sha256:75d76a1c492894f195aec0990a29a5f8f886c13cac90f8fa23f8d07fa6bcedab",
+  "model_fast": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+  "model_reasoning": "nvidia/Nemotron-3-Ultra-550b-a55b",
+  "runner_name": "local",
+  "official": false,
+  "python": "3.11.17"
+ },
+ "verdict": null,
+ "error": "LLMValidationError: scenario_generation: output failed validation after retry: 1 validation error for ScenarioProposal\nregions.0\n  Value error, region 'LowMassHighFriction' covers only 1.34% of the parameter space; at least 2% is required, widen it [type=value_error, input_value={'name': 'LowMassHighFric...1]}, 'unverified': True}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error",
+ "attempts": [],
+ "n_attempts": 0,
+ "timings_s": {
+  "generate_scenarios_llm": 10.06
+ },
+ "wall_clock_total_s": 10.06,
+ "llm_usage": {
+  "calls_total": 2,
+  "calls_real": 2,
+  "calls_cached": 0,
+  "prompt_tokens": 2366,
+  "completion_tokens": 628,
+  "max_calls": 12,
+  "any_cached": false
+ },
+ "llm_calls": [
+  {
+   "purpose": "scenario_generation",
+   "model_kind": "fast",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "attempt": 1,
+   "latency_s": 5.252920962000644,
+   "prompt_tokens": 965,
+   "completion_tokens": 313,
+   "ok": false,
+   "error": "validation: 1 validation error for ScenarioProposal\nregions.0\n  Value error, region 'LowMassHighFriction' covers only 0.48% of the parameter space; at least 2% is required, widen it [type=value_error, input_value",
+   "cached": false
+  },
+  {
+   "purpose": "scenario_generation",
+   "model_kind": "fast",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "attempt": 2,
+   "latency_s": 4.755493974000274,
+   "prompt_tokens": 1401,
+   "completion_tokens": 315,
+   "ok": false,
+   "error": "validation: 1 validation error for ScenarioProposal\nregions.0\n  Value error, region 'LowMassHighFriction' covers only 1.34% of the parameter space; at least 2% is required, widen it [type=value_error, input_value",
+   "cached": false
+  }
+ ],
+ "pricing_per_token_from_api": {
+  "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B": {
+   "prompt": 6e-08,
+   "completion": 2.4e-07
+  },
+  "nvidia/Nemotron-3-Ultra-550b-a55b": {
+   "prompt": 1e-06,
+   "completion": 3e-06
+  }
+ },
+ "estimated_cost_usd": 0.000293,
+ "llm_seconds": 10.01,
+ "cost_note": "ESTIMATE = tokens x per-token prices from GET /models?verbose=true; hidden reasoning tokens are included in completion tokens; actual billing UNCONFIRMED"
+}

@@ -1,0 +1,107 @@
+[
+ {
+  "id": "H1",
+  "statement": "Insufficient grip force for heavy cubes with low friction causes MISSED_GRASP because the friction force cannot overcome the cube's weight during lift.",
+  "region": {
+   "mass_kg": [
+    0.69,
+    1.0
+   ],
+   "friction": [
+    0.1,
+    0.23
+   ]
+  },
+  "mechanism": "The maximum friction force (grip_force * friction) is less than the gravitational force (mass_kg * 9.81), so the cube never leaves the table or slips immediately.",
+  "levers": [
+   {
+    "param": "grip_force",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grip_force will eliminate MISSED_GRASP failures in the high-mass, low-friction region.",
+  "evidence_refs": [
+   "E46",
+   "E39",
+   "E2"
+  ]
+ },
+ {
+  "id": "H2",
+  "statement": "Small cube size combined with low friction reduces contact area and friction force, leading to MISSED_GRASP.",
+  "region": {
+   "size_m": [
+    0.03,
+    0.047
+   ],
+   "friction": [
+    0.1,
+    0.47
+   ]
+  },
+  "mechanism": "Small cubes have smaller contact patches, requiring higher normal force to generate sufficient friction; current grip_force is too low for the low-friction, small-size combination.",
+  "levers": [
+   {
+    "param": "grip_force",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grip_force will reduce MISSED_GRASP failures in the small-size, low-friction region.",
+  "evidence_refs": [
+   "E38",
+   "E13",
+   "E8"
+  ]
+ },
+ {
+  "id": "H3",
+  "statement": "High sensor noise causes misperception of cube pose, leading to MISSED_GRASP and PLACED_OUTSIDE_ZONE, exacerbated by zero retries.",
+  "region": {
+   "sensor_noise_m": [
+    0.024,
+    0.03
+   ]
+  },
+  "mechanism": "Noisy perception causes the gripper to miss the cube or misplace it; with retry_count=0, there is no opportunity to re-perceive and correct.",
+  "levers": [
+   {
+    "param": "retry_count",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Setting retry_count > 0 will reduce failures in high sensor noise regions.",
+  "evidence_refs": [
+   "E32",
+   "E41",
+   "E43",
+   "E45"
+  ]
+ },
+ {
+  "id": "H4",
+  "statement": "High gripper delay combined with small cube size causes MISSED_GRASP because the fingers have insufficient time to conform before lift.",
+  "region": {
+   "size_m": [
+    0.03,
+    0.047
+   ],
+   "gripper_delay_steps": [
+    13.0,
+    20.0
+   ]
+  },
+  "mechanism": "The gripper_delay_steps postpones the close command; with small cubes, the fingers need more time to close fully. The current grasp_hold_steps (10) may be too short after the delayed close command.",
+  "levers": [
+   {
+    "param": "grasp_hold_steps",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grasp_hold_steps will reduce MISSED_GRASP failures in the high-delay, small-size region.",
+  "evidence_refs": [
+   "E40",
+   "E37",
+   "E38"
+  ]
+ }
+]

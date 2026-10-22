@@ -1,0 +1,471 @@
+{
+ "note": "Rebuilt from the saved run files (nothing re-run). Master seeds fixed in advance (101 202 303 404 505); no run was re-rolled for its verdict. Runs with no verdict failed in the scenario generator (validation failed after its single retry): that is not an infrastructure error, so they were not re-run. LocalRunner (labelled fallback, not Nebius). Rehearsal seed blocks only; held-out seeds were never run.",
+ "aggregate": {
+  "runs": 5,
+  "verdict_counts": {
+   "VERIFIED": 1,
+   "FAILED": 2,
+   "UNVERIFIED": 0,
+   "ERROR (no verdict)": 2
+  },
+  "attempts_distribution_for_runs_with_a_verdict": {
+   "3": 2,
+   "2": 1
+  },
+  "total_tokens": {
+   "min": 2789,
+   "median": 16959,
+   "max": 34554,
+   "n": 5
+  },
+  "wall_clock_total_s": {
+   "min": 7.63,
+   "median": 105.01,
+   "max": 159.34,
+   "n": 5
+  },
+  "estimated_cost_usd": {
+   "min": 0.000256,
+   "median": 0.028883,
+   "max": 0.06304,
+   "n": 5
+  },
+  "llm_seconds": {
+   "min": 7.58,
+   "median": 23.21,
+   "max": 52.09,
+   "n": 5
+  },
+  "generator_value_pooled": {
+   "cov": {
+    "n": 450,
+    "n_fail": 126,
+    "fail_rate": 0.28,
+    "wilson95": [
+     0.2405,
+     0.3232
+    ]
+   },
+   "tgt": {
+    "n": 300,
+    "n_fail": 139,
+    "fail_rate": 0.4633,
+    "wilson95": [
+     0.4077,
+     0.5199
+    ]
+   }
+  }
+ },
+ "runs": [
+  {
+   "run_id": "run_01_seed101",
+   "master_seed": 101,
+   "verdict": null,
+   "error": "LLMValidationError: scenario_generation: output failed validation after retry: 1 validation error for ScenarioProposal\nregions.2\n  Value error, region 'NoisyOffset' covers only 1.17% of the parameter space; at least 2% is required, widen it [type=value_error, input_value={'name': 'NoisyOffset', '...8]}, 'unverified': True}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error",
+   "attempts": 0,
+   "failed_checks_per_attempt": [],
+   "final_checks": null,
+   "analysis_before": null,
+   "analysis_after": null,
+   "verification_before": null,
+   "verification_after": null,
+   "prompt_tokens": 2297,
+   "completion_tokens": 492,
+   "llm_calls": 2,
+   "llm_seconds": 7.58,
+   "wall_clock_total_s": 7.63,
+   "timings_s": {
+    "generate_scenarios_llm": 7.63
+   },
+   "gate_timings_s": null,
+   "estimated_cost_usd": 0.000256,
+   "generator_value": null,
+   "n_hypotheses": null,
+   "n_targeted": null,
+   "final_patch": null,
+   "total_tokens": 2789
+  },
+  {
+   "run_id": "run_02_seed202",
+   "master_seed": 202,
+   "verdict": "FAILED",
+   "error": null,
+   "attempts": 3,
+   "failed_checks_per_attempt": [
+    [
+     "G3"
+    ],
+    [
+     "G3"
+    ],
+    []
+   ],
+   "final_checks": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G4": "pass",
+    "G5": "fail",
+    "G6": "pass"
+   },
+   "analysis_before": {
+    "n": 250,
+    "pass_rate": 0.704,
+    "pass_rate_ci95": [
+     0.6447,
+     0.7572
+    ],
+    "collision_rate": 0.0,
+    "mean_completion_time_s": 3.671
+   },
+   "analysis_after": {
+    "n": 250,
+    "pass_rate": 0.828,
+    "pass_rate_ci95": [
+     0.7763,
+     0.8697
+    ],
+    "collision_rate": 0.0,
+    "mean_completion_time_s": 3.794
+   },
+   "verification_before": {
+    "n": 400,
+    "pass_rate": 0.6925,
+    "pass_rate_ci95": [
+     0.6456,
+     0.7357
+    ],
+    "collision_rate": 0.0075,
+    "mean_completion_time_s": 3.652
+   },
+   "verification_after": {
+    "n": 400,
+    "pass_rate": 0.8425,
+    "pass_rate_ci95": [
+     0.8036,
+     0.8749
+    ],
+    "collision_rate": 0.0025,
+    "mean_completion_time_s": 3.778
+   },
+   "prompt_tokens": 19471,
+   "completion_tokens": 15083,
+   "llm_calls": 6,
+   "llm_seconds": 52.09,
+   "wall_clock_total_s": 159.34,
+   "timings_s": {
+    "generate_scenarios_llm": 2.92,
+    "baseline_run": 13.06,
+    "evidence": 0.02,
+    "analyst_llm": 10.15,
+    "gate_prepare_g1_g2": 1.71,
+    "fixer_llm_attempt1": 3.95,
+    "dev_stage_attempt1": 17.53,
+    "fixer_llm_attempt2": 24.31,
+    "dev_stage_attempt2": 14.41,
+    "fixer_llm_attempt3": 10.92,
+    "dev_stage_attempt3": 15.55,
+    "verification_g5": 44.73
+   },
+   "gate_timings_s": {
+    "g1_fresh_process_rerun_s": 1.14,
+    "g2_targeted_rerun_s": 0.57,
+    "dev_patched_analysis_run_1_s": 17.53,
+    "dev_patched_analysis_run_2_s": 14.41,
+    "dev_patched_analysis_run_3_s": 15.55,
+    "g5_unpatched_run_s": 20.46,
+    "g5_patched_run_s": 24.21
+   },
+   "estimated_cost_usd": 0.06304,
+   "generator_value": {
+    "cov": {
+     "n": 150,
+     "n_fail": 42,
+     "fail_rate": 0.28,
+     "wilson95": [
+      0.2143,
+      0.3567
+     ]
+    },
+    "tgt": {
+     "n": 100,
+     "n_fail": 32,
+     "fail_rate": 0.32,
+     "wilson95": [
+      0.2367,
+      0.4166
+     ]
+    },
+    "per_region_fail": {
+     "ThickLowFriction": "7/34",
+     "MismatchedSizeOffset": "8/33",
+     "NoisyDelayCombo": "17/33"
+    }
+   },
+   "n_hypotheses": 4,
+   "n_targeted": 40,
+   "final_patch": {
+    "grip_force": 30.0,
+    "grasp_hold_steps": 40.0
+   },
+   "total_tokens": 34554
+  },
+  {
+   "run_id": "run_03_seed303",
+   "master_seed": 303,
+   "verdict": "VERIFIED",
+   "error": null,
+   "attempts": 2,
+   "failed_checks_per_attempt": [
+    [
+     "G3"
+    ],
+    []
+   ],
+   "final_checks": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "pass",
+    "G4": "pass",
+    "G5": "pass",
+    "G6": "pass"
+   },
+   "analysis_before": {
+    "n": 250,
+    "pass_rate": 0.616,
+    "pass_rate_ci95": [
+     0.5544,
+     0.6741
+    ],
+    "collision_rate": 0.008,
+    "mean_completion_time_s": 3.646
+   },
+   "analysis_after": {
+    "n": 250,
+    "pass_rate": 0.932,
+    "pass_rate_ci95": [
+     0.8938,
+     0.9571
+    ],
+    "collision_rate": 0.028,
+    "mean_completion_time_s": 4.301
+   },
+   "verification_before": {
+    "n": 400,
+    "pass_rate": 0.7075,
+    "pass_rate_ci95": [
+     0.6611,
+     0.7499
+    ],
+    "collision_rate": 0.0025,
+    "mean_completion_time_s": 3.637
+   },
+   "verification_after": {
+    "n": 400,
+    "pass_rate": 0.95,
+    "pass_rate_ci95": [
+     0.924,
+     0.9674
+    ],
+    "collision_rate": 0.0075,
+    "mean_completion_time_s": 4.297
+   },
+   "prompt_tokens": 10139,
+   "completion_tokens": 6820,
+   "llm_calls": 4,
+   "llm_seconds": 23.21,
+   "wall_clock_total_s": 133.47,
+   "timings_s": {
+    "generate_scenarios_llm": 3.51,
+    "baseline_run": 13.77,
+    "evidence": 0.01,
+    "analyst_llm": 10.63,
+    "gate_prepare_g1_g2": 2.07,
+    "fixer_llm_attempt1": 3.79,
+    "dev_stage_attempt1": 15.12,
+    "fixer_llm_attempt2": 5.41,
+    "dev_stage_attempt2": 20.75,
+    "verification_g5": 58.32
+   },
+   "gate_timings_s": {
+    "g1_fresh_process_rerun_s": 1.02,
+    "g2_targeted_rerun_s": 1.05,
+    "dev_patched_analysis_run_1_s": 15.12,
+    "dev_patched_analysis_run_2_s": 20.75,
+    "g5_unpatched_run_s": 22.66,
+    "g5_patched_run_s": 35.61
+   },
+   "estimated_cost_usd": 0.028883,
+   "generator_value": {
+    "cov": {
+     "n": 150,
+     "n_fail": 38,
+     "fail_rate": 0.2533,
+     "wilson95": [
+      0.1905,
+      0.3285
+     ]
+    },
+    "tgt": {
+     "n": 100,
+     "n_fail": 58,
+     "fail_rate": 0.58,
+     "wilson95": [
+      0.4821,
+      0.672
+     ]
+    },
+    "per_region_fail": {
+     "LowFrictionWetSurface": "18/25",
+     "HeavyCube": "14/25",
+     "LargeDelayBlindSpot": "17/25",
+     "LargePosOffset": "9/25"
+    }
+   },
+   "n_hypotheses": 4,
+   "n_targeted": 78,
+   "final_patch": {
+    "grip_force": 40.0,
+    "retry_count": 2.0,
+    "lift_speed": 0.15
+   },
+   "total_tokens": 16959
+  },
+  {
+   "run_id": "run_04_seed404",
+   "master_seed": 404,
+   "verdict": "FAILED",
+   "error": null,
+   "attempts": 3,
+   "failed_checks_per_attempt": [
+    [
+     "G3"
+    ],
+    [
+     "G3"
+    ],
+    [
+     "G3",
+     "G4"
+    ]
+   ],
+   "final_checks": {
+    "G1": "pass",
+    "G2": "pass",
+    "G3": "fail",
+    "G4": "fail",
+    "G5": "skipped_after_failure",
+    "G6": "pass"
+   },
+   "analysis_before": {
+    "n": 250,
+    "pass_rate": 0.62,
+    "pass_rate_ci95": [
+     0.5584,
+     0.6779
+    ],
+    "collision_rate": 0.008,
+    "mean_completion_time_s": 3.694
+   },
+   "analysis_after": {
+    "n": 250,
+    "pass_rate": 0.744,
+    "pass_rate_ci95": [
+     0.6865,
+     0.7941
+    ],
+    "collision_rate": 0.004,
+    "mean_completion_time_s": 3.692
+   },
+   "verification_before": null,
+   "verification_after": null,
+   "prompt_tokens": 13032,
+   "completion_tokens": 13871,
+   "llm_calls": 6,
+   "llm_seconds": 48.8,
+   "wall_clock_total_s": 105.01,
+   "timings_s": {
+    "generate_scenarios_llm": 8.99,
+    "baseline_run": 13.17,
+    "evidence": 0.02,
+    "analyst_llm": 16.54,
+    "gate_prepare_g1_g2": 1.73,
+    "fixer_llm_attempt1": 5.75,
+    "dev_stage_attempt1": 13.68,
+    "fixer_llm_attempt2": 4.87,
+    "dev_stage_attempt2": 15.44,
+    "fixer_llm_attempt3": 12.81,
+    "dev_stage_attempt3": 11.92,
+    "verification_g5": 0.0
+   },
+   "gate_timings_s": {
+    "g1_fresh_process_rerun_s": 0.81,
+    "g2_targeted_rerun_s": 0.92,
+    "dev_patched_analysis_run_1_s": 13.68,
+    "dev_patched_analysis_run_2_s": 15.44,
+    "dev_patched_analysis_run_3_s": 11.92
+   },
+   "estimated_cost_usd": 0.050789,
+   "generator_value": {
+    "cov": {
+     "n": 150,
+     "n_fail": 46,
+     "fail_rate": 0.3067,
+     "wilson95": [
+      0.2385,
+      0.3845
+     ]
+    },
+    "tgt": {
+     "n": 100,
+     "n_fail": 49,
+     "fail_rate": 0.49,
+     "wilson95": [
+      0.3942,
+      0.5865
+     ]
+    },
+    "per_region_fail": {
+     "HighMassLowFriction": "24/34",
+     "MisalignedHSensorNoise": "12/33",
+     "WideDelayHighNoise": "13/33"
+    }
+   },
+   "n_hypotheses": 4,
+   "n_targeted": 71,
+   "final_patch": {
+    "grip_force": 60.0
+   },
+   "total_tokens": 26903
+  },
+  {
+   "run_id": "run_05_seed505",
+   "master_seed": 505,
+   "verdict": null,
+   "error": "LLMValidationError: scenario_generation: output failed validation after retry: 1 validation error for ScenarioProposal\nregions.0\n  Value error, region 'LowMassHighFriction' covers only 1.34% of the parameter space; at least 2% is required, widen it [type=value_error, input_value={'name': 'LowMassHighFric...1]}, 'unverified': True}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error",
+   "attempts": 0,
+   "failed_checks_per_attempt": [],
+   "final_checks": null,
+   "analysis_before": null,
+   "analysis_after": null,
+   "verification_before": null,
+   "verification_after": null,
+   "prompt_tokens": 2366,
+   "completion_tokens": 628,
+   "llm_calls": 2,
+   "llm_seconds": 10.01,
+   "wall_clock_total_s": 10.06,
+   "timings_s": {
+    "generate_scenarios_llm": 10.06
+   },
+   "gate_timings_s": null,
+   "estimated_cost_usd": 0.000293,
+   "generator_value": null,
+   "n_hypotheses": null,
+   "n_targeted": null,
+   "final_patch": null,
+   "total_tokens": 2994
+  }
+ ]
+}

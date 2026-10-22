@@ -1,0 +1,3509 @@
+{
+ "runner_name": "local",
+ "image_build_id": "sha256:75d76a1c492894f195aec0990a29a5f8f886c13cac90f8fa23f8d07fa6bcedab",
+ "complete": true,
+ "wall_clock_s": 13.059,
+ "cpu_count": 12,
+ "results": [
+  {
+   "scenario_id": "cov-1000",
+   "seed": 1000,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7,
+   "final_place_error_m": 0.00413,
+   "max_slip_m": 0.00967,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1418,
+    "steps": 1124.0
+   }
+  },
+  {
+   "scenario_id": "cov-1001",
+   "seed": 1001,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7667,
+   "final_place_error_m": 0.01182,
+   "max_slip_m": 0.02898,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1209,
+    "steps": 1140.0
+   }
+  },
+  {
+   "scenario_id": "cov-1002",
+   "seed": 1002,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.475,
+   "final_place_error_m": 0.0034,
+   "max_slip_m": 0.01097,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1335,
+    "steps": 1070.0
+   }
+  },
+  {
+   "scenario_id": "cov-1003",
+   "seed": 1003,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.925,
+   "final_place_error_m": 0.00285,
+   "max_slip_m": 0.00029,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1462,
+    "steps": 1178.0
+   }
+  },
+  {
+   "scenario_id": "cov-1004",
+   "seed": 1004,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.9,
+   "final_place_error_m": 0.00014,
+   "max_slip_m": 0.00945,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.135,
+    "steps": 1172.0
+   }
+  },
+  {
+   "scenario_id": "cov-1005",
+   "seed": 1005,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.3958,
+   "final_place_error_m": 0.0144,
+   "max_slip_m": 0.01282,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1318,
+    "steps": 1051.0
+   }
+  },
+  {
+   "scenario_id": "cov-1006",
+   "seed": 1006,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.425,
+   "final_place_error_m": 0.27705,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0012,
+    "steps": 342.0
+   }
+  },
+  {
+   "scenario_id": "cov-1007",
+   "seed": 1007,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.9875,
+   "final_place_error_m": 0.00287,
+   "max_slip_m": 0.02303,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1292,
+    "steps": 1193.0
+   }
+  },
+  {
+   "scenario_id": "cov-1008",
+   "seed": 1008,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5958,
+   "final_place_error_m": 0.03139,
+   "max_slip_m": 0.02685,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1199,
+    "steps": 1099.0
+   }
+  },
+  {
+   "scenario_id": "cov-1009",
+   "seed": 1009,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.6625,
+   "final_place_error_m": 0.22828,
+   "max_slip_m": 0.15631,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 399.0
+   }
+  },
+  {
+   "scenario_id": "cov-1010",
+   "seed": 1010,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 3.7583,
+   "final_place_error_m": 0.04731,
+   "max_slip_m": 0.01988,
+   "failure_reason": "PLACED_OUTSIDE_ZONE",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1329,
+    "steps": 1138.0
+   }
+  },
+  {
+   "scenario_id": "cov-1011",
+   "seed": 1011,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.475,
+   "final_place_error_m": 0.01245,
+   "max_slip_m": 0.01393,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.139,
+    "steps": 1070.0
+   }
+  },
+  {
+   "scenario_id": "cov-1012",
+   "seed": 1012,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5917,
+   "final_place_error_m": 0.35241,
+   "max_slip_m": 0.10785,
+   "failure_reason": "SLIPPED_ON_LIFT",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0116,
+    "steps": 382.0
+   }
+  },
+  {
+   "scenario_id": "cov-1013",
+   "seed": 1013,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.725,
+   "final_place_error_m": 0.00154,
+   "max_slip_m": 0.04399,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1151,
+    "steps": 1130.0
+   }
+  },
+  {
+   "scenario_id": "cov-1014",
+   "seed": 1014,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 4.075,
+   "final_place_error_m": 0.0004,
+   "max_slip_m": 0.00086,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1435,
+    "steps": 1214.0
+   }
+  },
+  {
+   "scenario_id": "cov-1015",
+   "seed": 1015,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.7708,
+   "final_place_error_m": 0.36865,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 185.0
+   }
+  },
+  {
+   "scenario_id": "cov-1016",
+   "seed": 1016,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4708,
+   "final_place_error_m": 0.00615,
+   "max_slip_m": 0.02485,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1255,
+    "steps": 1069.0
+   }
+  },
+  {
+   "scenario_id": "cov-1017",
+   "seed": 1017,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5333,
+   "final_place_error_m": 0.00078,
+   "max_slip_m": 0.00908,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1353,
+    "steps": 1084.0
+   }
+  },
+  {
+   "scenario_id": "cov-1018",
+   "seed": 1018,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4542,
+   "final_place_error_m": 0.02317,
+   "max_slip_m": 0.02292,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1209,
+    "steps": 1065.0
+   }
+  },
+  {
+   "scenario_id": "cov-1019",
+   "seed": 1019,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5875,
+   "final_place_error_m": 0.00235,
+   "max_slip_m": 0.0231,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1268,
+    "steps": 1097.0
+   }
+  },
+  {
+   "scenario_id": "cov-1020",
+   "seed": 1020,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4375,
+   "final_place_error_m": 0.02438,
+   "max_slip_m": 0.01058,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1337,
+    "steps": 1061.0
+   }
+  },
+  {
+   "scenario_id": "cov-1021",
+   "seed": 1021,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5458,
+   "final_place_error_m": 0.27292,
+   "max_slip_m": 0.15581,
+   "failure_reason": "SLIPPED_ON_LIFT",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0282,
+    "steps": 371.0
+   }
+  },
+  {
+   "scenario_id": "cov-1022",
+   "seed": 1022,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7667,
+   "final_place_error_m": 0.0001,
+   "max_slip_m": 0.00047,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.144,
+    "steps": 1140.0
+   }
+  },
+  {
+   "scenario_id": "cov-1023",
+   "seed": 1023,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.4542,
+   "final_place_error_m": 0.30282,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0082,
+    "steps": 349.0
+   }
+  },
+  {
+   "scenario_id": "cov-1024",
+   "seed": 1024,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4333,
+   "final_place_error_m": 0.00593,
+   "max_slip_m": 0.01449,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1299,
+    "steps": 1060.0
+   }
+  },
+  {
+   "scenario_id": "cov-1025",
+   "seed": 1025,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5542,
+   "final_place_error_m": 0.00171,
+   "max_slip_m": 0.00574,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1387,
+    "steps": 1089.0
+   }
+  },
+  {
+   "scenario_id": "cov-1026",
+   "seed": 1026,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7458,
+   "final_place_error_m": 0.02426,
+   "max_slip_m": 0.01784,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1393,
+    "steps": 1135.0
+   }
+  },
+  {
+   "scenario_id": "cov-1027",
+   "seed": 1027,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5917,
+   "final_place_error_m": 0.00594,
+   "max_slip_m": 0.00965,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1347,
+    "steps": 1098.0
+   }
+  },
+  {
+   "scenario_id": "cov-1028",
+   "seed": 1028,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4625,
+   "final_place_error_m": 0.00394,
+   "max_slip_m": 0.0001,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1466,
+    "steps": 1067.0
+   }
+  },
+  {
+   "scenario_id": "cov-1029",
+   "seed": 1029,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.9292,
+   "final_place_error_m": 0.00474,
+   "max_slip_m": 0.02734,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1227,
+    "steps": 1179.0
+   }
+  },
+  {
+   "scenario_id": "cov-1030",
+   "seed": 1030,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5625,
+   "final_place_error_m": 0.28002,
+   "max_slip_m": 0.14969,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 375.0
+   }
+  },
+  {
+   "scenario_id": "cov-1031",
+   "seed": 1031,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7833,
+   "final_place_error_m": 0.01282,
+   "max_slip_m": 0.01613,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1353,
+    "steps": 1144.0
+   }
+  },
+  {
+   "scenario_id": "cov-1032",
+   "seed": 1032,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.8083,
+   "final_place_error_m": 4e-05,
+   "max_slip_m": 0.00481,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1395,
+    "steps": 1150.0
+   }
+  },
+  {
+   "scenario_id": "cov-1033",
+   "seed": 1033,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.9458,
+   "final_place_error_m": 0.24306,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 227.0
+   }
+  },
+  {
+   "scenario_id": "cov-1034",
+   "seed": 1034,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.6458,
+   "final_place_error_m": 0.01157,
+   "max_slip_m": 0.01469,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1355,
+    "steps": 1111.0
+   }
+  },
+  {
+   "scenario_id": "cov-1035",
+   "seed": 1035,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5875,
+   "final_place_error_m": 0.00382,
+   "max_slip_m": 0.00029,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1464,
+    "steps": 1097.0
+   }
+  },
+  {
+   "scenario_id": "cov-1036",
+   "seed": 1036,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 4.025,
+   "final_place_error_m": 0.00359,
+   "max_slip_m": 0.02147,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1284,
+    "steps": 1202.0
+   }
+  },
+  {
+   "scenario_id": "cov-1037",
+   "seed": 1037,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.8083,
+   "final_place_error_m": 0.26904,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 194.0
+   }
+  },
+  {
+   "scenario_id": "cov-1038",
+   "seed": 1038,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5167,
+   "final_place_error_m": 0.23957,
+   "max_slip_m": 0.15278,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0002,
+    "steps": 364.0
+   }
+  },
+  {
+   "scenario_id": "cov-1039",
+   "seed": 1039,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5792,
+   "final_place_error_m": 0.01149,
+   "max_slip_m": 0.02061,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1238,
+    "steps": 1095.0
+   }
+  },
+  {
+   "scenario_id": "cov-1040",
+   "seed": 1040,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4125,
+   "final_place_error_m": 0.0045,
+   "max_slip_m": 0.00319,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1413,
+    "steps": 1055.0
+   }
+  },
+  {
+   "scenario_id": "cov-1041",
+   "seed": 1041,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5625,
+   "final_place_error_m": 0.33886,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0056,
+    "steps": 375.0
+   }
+  },
+  {
+   "scenario_id": "cov-1042",
+   "seed": 1042,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.4792,
+   "final_place_error_m": 0.35121,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 115.0
+   }
+  },
+  {
+   "scenario_id": "cov-1043",
+   "seed": 1043,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4,
+   "final_place_error_m": 0.0221,
+   "max_slip_m": 0.0005,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.144,
+    "steps": 1052.0
+   }
+  },
+  {
+   "scenario_id": "cov-1044",
+   "seed": 1044,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.5167,
+   "final_place_error_m": 0.31738,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 124.0
+   }
+  },
+  {
+   "scenario_id": "cov-1045",
+   "seed": 1045,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4542,
+   "final_place_error_m": 0.00611,
+   "max_slip_m": 9e-05,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1478,
+    "steps": 1065.0
+   }
+  },
+  {
+   "scenario_id": "cov-1046",
+   "seed": 1046,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.5792,
+   "final_place_error_m": 0.33108,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 139.0
+   }
+  },
+  {
+   "scenario_id": "cov-1047",
+   "seed": 1047,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.575,
+   "final_place_error_m": 0.00582,
+   "max_slip_m": 0.00483,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1377,
+    "steps": 1094.0
+   }
+  },
+  {
+   "scenario_id": "cov-1048",
+   "seed": 1048,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.6917,
+   "final_place_error_m": 0.37014,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 166.0
+   }
+  },
+  {
+   "scenario_id": "cov-1049",
+   "seed": 1049,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7125,
+   "final_place_error_m": 0.00308,
+   "max_slip_m": 0.01788,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1391,
+    "steps": 1127.0
+   }
+  },
+  {
+   "scenario_id": "cov-1050",
+   "seed": 1050,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.475,
+   "final_place_error_m": 0.37076,
+   "max_slip_m": 0.14969,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 354.0
+   }
+  },
+  {
+   "scenario_id": "cov-1051",
+   "seed": 1051,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5125,
+   "final_place_error_m": 0.00062,
+   "max_slip_m": 0.00043,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1463,
+    "steps": 1079.0
+   }
+  },
+  {
+   "scenario_id": "cov-1052",
+   "seed": 1052,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.475,
+   "final_place_error_m": 0.00385,
+   "max_slip_m": 0.01976,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1332,
+    "steps": 1070.0
+   }
+  },
+  {
+   "scenario_id": "cov-1053",
+   "seed": 1053,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4333,
+   "final_place_error_m": 0.00587,
+   "max_slip_m": 0.00574,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1387,
+    "steps": 1060.0
+   }
+  },
+  {
+   "scenario_id": "cov-1054",
+   "seed": 1054,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5792,
+   "final_place_error_m": 0.0074,
+   "max_slip_m": 0.03045,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.123,
+    "steps": 1095.0
+   }
+  },
+  {
+   "scenario_id": "cov-1055",
+   "seed": 1055,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5208,
+   "final_place_error_m": 0.00457,
+   "max_slip_m": 0.02029,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1302,
+    "steps": 1081.0
+   }
+  },
+  {
+   "scenario_id": "cov-1056",
+   "seed": 1056,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5542,
+   "final_place_error_m": 0.00282,
+   "max_slip_m": 0.02053,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1304,
+    "steps": 1089.0
+   }
+  },
+  {
+   "scenario_id": "cov-1057",
+   "seed": 1057,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5042,
+   "final_place_error_m": 0.26824,
+   "max_slip_m": 0.1503,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 361.0
+   }
+  },
+  {
+   "scenario_id": "cov-1058",
+   "seed": 1058,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.9458,
+   "final_place_error_m": 0.00593,
+   "max_slip_m": 0.01957,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1326,
+    "steps": 1183.0
+   }
+  },
+  {
+   "scenario_id": "cov-1059",
+   "seed": 1059,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4167,
+   "final_place_error_m": 0.00513,
+   "max_slip_m": 0.00046,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1444,
+    "steps": 1056.0
+   }
+  },
+  {
+   "scenario_id": "cov-1060",
+   "seed": 1060,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4375,
+   "final_place_error_m": 0.00703,
+   "max_slip_m": 0.02805,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.114,
+    "steps": 1061.0
+   }
+  },
+  {
+   "scenario_id": "cov-1061",
+   "seed": 1061,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.6208,
+   "final_place_error_m": 0.02955,
+   "max_slip_m": 0.01992,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1317,
+    "steps": 1105.0
+   }
+  },
+  {
+   "scenario_id": "cov-1062",
+   "seed": 1062,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.9708,
+   "final_place_error_m": 0.00757,
+   "max_slip_m": 0.00018,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1458,
+    "steps": 1189.0
+   }
+  },
+  {
+   "scenario_id": "cov-1063",
+   "seed": 1063,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.6375,
+   "final_place_error_m": 0.0092,
+   "max_slip_m": 0.02294,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1277,
+    "steps": 1109.0
+   }
+  },
+  {
+   "scenario_id": "cov-1064",
+   "seed": 1064,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5458,
+   "final_place_error_m": 0.30879,
+   "max_slip_m": 0.15524,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 371.0
+   }
+  },
+  {
+   "scenario_id": "cov-1065",
+   "seed": 1065,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.6208,
+   "final_place_error_m": 0.36047,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0001,
+    "steps": 389.0
+   }
+  },
+  {
+   "scenario_id": "cov-1066",
+   "seed": 1066,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.6542,
+   "final_place_error_m": 0.00734,
+   "max_slip_m": 0.02711,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1229,
+    "steps": 1113.0
+   }
+  },
+  {
+   "scenario_id": "cov-1067",
+   "seed": 1067,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4333,
+   "final_place_error_m": 0.00434,
+   "max_slip_m": 0.00103,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1469,
+    "steps": 1060.0
+   }
+  },
+  {
+   "scenario_id": "cov-1068",
+   "seed": 1068,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4708,
+   "final_place_error_m": 0.01386,
+   "max_slip_m": 0.01437,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1357,
+    "steps": 1069.0
+   }
+  },
+  {
+   "scenario_id": "cov-1069",
+   "seed": 1069,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.4208,
+   "final_place_error_m": 0.33916,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 341.0
+   }
+  },
+  {
+   "scenario_id": "cov-1070",
+   "seed": 1070,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.5625,
+   "final_place_error_m": 0.31785,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 135.0
+   }
+  },
+  {
+   "scenario_id": "cov-1071",
+   "seed": 1071,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.6875,
+   "final_place_error_m": 0.26566,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 165.0
+   }
+  },
+  {
+   "scenario_id": "cov-1072",
+   "seed": 1072,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5333,
+   "final_place_error_m": 0.00206,
+   "max_slip_m": 0.00925,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1349,
+    "steps": 1084.0
+   }
+  },
+  {
+   "scenario_id": "cov-1073",
+   "seed": 1073,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4917,
+   "final_place_error_m": 0.00461,
+   "max_slip_m": 0.00516,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1394,
+    "steps": 1074.0
+   }
+  },
+  {
+   "scenario_id": "cov-1074",
+   "seed": 1074,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.6333,
+   "final_place_error_m": 0.24732,
+   "max_slip_m": 0.15315,
+   "failure_reason": "SLIPPED_ON_LIFT",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0136,
+    "steps": 392.0
+   }
+  },
+  {
+   "scenario_id": "cov-1075",
+   "seed": 1075,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4625,
+   "final_place_error_m": 0.004,
+   "max_slip_m": 0.02724,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1233,
+    "steps": 1067.0
+   }
+  },
+  {
+   "scenario_id": "cov-1076",
+   "seed": 1076,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5125,
+   "final_place_error_m": 0.31556,
+   "max_slip_m": 0.12679,
+   "failure_reason": "SLIPPED_ON_LIFT",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0155,
+    "steps": 363.0
+   }
+  },
+  {
+   "scenario_id": "cov-1077",
+   "seed": 1077,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5,
+   "final_place_error_m": 0.00241,
+   "max_slip_m": 0.00259,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1418,
+    "steps": 1076.0
+   }
+  },
+  {
+   "scenario_id": "cov-1078",
+   "seed": 1078,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5,
+   "final_place_error_m": 0.00225,
+   "max_slip_m": 0.02499,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1251,
+    "steps": 1076.0
+   }
+  },
+  {
+   "scenario_id": "cov-1079",
+   "seed": 1079,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.425,
+   "final_place_error_m": 0.00134,
+   "max_slip_m": 0.02291,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1274,
+    "steps": 1058.0
+   }
+  },
+  {
+   "scenario_id": "cov-1080",
+   "seed": 1080,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.625,
+   "final_place_error_m": 0.00493,
+   "max_slip_m": 0.00633,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1381,
+    "steps": 1106.0
+   }
+  },
+  {
+   "scenario_id": "cov-1081",
+   "seed": 1081,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.65,
+   "final_place_error_m": 0.01113,
+   "max_slip_m": 0.02589,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.124,
+    "steps": 1112.0
+   }
+  },
+  {
+   "scenario_id": "cov-1082",
+   "seed": 1082,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.875,
+   "final_place_error_m": 0.00732,
+   "max_slip_m": 0.00657,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1379,
+    "steps": 1166.0
+   }
+  },
+  {
+   "scenario_id": "cov-1083",
+   "seed": 1083,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5583,
+   "final_place_error_m": 0.00082,
+   "max_slip_m": 0.01397,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1304,
+    "steps": 1090.0
+   }
+  },
+  {
+   "scenario_id": "cov-1084",
+   "seed": 1084,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5417,
+   "final_place_error_m": 0.34511,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 370.0
+   }
+  },
+  {
+   "scenario_id": "cov-1085",
+   "seed": 1085,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5458,
+   "final_place_error_m": 0.34637,
+   "max_slip_m": 0.14973,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0048,
+    "steps": 371.0
+   }
+  },
+  {
+   "scenario_id": "cov-1086",
+   "seed": 1086,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.575,
+   "final_place_error_m": 0.0271,
+   "max_slip_m": 0.02372,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1316,
+    "steps": 1094.0
+   }
+  },
+  {
+   "scenario_id": "cov-1087",
+   "seed": 1087,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.8708,
+   "final_place_error_m": 0.00576,
+   "max_slip_m": 0.00017,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1454,
+    "steps": 1165.0
+   }
+  },
+  {
+   "scenario_id": "cov-1088",
+   "seed": 1088,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4,
+   "final_place_error_m": 0.0396,
+   "max_slip_m": 0.03334,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1056,
+    "steps": 1052.0
+   }
+  },
+  {
+   "scenario_id": "cov-1089",
+   "seed": 1089,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5375,
+   "final_place_error_m": 0.39866,
+   "max_slip_m": 0.10205,
+   "failure_reason": "SLIPPED_ON_LIFT",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0919,
+    "steps": 369.0
+   }
+  },
+  {
+   "scenario_id": "cov-1090",
+   "seed": 1090,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5708,
+   "final_place_error_m": 0.01275,
+   "max_slip_m": 0.00398,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1403,
+    "steps": 1093.0
+   }
+  },
+  {
+   "scenario_id": "cov-1091",
+   "seed": 1091,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5542,
+   "final_place_error_m": 0.00215,
+   "max_slip_m": 0.00822,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1419,
+    "steps": 1089.0
+   }
+  },
+  {
+   "scenario_id": "cov-1092",
+   "seed": 1092,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5792,
+   "final_place_error_m": 0.00168,
+   "max_slip_m": 0.01464,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1354,
+    "steps": 1095.0
+   }
+  },
+  {
+   "scenario_id": "cov-1093",
+   "seed": 1093,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5208,
+   "final_place_error_m": 0.37649,
+   "max_slip_m": 0.14975,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 365.0
+   }
+  },
+  {
+   "scenario_id": "cov-1094",
+   "seed": 1094,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4708,
+   "final_place_error_m": 0.02911,
+   "max_slip_m": 0.02081,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1131,
+    "steps": 1069.0
+   }
+  },
+  {
+   "scenario_id": "cov-1095",
+   "seed": 1095,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.6958,
+   "final_place_error_m": 0.0219,
+   "max_slip_m": 0.00055,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1469,
+    "steps": 1123.0
+   }
+  },
+  {
+   "scenario_id": "cov-1096",
+   "seed": 1096,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.6167,
+   "final_place_error_m": 0.01022,
+   "max_slip_m": 0.01237,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1375,
+    "steps": 1104.0
+   }
+  },
+  {
+   "scenario_id": "cov-1097",
+   "seed": 1097,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7292,
+   "final_place_error_m": 0.00678,
+   "max_slip_m": 0.01764,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1324,
+    "steps": 1131.0
+   }
+  },
+  {
+   "scenario_id": "cov-1098",
+   "seed": 1098,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4042,
+   "final_place_error_m": 0.00011,
+   "max_slip_m": 0.00826,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1362,
+    "steps": 1053.0
+   }
+  },
+  {
+   "scenario_id": "cov-1099",
+   "seed": 1099,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4542,
+   "final_place_error_m": 0.00868,
+   "max_slip_m": 0.00105,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1436,
+    "steps": 1065.0
+   }
+  },
+  {
+   "scenario_id": "cov-1100",
+   "seed": 1100,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.4208,
+   "final_place_error_m": 0.28189,
+   "max_slip_m": 0.13349,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 341.0
+   }
+  },
+  {
+   "scenario_id": "cov-1101",
+   "seed": 1101,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7708,
+   "final_place_error_m": 0.00187,
+   "max_slip_m": 0.02561,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1267,
+    "steps": 1141.0
+   }
+  },
+  {
+   "scenario_id": "cov-1102",
+   "seed": 1102,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.6292,
+   "final_place_error_m": 0.01394,
+   "max_slip_m": 0.04485,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1132,
+    "steps": 1107.0
+   }
+  },
+  {
+   "scenario_id": "cov-1103",
+   "seed": 1103,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5042,
+   "final_place_error_m": 0.04221,
+   "max_slip_m": 0.01869,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.14,
+    "steps": 1077.0
+   }
+  },
+  {
+   "scenario_id": "cov-1104",
+   "seed": 1104,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.9,
+   "final_place_error_m": 0.03273,
+   "max_slip_m": 0.01113,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1397,
+    "steps": 1172.0
+   }
+  },
+  {
+   "scenario_id": "cov-1105",
+   "seed": 1105,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.9167,
+   "final_place_error_m": 0.00401,
+   "max_slip_m": 0.02661,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1243,
+    "steps": 1176.0
+   }
+  },
+  {
+   "scenario_id": "cov-1106",
+   "seed": 1106,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4542,
+   "final_place_error_m": 0.01396,
+   "max_slip_m": 0.01178,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1326,
+    "steps": 1065.0
+   }
+  },
+  {
+   "scenario_id": "cov-1107",
+   "seed": 1107,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7917,
+   "final_place_error_m": 0.02545,
+   "max_slip_m": 0.00028,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.144,
+    "steps": 1146.0
+   }
+  },
+  {
+   "scenario_id": "cov-1108",
+   "seed": 1108,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.8167,
+   "final_place_error_m": 0.01082,
+   "max_slip_m": 0.03458,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1186,
+    "steps": 1152.0
+   }
+  },
+  {
+   "scenario_id": "cov-1109",
+   "seed": 1109,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.6542,
+   "final_place_error_m": 0.00444,
+   "max_slip_m": 0.00216,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1424,
+    "steps": 1113.0
+   }
+  },
+  {
+   "scenario_id": "cov-1110",
+   "seed": 1110,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5917,
+   "final_place_error_m": 0.04289,
+   "max_slip_m": 0.02562,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1354,
+    "steps": 1098.0
+   }
+  },
+  {
+   "scenario_id": "cov-1111",
+   "seed": 1111,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.575,
+   "final_place_error_m": 0.00814,
+   "max_slip_m": 0.03522,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1039,
+    "steps": 1094.0
+   }
+  },
+  {
+   "scenario_id": "cov-1112",
+   "seed": 1112,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5208,
+   "final_place_error_m": 0.0176,
+   "max_slip_m": 0.02252,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.129,
+    "steps": 1081.0
+   }
+  },
+  {
+   "scenario_id": "cov-1113",
+   "seed": 1113,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5,
+   "final_place_error_m": 0.3558,
+   "max_slip_m": 0.14973,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0045,
+    "steps": 360.0
+   }
+  },
+  {
+   "scenario_id": "cov-1114",
+   "seed": 1114,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7458,
+   "final_place_error_m": 0.01346,
+   "max_slip_m": 0.00237,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1421,
+    "steps": 1135.0
+   }
+  },
+  {
+   "scenario_id": "cov-1115",
+   "seed": 1115,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.6292,
+   "final_place_error_m": 0.33238,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 391.0
+   }
+  },
+  {
+   "scenario_id": "cov-1116",
+   "seed": 1116,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5292,
+   "final_place_error_m": 0.00091,
+   "max_slip_m": 0.01172,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1384,
+    "steps": 1083.0
+   }
+  },
+  {
+   "scenario_id": "cov-1117",
+   "seed": 1117,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.5917,
+   "final_place_error_m": 0.36743,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 142.0
+   }
+  },
+  {
+   "scenario_id": "cov-1118",
+   "seed": 1118,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.5667,
+   "final_place_error_m": 0.27441,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 136.0
+   }
+  },
+  {
+   "scenario_id": "cov-1119",
+   "seed": 1119,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5333,
+   "final_place_error_m": 0.35222,
+   "max_slip_m": 0.14975,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0031,
+    "steps": 368.0
+   }
+  },
+  {
+   "scenario_id": "cov-1120",
+   "seed": 1120,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7542,
+   "final_place_error_m": 0.01267,
+   "max_slip_m": 0.00659,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1379,
+    "steps": 1137.0
+   }
+  },
+  {
+   "scenario_id": "cov-1121",
+   "seed": 1121,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.6708,
+   "final_place_error_m": 0.00073,
+   "max_slip_m": 0.0177,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.141,
+    "steps": 1117.0
+   }
+  },
+  {
+   "scenario_id": "cov-1122",
+   "seed": 1122,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7542,
+   "final_place_error_m": 0.01546,
+   "max_slip_m": 0.0363,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1202,
+    "steps": 1137.0
+   }
+  },
+  {
+   "scenario_id": "cov-1123",
+   "seed": 1123,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.6708,
+   "final_place_error_m": 0.00114,
+   "max_slip_m": 0.00742,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.137,
+    "steps": 1117.0
+   }
+  },
+  {
+   "scenario_id": "cov-1124",
+   "seed": 1124,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.375,
+   "final_place_error_m": 0.01024,
+   "max_slip_m": 0.02334,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1332,
+    "steps": 1046.0
+   }
+  },
+  {
+   "scenario_id": "cov-1125",
+   "seed": 1125,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 4.0042,
+   "final_place_error_m": 0.00682,
+   "max_slip_m": 0.03032,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1198,
+    "steps": 1197.0
+   }
+  },
+  {
+   "scenario_id": "cov-1126",
+   "seed": 1126,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.6,
+   "final_place_error_m": 0.00811,
+   "max_slip_m": 0.00374,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1407,
+    "steps": 1100.0
+   }
+  },
+  {
+   "scenario_id": "cov-1127",
+   "seed": 1127,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.6625,
+   "final_place_error_m": 0.00328,
+   "max_slip_m": 0.02645,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1237,
+    "steps": 1115.0
+   }
+  },
+  {
+   "scenario_id": "cov-1128",
+   "seed": 1128,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.575,
+   "final_place_error_m": 0.0076,
+   "max_slip_m": 0.00069,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1438,
+    "steps": 1094.0
+   }
+  },
+  {
+   "scenario_id": "cov-1129",
+   "seed": 1129,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.4458,
+   "final_place_error_m": 0.32408,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 347.0
+   }
+  },
+  {
+   "scenario_id": "cov-1130",
+   "seed": 1130,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5542,
+   "final_place_error_m": 0.28847,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 373.0
+   }
+  },
+  {
+   "scenario_id": "cov-1131",
+   "seed": 1131,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5375,
+   "final_place_error_m": 5e-05,
+   "max_slip_m": 0.01199,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1325,
+    "steps": 1085.0
+   }
+  },
+  {
+   "scenario_id": "cov-1132",
+   "seed": 1132,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.8583,
+   "final_place_error_m": 0.00393,
+   "max_slip_m": 0.01051,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1339,
+    "steps": 1162.0
+   }
+  },
+  {
+   "scenario_id": "cov-1133",
+   "seed": 1133,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.925,
+   "final_place_error_m": 0.01373,
+   "max_slip_m": 0.00304,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1415,
+    "steps": 1178.0
+   }
+  },
+  {
+   "scenario_id": "cov-1134",
+   "seed": 1134,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.4625,
+   "final_place_error_m": 0.30802,
+   "max_slip_m": 0.15089,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0049,
+    "steps": 351.0
+   }
+  },
+  {
+   "scenario_id": "cov-1135",
+   "seed": 1135,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5833,
+   "final_place_error_m": 0.39494,
+   "max_slip_m": 0.1087,
+   "failure_reason": "SLIPPED_ON_LIFT",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0288,
+    "steps": 380.0
+   }
+  },
+  {
+   "scenario_id": "cov-1136",
+   "seed": 1136,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4667,
+   "final_place_error_m": 0.00461,
+   "max_slip_m": 0.01993,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.138,
+    "steps": 1068.0
+   }
+  },
+  {
+   "scenario_id": "cov-1137",
+   "seed": 1137,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4,
+   "final_place_error_m": 0.02176,
+   "max_slip_m": 0.00383,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1405,
+    "steps": 1052.0
+   }
+  },
+  {
+   "scenario_id": "cov-1138",
+   "seed": 1138,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.6958,
+   "final_place_error_m": 0.00429,
+   "max_slip_m": 0.00808,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.136,
+    "steps": 1123.0
+   }
+  },
+  {
+   "scenario_id": "cov-1139",
+   "seed": 1139,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.4625,
+   "final_place_error_m": 0.27165,
+   "max_slip_m": 0.15413,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0068,
+    "steps": 351.0
+   }
+  },
+  {
+   "scenario_id": "cov-1140",
+   "seed": 1140,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.475,
+   "final_place_error_m": 0.01496,
+   "max_slip_m": 0.04299,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1122,
+    "steps": 1070.0
+   }
+  },
+  {
+   "scenario_id": "cov-1141",
+   "seed": 1141,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.825,
+   "final_place_error_m": 0.03218,
+   "max_slip_m": 0.0412,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1184,
+    "steps": 1154.0
+   }
+  },
+  {
+   "scenario_id": "cov-1142",
+   "seed": 1142,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4458,
+   "final_place_error_m": 0.01374,
+   "max_slip_m": 0.02324,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1166,
+    "steps": 1063.0
+   }
+  },
+  {
+   "scenario_id": "cov-1143",
+   "seed": 1143,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.8208,
+   "final_place_error_m": 0.00329,
+   "max_slip_m": 0.01576,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1342,
+    "steps": 1153.0
+   }
+  },
+  {
+   "scenario_id": "cov-1144",
+   "seed": 1144,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7083,
+   "final_place_error_m": 0.00949,
+   "max_slip_m": 0.01128,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1325,
+    "steps": 1126.0
+   }
+  },
+  {
+   "scenario_id": "cov-1145",
+   "seed": 1145,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5708,
+   "final_place_error_m": 0.2858,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0006,
+    "steps": 377.0
+   }
+  },
+  {
+   "scenario_id": "cov-1146",
+   "seed": 1146,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 4.025,
+   "final_place_error_m": 0.01016,
+   "max_slip_m": 0.00893,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1353,
+    "steps": 1202.0
+   }
+  },
+  {
+   "scenario_id": "cov-1147",
+   "seed": 1147,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.475,
+   "final_place_error_m": 0.00372,
+   "max_slip_m": 0.00767,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1367,
+    "steps": 1070.0
+   }
+  },
+  {
+   "scenario_id": "cov-1148",
+   "seed": 1148,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.6875,
+   "final_place_error_m": 0.25122,
+   "max_slip_m": 0.14969,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 405.0
+   }
+  },
+  {
+   "scenario_id": "cov-1149",
+   "seed": 1149,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7625,
+   "final_place_error_m": 0.04247,
+   "max_slip_m": 0.01675,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1367,
+    "steps": 1139.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1150",
+   "seed": 1150,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.6,
+   "final_place_error_m": 0.00702,
+   "max_slip_m": 0.02516,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1249,
+    "steps": 1100.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1151",
+   "seed": 1151,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.925,
+   "final_place_error_m": 0.00027,
+   "max_slip_m": 0.00022,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1475,
+    "steps": 1178.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1152",
+   "seed": 1152,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.4667,
+   "final_place_error_m": 0.34473,
+   "max_slip_m": 0.15261,
+   "failure_reason": "SLIPPED_ON_LIFT",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0156,
+    "steps": 352.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1153",
+   "seed": 1153,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4833,
+   "final_place_error_m": 0.0134,
+   "max_slip_m": 0.00044,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1456,
+    "steps": 1072.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1154",
+   "seed": 1154,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.975,
+   "final_place_error_m": 0.00887,
+   "max_slip_m": 0.01026,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.14,
+    "steps": 1190.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1155",
+   "seed": 1155,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.9667,
+   "final_place_error_m": 0.01105,
+   "max_slip_m": 0.02826,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1237,
+    "steps": 1188.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1156",
+   "seed": 1156,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4292,
+   "final_place_error_m": 0.00429,
+   "max_slip_m": 0.01233,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1376,
+    "steps": 1059.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1157",
+   "seed": 1157,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.4792,
+   "final_place_error_m": 0.35957,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 115.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1158",
+   "seed": 1158,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.6958,
+   "final_place_error_m": 0.00607,
+   "max_slip_m": 0.02445,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1275,
+    "steps": 1123.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1159",
+   "seed": 1159,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.475,
+   "final_place_error_m": 0.32342,
+   "max_slip_m": 0.0,
+   "failure_reason": "PLACED_OUTSIDE_ZONE",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0155,
+    "steps": 354.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1160",
+   "seed": 1160,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.8833,
+   "final_place_error_m": 0.00329,
+   "max_slip_m": 0.00224,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1421,
+    "steps": 1168.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1161",
+   "seed": 1161,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5208,
+   "final_place_error_m": 0.32006,
+   "max_slip_m": 0.15748,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0054,
+    "steps": 365.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1162",
+   "seed": 1162,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5875,
+   "final_place_error_m": 0.00902,
+   "max_slip_m": 0.01131,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1331,
+    "steps": 1097.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1163",
+   "seed": 1163,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.8833,
+   "final_place_error_m": 0.00072,
+   "max_slip_m": 0.00043,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1451,
+    "steps": 1168.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1164",
+   "seed": 1164,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.7542,
+   "final_place_error_m": 0.38388,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 181.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1165",
+   "seed": 1165,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4333,
+   "final_place_error_m": 0.00692,
+   "max_slip_m": 0.01182,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1326,
+    "steps": 1060.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1166",
+   "seed": 1166,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.8792,
+   "final_place_error_m": 0.00105,
+   "max_slip_m": 0.00052,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1441,
+    "steps": 1167.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1167",
+   "seed": 1167,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5125,
+   "final_place_error_m": 0.30799,
+   "max_slip_m": 0.15063,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0019,
+    "steps": 363.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1168",
+   "seed": 1168,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.725,
+   "final_place_error_m": 0.01453,
+   "max_slip_m": 0.00144,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1427,
+    "steps": 1130.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1169",
+   "seed": 1169,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.65,
+   "final_place_error_m": 0.37885,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 156.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1170",
+   "seed": 1170,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.6083,
+   "final_place_error_m": 0.27188,
+   "max_slip_m": 0.14969,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 386.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1171",
+   "seed": 1171,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.775,
+   "final_place_error_m": 0.00917,
+   "max_slip_m": 0.00971,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1343,
+    "steps": 1142.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1172",
+   "seed": 1172,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.9083,
+   "final_place_error_m": 0.01188,
+   "max_slip_m": 0.02523,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1373,
+    "steps": 1174.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1173",
+   "seed": 1173,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.6958,
+   "final_place_error_m": 0.01322,
+   "max_slip_m": 0.03116,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.125,
+    "steps": 1123.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1174",
+   "seed": 1174,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5,
+   "final_place_error_m": 0.00581,
+   "max_slip_m": 0.00627,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1381,
+    "steps": 1076.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1175",
+   "seed": 1175,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7833,
+   "final_place_error_m": 0.02273,
+   "max_slip_m": 0.00014,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1471,
+    "steps": 1144.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1176",
+   "seed": 1176,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.7417,
+   "final_place_error_m": 0.28624,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 178.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1177",
+   "seed": 1177,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5167,
+   "final_place_error_m": 0.01011,
+   "max_slip_m": 0.00149,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1426,
+    "steps": 1080.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1178",
+   "seed": 1178,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.6083,
+   "final_place_error_m": 0.35336,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 146.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1179",
+   "seed": 1179,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.8,
+   "final_place_error_m": 0.01399,
+   "max_slip_m": 0.03548,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1249,
+    "steps": 1148.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1180",
+   "seed": 1180,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.9542,
+   "final_place_error_m": 0.01473,
+   "max_slip_m": 0.01711,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1274,
+    "steps": 1185.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1181",
+   "seed": 1181,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7083,
+   "final_place_error_m": 0.0018,
+   "max_slip_m": 0.00149,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1428,
+    "steps": 1126.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1182",
+   "seed": 1182,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 3.7833,
+   "final_place_error_m": 0.04644,
+   "max_slip_m": 0.06124,
+   "failure_reason": "SLIPPED_ON_LIFT",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0965,
+    "steps": 1144.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1183",
+   "seed": 1183,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 4.0708,
+   "final_place_error_m": 0.0096,
+   "max_slip_m": 0.03591,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1247,
+    "steps": 1213.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1184",
+   "seed": 1184,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.8042,
+   "final_place_error_m": 0.00366,
+   "max_slip_m": 0.00128,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1441,
+    "steps": 1149.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1185",
+   "seed": 1185,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5292,
+   "final_place_error_m": 0.36038,
+   "max_slip_m": 0.14969,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 367.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1186",
+   "seed": 1186,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.6667,
+   "final_place_error_m": 0.00165,
+   "max_slip_m": 0.02299,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1255,
+    "steps": 1116.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1187",
+   "seed": 1187,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7833,
+   "final_place_error_m": 0.00852,
+   "max_slip_m": 0.02139,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1353,
+    "steps": 1144.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1188",
+   "seed": 1188,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.6083,
+   "final_place_error_m": 0.23897,
+   "max_slip_m": 0.15073,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.003,
+    "steps": 386.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1189",
+   "seed": 1189,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.475,
+   "final_place_error_m": 0.00696,
+   "max_slip_m": 0.03147,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1193,
+    "steps": 1070.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1190",
+   "seed": 1190,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.9375,
+   "final_place_error_m": 0.01963,
+   "max_slip_m": 0.00256,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1415,
+    "steps": 1181.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1191",
+   "seed": 1191,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5167,
+   "final_place_error_m": 0.00064,
+   "max_slip_m": 0.03429,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1172,
+    "steps": 1080.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1192",
+   "seed": 1192,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.7042,
+   "final_place_error_m": 0.23179,
+   "max_slip_m": 0.14971,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0056,
+    "steps": 409.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1193",
+   "seed": 1193,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7792,
+   "final_place_error_m": 0.02294,
+   "max_slip_m": 0.00021,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1449,
+    "steps": 1143.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1194",
+   "seed": 1194,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.4667,
+   "final_place_error_m": 0.34747,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 112.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1195",
+   "seed": 1195,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.3667,
+   "final_place_error_m": 0.28076,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 88.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1196",
+   "seed": 1196,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.9583,
+   "final_place_error_m": 0.01789,
+   "max_slip_m": 0.01626,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1349,
+    "steps": 1186.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1197",
+   "seed": 1197,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4875,
+   "final_place_error_m": 0.01169,
+   "max_slip_m": 0.0268,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1238,
+    "steps": 1073.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1198",
+   "seed": 1198,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.9167,
+   "final_place_error_m": 0.02162,
+   "max_slip_m": 0.00887,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1419,
+    "steps": 1176.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1199",
+   "seed": 1199,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 4.075,
+   "final_place_error_m": 0.02858,
+   "max_slip_m": 0.00153,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1448,
+    "steps": 1214.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1200",
+   "seed": 1200,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4708,
+   "final_place_error_m": 0.01898,
+   "max_slip_m": 0.03453,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1202,
+    "steps": 1069.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1201",
+   "seed": 1201,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5708,
+   "final_place_error_m": 0.18183,
+   "max_slip_m": 0.09849,
+   "failure_reason": "SLIPPED_ON_LIFT",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1019,
+    "steps": 377.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1202",
+   "seed": 1202,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.8,
+   "final_place_error_m": 0.01087,
+   "max_slip_m": 0.02095,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1391,
+    "steps": 1148.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1203",
+   "seed": 1203,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.6,
+   "final_place_error_m": 0.00381,
+   "max_slip_m": 0.09639,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0846,
+    "steps": 1100.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1204",
+   "seed": 1204,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4292,
+   "final_place_error_m": 0.01366,
+   "max_slip_m": 0.01046,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1339,
+    "steps": 1059.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1205",
+   "seed": 1205,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.85,
+   "final_place_error_m": 0.00866,
+   "max_slip_m": 0.0014,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1418,
+    "steps": 1160.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1206",
+   "seed": 1206,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.6042,
+   "final_place_error_m": 0.34115,
+   "max_slip_m": 0.14969,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 385.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1207",
+   "seed": 1207,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 4.0,
+   "final_place_error_m": 0.00232,
+   "max_slip_m": 0.01046,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1341,
+    "steps": 1196.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1208",
+   "seed": 1208,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.7875,
+   "final_place_error_m": 0.37387,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 189.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1209",
+   "seed": 1209,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.7542,
+   "final_place_error_m": 0.37425,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 181.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1210",
+   "seed": 1210,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.675,
+   "final_place_error_m": 0.28929,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 162.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1211",
+   "seed": 1211,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 4.0583,
+   "final_place_error_m": 0.0229,
+   "max_slip_m": 0.00123,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1454,
+    "steps": 1210.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1212",
+   "seed": 1212,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4792,
+   "final_place_error_m": 0.00975,
+   "max_slip_m": 0.03488,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1151,
+    "steps": 1071.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1213",
+   "seed": 1213,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 4.0958,
+   "final_place_error_m": 0.01085,
+   "max_slip_m": 0.01547,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.129,
+    "steps": 1219.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1214",
+   "seed": 1214,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.7167,
+   "final_place_error_m": 0.36273,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 172.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1215",
+   "seed": 1215,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.6167,
+   "final_place_error_m": 0.23785,
+   "max_slip_m": 0.14969,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.006,
+    "steps": 388.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1216",
+   "seed": 1216,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4625,
+   "final_place_error_m": 0.01043,
+   "max_slip_m": 0.03286,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1228,
+    "steps": 1067.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1217",
+   "seed": 1217,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.8667,
+   "final_place_error_m": 0.00027,
+   "max_slip_m": 0.00888,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1356,
+    "steps": 1164.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1218",
+   "seed": 1218,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.9083,
+   "final_place_error_m": 0.02326,
+   "max_slip_m": 0.05777,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1015,
+    "steps": 1174.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1219",
+   "seed": 1219,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.875,
+   "final_place_error_m": 0.00025,
+   "max_slip_m": 0.00388,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1397,
+    "steps": 1166.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1220",
+   "seed": 1220,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.9333,
+   "final_place_error_m": 0.00032,
+   "max_slip_m": 0.01462,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1353,
+    "steps": 1180.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1221",
+   "seed": 1221,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4708,
+   "final_place_error_m": 0.02273,
+   "max_slip_m": 0.01745,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1354,
+    "steps": 1069.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1222",
+   "seed": 1222,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4792,
+   "final_place_error_m": 0.01949,
+   "max_slip_m": 0.01643,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1338,
+    "steps": 1071.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1223",
+   "seed": 1223,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5917,
+   "final_place_error_m": 0.37975,
+   "max_slip_m": 0.11868,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 382.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1224",
+   "seed": 1224,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4833,
+   "final_place_error_m": 0.02866,
+   "max_slip_m": 0.02429,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1302,
+    "steps": 1072.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1225",
+   "seed": 1225,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5292,
+   "final_place_error_m": 0.00035,
+   "max_slip_m": 0.01253,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1311,
+    "steps": 1083.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1226",
+   "seed": 1226,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.8708,
+   "final_place_error_m": 0.00114,
+   "max_slip_m": 0.00031,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1471,
+    "steps": 1165.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1227",
+   "seed": 1227,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7292,
+   "final_place_error_m": 0.01945,
+   "max_slip_m": 0.02223,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1287,
+    "steps": 1131.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1228",
+   "seed": 1228,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.55,
+   "final_place_error_m": 0.28992,
+   "max_slip_m": 0.14969,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 372.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1229",
+   "seed": 1229,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.6083,
+   "final_place_error_m": 0.37455,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 146.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1230",
+   "seed": 1230,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.5333,
+   "final_place_error_m": 0.00065,
+   "max_slip_m": 0.08162,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0979,
+    "steps": 1084.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1231",
+   "seed": 1231,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.425,
+   "final_place_error_m": 0.36417,
+   "max_slip_m": 0.0,
+   "failure_reason": "PLACED_OUTSIDE_ZONE",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0151,
+    "steps": 342.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1232",
+   "seed": 1232,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.9542,
+   "final_place_error_m": 0.01368,
+   "max_slip_m": 0.00018,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1477,
+    "steps": 1185.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1233",
+   "seed": 1233,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.6792,
+   "final_place_error_m": 0.02172,
+   "max_slip_m": 0.05384,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1145,
+    "steps": 1119.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1234",
+   "seed": 1234,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4208,
+   "final_place_error_m": 0.02808,
+   "max_slip_m": 0.01307,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1312,
+    "steps": 1057.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1235",
+   "seed": 1235,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7375,
+   "final_place_error_m": 7e-05,
+   "max_slip_m": 0.00051,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1444,
+    "steps": 1133.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1236",
+   "seed": 1236,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.5917,
+   "final_place_error_m": 0.33516,
+   "max_slip_m": 0.15348,
+   "failure_reason": "SLIPPED_ON_LIFT",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0112,
+    "steps": 382.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1237",
+   "seed": 1237,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.8792,
+   "final_place_error_m": 0.00014,
+   "max_slip_m": 0.01152,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1329,
+    "steps": 1167.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1238",
+   "seed": 1238,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7667,
+   "final_place_error_m": 0.01162,
+   "max_slip_m": 0.00648,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1448,
+    "steps": 1140.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1239",
+   "seed": 1239,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.4542,
+   "final_place_error_m": 0.01653,
+   "max_slip_m": 0.04919,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1153,
+    "steps": 1065.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1240",
+   "seed": 1240,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7667,
+   "final_place_error_m": 0.01369,
+   "max_slip_m": 0.03223,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1295,
+    "steps": 1140.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1241",
+   "seed": 1241,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.7583,
+   "final_place_error_m": 0.3748,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 182.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1242",
+   "seed": 1242,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.3875,
+   "final_place_error_m": 0.3169,
+   "max_slip_m": 0.15786,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 333.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1243",
+   "seed": 1243,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.425,
+   "final_place_error_m": 0.00524,
+   "max_slip_m": 0.01952,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1375,
+    "steps": 1058.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1244",
+   "seed": 1244,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.9042,
+   "final_place_error_m": 0.00397,
+   "max_slip_m": 0.00028,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1455,
+    "steps": 1173.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1245",
+   "seed": 1245,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 0.7583,
+   "final_place_error_m": 0.28722,
+   "max_slip_m": 0.0,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0,
+    "steps": 182.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1246",
+   "seed": 1246,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.7583,
+   "final_place_error_m": 0.00059,
+   "max_slip_m": 0.01163,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1382,
+    "steps": 1138.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1247",
+   "seed": 1247,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.9458,
+   "final_place_error_m": 0.00031,
+   "max_slip_m": 0.00036,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1478,
+    "steps": 1183.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1248",
+   "seed": 1248,
+   "success": false,
+   "collision": false,
+   "completion_time_s": 1.4417,
+   "final_place_error_m": 0.27508,
+   "max_slip_m": 0.15452,
+   "failure_reason": "MISSED_GRASP",
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.0069,
+    "steps": 346.0
+   }
+  },
+  {
+   "scenario_id": "tgt-1249",
+   "seed": 1249,
+   "success": true,
+   "collision": false,
+   "completion_time_s": 3.9167,
+   "final_place_error_m": 0.00012,
+   "max_slip_m": 0.00676,
+   "failure_reason": null,
+   "trajectory_summary": {
+    "max_cube_lift_m": 0.1377,
+    "steps": 1176.0
+   }
+  }
+ ]
+}

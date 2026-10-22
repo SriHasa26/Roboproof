@@ -1,0 +1,113 @@
+[
+ {
+  "id": "H1",
+  "statement": "Low friction (0.1\u20130.32) causes MISSED_GRASP because the current grip force (15 N) cannot generate enough normal force to hold the cube against tangential loads.",
+  "region": {
+   "friction": [
+    0.1,
+    0.32
+   ]
+  },
+  "mechanism": "Friction coefficient directly limits the maximum tangential force before slip (F_tangential \u2264 \u03bc * F_normal). With low \u03bc, the 15 N grip force yields insufficient holding capacity, so the cube slips during the initial grasp or lift.",
+  "levers": [
+   {
+    "param": "grip_force",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grip_force will reduce MISSED_GRASP failures in the low-friction region.",
+  "evidence_refs": [
+   "E8",
+   "E2"
+  ]
+ },
+ {
+  "id": "H2",
+  "statement": "Very small cubes (size_m 0.03\u20130.04 m) suffer high MISSED_GRASP rates due to limited contact area and sensitivity to sensor noise.",
+  "region": {
+   "size_m": [
+    0.03,
+    0.04
+   ]
+  },
+  "mechanism": "Small cubes have less surface area for frictional contact and are more easily mislocalized by sensor noise, causing the fingers to miss or grasp poorly.",
+  "levers": [
+   {
+    "param": "grasp_hold_steps",
+    "direction": "increase"
+   },
+   {
+    "param": "retry_count",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grasp_hold_steps (more time to stabilize the grasp) and adding retry_count (re-perception attempts) will lower MISSED_GRASP for the smallest cubes.",
+  "evidence_refs": [
+   "E13",
+   "E46",
+   "E2"
+  ]
+ },
+ {
+  "id": "H3",
+  "statement": "High sensor noise (sensor_noise_m > 0.020) combined with very small cubes (size_m \u2264 0.038) creates extreme MISSED_GRASP rates due to large perception errors.",
+  "region": {
+   "sensor_noise_m": [
+    0.0201,
+    0.03
+   ],
+   "size_m": [
+    0.03,
+    0.038
+   ]
+  },
+  "mechanism": "Sensor noise above 2 cm causes the perceived cube position to deviate enough that the fingers miss the tiny cube entirely, and no retry is currently allowed to correct it.",
+  "levers": [
+   {
+    "param": "retry_count",
+    "direction": "increase"
+   },
+   {
+    "param": "grasp_hold_steps",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Adding at least one retry (retry_count \u2265 1) will dramatically cut MISSED_GRASP in this high-noise, small-cube region.",
+  "evidence_refs": [
+   "E46",
+   "E32",
+   "E2"
+  ]
+ },
+ {
+  "id": "H4",
+  "statement": "Long gripper delays (gripper_delay_steps 16\u201320) together with small cubes (size_m 0.03\u20130.0467) increase MISSED_GRASP because the cube can shift during the delay before the fingers close.",
+  "region": {
+   "size_m": [
+    0.03,
+    0.0467
+   ],
+   "gripper_delay_steps": [
+    13.33,
+    20.0
+   ]
+  },
+  "mechanism": "The scenario-imposed delay between the grasp command and actual finger closure leaves the cube unheld for many physics steps; small cubes are more easily displaced by residual motion or noise.",
+  "levers": [
+   {
+    "param": "grasp_hold_steps",
+    "direction": "increase"
+   },
+   {
+    "param": "grip_force",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grasp_hold_steps (ensuring a stable hold after closure) and/or grip_force (stronger squeeze) will reduce MISSED_GRASP in the high-delay, small-cube region.",
+  "evidence_refs": [
+   "E41",
+   "E37",
+   "E2"
+  ]
+ }
+]
