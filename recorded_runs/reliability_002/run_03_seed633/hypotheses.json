@@ -1,0 +1,103 @@
+[
+ {
+  "id": "H1",
+  "statement": "Insufficient grip force causes MISSED_GRASP and SLIPPED_ON_LIFT failures, especially for heavy cubes and low friction.",
+  "region": {
+   "mass_kg": [
+    0.6833,
+    1.0
+   ],
+   "friction": [
+    0.1,
+    0.4667
+   ]
+  },
+  "mechanism": "The normal force from grip_force generates friction to resist gravity and inertial loads. When mass is high and friction is low, the current grip_force (15 N) is too low to prevent slip or missed grasp.",
+  "levers": [
+   {
+    "param": "grip_force",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grip_force will reduce MISSED_GRASP and SLIPPED_ON_LIFT failure rates in the high-mass, low-friction region (E43), and marginally across all mass and friction bins (E3-E7, E8-E12).",
+  "evidence_refs": [
+   "E2",
+   "E3",
+   "E4",
+   "E5",
+   "E6",
+   "E7",
+   "E8",
+   "E9",
+   "E10",
+   "E11",
+   "E12",
+   "E43",
+   "E45"
+  ]
+ },
+ {
+  "id": "H2",
+  "statement": "Insufficient grasp_hold_steps after gripper delay causes MISSED_GRASP, especially for small cubes and long gripper delays.",
+  "region": {
+   "size_m": [
+    0.03,
+    0.0467
+   ],
+   "gripper_delay_steps": [
+    13.3333,
+    20.0
+   ]
+  },
+  "mechanism": "The gripper_delay_steps delays the close command; if grasp_hold_steps is too short, the fingers have not fully closed or stabilized before lift begins, causing the cube to be missed. Small cubes are more sensitive to timing.",
+  "levers": [
+   {
+    "param": "grasp_hold_steps",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grasp_hold_steps will reduce MISSED_GRASP failures in the small-size, high-delay region (E38) and in high gripper_delay_steps bins (E36, E37).",
+  "evidence_refs": [
+   "E2",
+   "E33",
+   "E34",
+   "E35",
+   "E36",
+   "E37",
+   "E38"
+  ]
+ },
+ {
+  "id": "H3",
+  "statement": "High sensor noise causes MISSED_GRASP due to misperception of cube position; retries would allow re-perception and reduce these failures.",
+  "region": {
+   "sensor_noise_m": [
+    0.02,
+    0.03
+   ],
+   "size_m": [
+    0.03,
+    0.0467
+   ]
+  },
+  "mechanism": "Sensor noise perturbs the perceived cube position, causing the grasp to miss or land on the cube. With retry_count=0, there is no second chance. Increasing retry_count allows a fresh perception attempt.",
+  "levers": [
+   {
+    "param": "retry_count",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing retry_count to at least 1 will reduce MISSED_GRASP failures in high sensor noise regions (E28-E32), especially where sensor noise interacts with small size (E39) or low friction (E41).",
+  "evidence_refs": [
+   "E2",
+   "E28",
+   "E29",
+   "E30",
+   "E31",
+   "E32",
+   "E39",
+   "E41",
+   "E46"
+  ]
+ }
+]

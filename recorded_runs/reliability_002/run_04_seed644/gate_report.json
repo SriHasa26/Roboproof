@@ -1,0 +1,431 @@
+{
+ "label": "REHEARSAL, NOT AN OFFICIAL RESULT. Verification used the rehearsal seed block; held-out seeds were not run.",
+ "attempts": [
+  {
+   "attempt": 1,
+   "candidates": [
+    {
+     "index": 0,
+     "model_proposal": {
+      "changes": {
+       "retry_count": 3.0
+      },
+      "rationale": "H1, H3, H4 indicate missed grasps due to perception errors and delays; increasing retry_count allows fresh perception on retry. Measured effect shows retry_count 0->3 improves overall pass rate from 70% to 81%.",
+      "expected_effect": "Eliminate MISSED_GRASP failures in H1, H3, H4 regions by allowing re-perception; may increase cycle time but improve pass rate."
+     },
+     "applied": {
+      "retry_count": 3.0
+     },
+     "clamped": {
+      "retry_count": false
+     },
+     "rounded": {},
+     "complete": true,
+     "fixed": 11,
+     "targeted": 69,
+     "regressions": 0,
+     "previously_passing": 140,
+     "pass_rate": 0.708,
+     "collision_rate": 0.072,
+     "per_hypothesis_fixed": {
+      "H1": "5/34",
+      "H2": "3/23",
+      "H3": "3/22",
+      "H4": "6/39"
+     },
+     "selected": false
+    },
+    {
+     "index": 1,
+     "model_proposal": {
+      "changes": {
+       "grip_force": 40.0,
+       "retry_count": 1.0,
+       "grasp_hold_steps": 30.0,
+       "lift_speed": 0.2
+      },
+      "rationale": "Addresses H2 (slip on lift) with higher grip_force, H1/H3/H4 with retry_count, and measured effects show grasp_hold_steps increase and lift_speed decrease improve pass rate. Moderate changes to multiple levers.",
+      "expected_effect": "Reduce SLIPPED_ON_LIFT in H2, reduce MISSED_GRASP in H1/H3/H4, and improve stability during lift via slower speed and longer hold."
+     },
+     "applied": {
+      "grip_force": 40.0,
+      "grasp_hold_steps": 30.0,
+      "retry_count": 1.0,
+      "lift_speed": 0.2
+     },
+     "clamped": {
+      "grip_force": false,
+      "retry_count": false,
+      "grasp_hold_steps": false,
+      "lift_speed": false
+     },
+     "rounded": {},
+     "complete": true,
+     "fixed": 55,
+     "targeted": 69,
+     "regressions": 1,
+     "previously_passing": 140,
+     "pass_rate": 0.856,
+     "collision_rate": 0.02,
+     "per_hypothesis_fixed": {
+      "H1": "26/34",
+      "H2": "21/23",
+      "H3": "18/22",
+      "H4": "30/39"
+     },
+     "selected": true
+    },
+    {
+     "index": 2,
+     "model_proposal": {
+      "changes": {
+       "grip_force": 20.0,
+       "retry_count": 1.0,
+       "grasp_hold_steps": 15.0,
+       "lift_speed": 0.28
+      },
+      "rationale": "Small incremental changes to all key parameters to test synergy without large jumps. Explores whether small improvements across the board can accumulate.",
+      "expected_effect": "Slight reduction in SLIPPED_ON_LIFT and MISSED_GRASP across hypotheses; minimal risk of overshooting."
+     },
+     "applied": {
+      "grip_force": 20.0,
+      "grasp_hold_steps": 15.0,
+      "retry_count": 1.0,
+      "lift_speed": 0.28
+     },
+     "clamped": {
+      "grip_force": false,
+      "retry_count": false,
+      "grasp_hold_steps": false,
+      "lift_speed": false
+     },
+     "rounded": {},
+     "complete": true,
+     "fixed": 36,
+     "targeted": 69,
+     "regressions": 1,
+     "previously_passing": 140,
+     "pass_rate": 0.768,
+     "collision_rate": 0.036,
+     "per_hypothesis_fixed": {
+      "H1": "18/34",
+      "H2": "9/23",
+      "H3": "13/22",
+      "H4": "21/39"
+     },
+     "selected": false
+    },
+    {
+     "index": 3,
+     "model_proposal": {
+      "changes": {
+       "grip_force": 60.0,
+       "lift_speed": 0.1,
+       "retry_count": 1.0
+      },
+      "rationale": "Large increase in grip_force to strongly counteract slip (H2) and large decrease in lift_speed to reduce inertial load, plus one retry for perception errors (H1/H3/H4).",
+      "expected_effect": "Significantly reduce SLIPPED_ON_LIFT in H2 and MISSED_GRASP in H1/H3/H4; risk of excessive force or slow cycle time but may pass more."
+     },
+     "applied": {
+      "grip_force": 60.0,
+      "retry_count": 1.0,
+      "lift_speed": 0.1
+     },
+     "clamped": {
+      "grip_force": false,
+      "lift_speed": false,
+      "retry_count": false
+     },
+     "rounded": {},
+     "complete": true,
+     "fixed": 55,
+     "targeted": 69,
+     "regressions": 3,
+     "previously_passing": 140,
+     "pass_rate": 0.844,
+     "collision_rate": 0.02,
+     "per_hypothesis_fixed": {
+      "H1": "26/34",
+      "H2": "21/23",
+      "H3": "18/22",
+      "H4": "30/39"
+     },
+     "selected": false
+    }
+   ],
+   "dropped_candidates": [],
+   "diversity_violations": [],
+   "selection_rule": "highest targeted fix among candidates within the regression budget; ties: fewer changed params, lower grip; none within budget: fewest regressions",
+   "selected_index": 1,
+   "regression_budget": 2,
+   "model_proposal": {
+    "changes": {
+     "grip_force": 40.0,
+     "retry_count": 1.0,
+     "grasp_hold_steps": 30.0,
+     "lift_speed": 0.2
+    },
+    "rationale": "Addresses H2 (slip on lift) with higher grip_force, H1/H3/H4 with retry_count, and measured effects show grasp_hold_steps increase and lift_speed decrease improve pass rate. Moderate changes to multiple levers.",
+    "expected_effect": "Reduce SLIPPED_ON_LIFT in H2, reduce MISSED_GRASP in H1/H3/H4, and improve stability during lift via slower speed and longer hold."
+   },
+   "clamped": {
+    "grip_force": false,
+    "retry_count": false,
+    "grasp_hold_steps": false,
+    "lift_speed": false
+   },
+   "rounded": {},
+   "patched_policy": {
+    "grip_force": 40.0,
+    "approach_speed": 0.3,
+    "lift_height": 0.15,
+    "lift_speed": 0.2,
+    "grasp_hold_steps": 30,
+    "place_slow_factor": 1.0,
+    "retry_count": 1
+   },
+   "dev_checks": {
+    "G1": {
+     "id": "G1",
+     "name": "Determinism",
+     "status": "pass",
+     "observed": {
+      "sample": 30,
+      "mismatches": 0
+     },
+     "threshold": {
+      "mismatches": 0
+     },
+     "details": "all outcomes identical"
+    },
+    "G2": {
+     "id": "G2",
+     "name": "Targeted failures reproduced",
+     "status": "pass",
+     "observed": {
+      "targeted": 69,
+      "not_reproduced": 0
+     },
+     "threshold": {
+      "not_reproduced": 0
+     },
+     "details": "all reproduced"
+    },
+    "G3": {
+     "id": "G3",
+     "name": "Targeted failures fixed",
+     "status": "pass",
+     "observed": {
+      "fixed": 55,
+      "targeted": 69,
+      "fix_rate": 0.7971
+     },
+     "threshold": {
+      "min_fix_rate": 0.7,
+      "comparison": "exact fraction, inclusive"
+     },
+     "details": ""
+    },
+    "G4": {
+     "id": "G4",
+     "name": "No regressions",
+     "status": "pass",
+     "observed": {
+      "regressions": 1,
+      "previously_passing": 140,
+      "strict_zero_budget_pass": false
+     },
+     "threshold": {
+      "budget": 2,
+      "budget_frac": 0.02
+     },
+     "details": "regressed: ['tgt-1211']"
+    }
+   },
+   "regressed_scenario_ids": [
+    "tgt-1211"
+   ],
+   "dev_stage_passed": true
+  }
+ ],
+ "report": {
+  "verdict": "FAILED",
+  "rehearsal": true,
+  "checks": [
+   {
+    "id": "G1",
+    "name": "Determinism",
+    "status": "pass",
+    "observed": {
+     "sample": 30,
+     "mismatches": 0
+    },
+    "threshold": {
+     "mismatches": 0
+    },
+    "details": "all outcomes identical"
+   },
+   {
+    "id": "G2",
+    "name": "Targeted failures reproduced",
+    "status": "pass",
+    "observed": {
+     "targeted": 69,
+     "not_reproduced": 0
+    },
+    "threshold": {
+     "not_reproduced": 0
+    },
+    "details": "all reproduced"
+   },
+   {
+    "id": "G3",
+    "name": "Targeted failures fixed",
+    "status": "pass",
+    "observed": {
+     "fixed": 55,
+     "targeted": 69,
+     "fix_rate": 0.7971
+    },
+    "threshold": {
+     "min_fix_rate": 0.7,
+     "comparison": "exact fraction, inclusive"
+    },
+    "details": ""
+   },
+   {
+    "id": "G4",
+    "name": "No regressions",
+    "status": "pass",
+    "observed": {
+     "regressions": 1,
+     "previously_passing": 140,
+     "strict_zero_budget_pass": false
+    },
+    "threshold": {
+     "budget": 2,
+     "budget_frac": 0.02
+    },
+    "details": "regressed: ['tgt-1211']"
+   },
+   {
+    "id": "G5",
+    "name": "Held-out generalization",
+    "status": "fail",
+    "observed": {
+     "patched_pass_rate": 0.8975,
+     "patched_wilson95_lower": 0.8639,
+     "unpatched_pass_rate": 0.725,
+     "improvement": 0.1725,
+     "n": 400,
+     "patched_passes": 359,
+     "unpatched_passes": 290,
+     "conditions": {
+      "target": false,
+      "improvement": true,
+      "wilson_lower_above_baseline": true
+     }
+    },
+    "threshold": {
+     "min_pass_rate": 0.9,
+     "min_improvement": 0.1,
+     "wilson_lower_must_exceed_unpatched_pass_rate": true,
+     "comparison": "target and improvement: exact fractions, inclusive; Wilson: strict, float"
+    },
+    "details": "failed: target"
+   },
+   {
+    "id": "G6",
+    "name": "Complete execution",
+    "status": "pass",
+    "observed": {
+     "runs": 6,
+     "incomplete_runs": [],
+     "failed_shards": 0,
+     "missing_scenarios": 0
+    },
+    "threshold": {},
+    "details": "all shards finished"
+   }
+  ],
+  "regressed_scenario_ids": [
+   "tgt-1211"
+  ],
+  "strict_zero_budget": {
+   "regressions": 1,
+   "pass": false
+  },
+  "metrics": {
+   "analysis": {
+    "before": {
+     "n": 250,
+     "pass_rate": 0.56,
+     "pass_rate_ci95": [
+      0.498,
+      0.6202
+     ],
+     "collision_rate": 0.004,
+     "mean_completion_time_s": 3.656
+    },
+    "after": {
+     "n": 250,
+     "pass_rate": 0.856,
+     "pass_rate_ci95": [
+      0.8071,
+      0.8941
+     ],
+     "collision_rate": 0.02,
+     "mean_completion_time_s": 4.153
+    }
+   },
+   "verification": {
+    "before": {
+     "n": 400,
+     "pass_rate": 0.725,
+     "pass_rate_ci95": [
+      0.6793,
+      0.7665
+     ],
+     "collision_rate": 0.0,
+     "mean_completion_time_s": 3.654
+    },
+    "after": {
+     "n": 400,
+     "pass_rate": 0.8975,
+     "pass_rate_ci95": [
+      0.8639,
+      0.9235
+     ],
+     "collision_rate": 0.0125,
+     "mean_completion_time_s": 4.034
+    }
+   }
+  },
+  "verification_set": {
+   "block": "rehearsal",
+   "start": 803600,
+   "count": 400,
+   "sampler": "latin_hypercube",
+   "rehearsal": true
+  },
+  "config": {
+   "heldout_target": 0.9,
+   "min_improvement": 0.1,
+   "target_fix_rate": 0.7,
+   "regression_budget_frac": 0.02,
+   "determinism_sample": 30,
+   "heldout_size": 400
+  },
+  "timings_s": {
+   "g1_fresh_process_rerun_s": 1.2,
+   "g2_targeted_rerun_s": 0.9,
+   "attempt1_cand0_1_s": 10.4,
+   "candidate_evals_total_s": 52.06,
+   "attempt1_cand1_1_s": 14.46,
+   "attempt1_cand2_1_s": 10.96,
+   "attempt1_cand3_1_s": 16.24,
+   "g5_unpatched_run_s": 19.18,
+   "g5_patched_run_s": 22.22
+  }
+ }
+}

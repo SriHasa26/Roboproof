@@ -1,0 +1,107 @@
+[
+ {
+  "id": "H1",
+  "statement": "Low friction and high mass cause MISSED_GRASP because the current grip_force (15 N) cannot generate enough friction force to lift the cube.",
+  "region": {
+   "friction": [
+    0.1,
+    0.34
+   ],
+   "mass_kg": [
+    0.52,
+    1.0
+   ]
+  },
+  "mechanism": "The friction force (\u03bc * grip_force) is less than the cube's weight (m*g) during lift, so the cube never leaves the table (MISSED_GRASP).",
+  "levers": [
+   {
+    "param": "grip_force",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "If grip_force is increased, MISSED_GRASP failures in the low-friction, high-mass region should decrease significantly.",
+  "evidence_refs": [
+   "E8",
+   "E39",
+   "E46",
+   "E47"
+  ]
+ },
+ {
+  "id": "H2",
+  "statement": "High sensor noise causes MISSED_GRASP because noisy position estimates lead to misaligned grasps, and with retry_count=0 there is no recovery.",
+  "region": {
+   "sensor_noise_m": [
+    0.02,
+    0.03
+   ]
+  },
+  "mechanism": "Sensor noise causes the gripper to misjudge the cube's position, resulting in fingers landing on the cube or missing it entirely (MISSED_GRASP). Retries provide fresh sensor readings.",
+  "levers": [
+   {
+    "param": "retry_count",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "If retry_count is increased from 0 to 1 or more, MISSED_GRASP failures in high sensor noise regions should decrease.",
+  "evidence_refs": [
+   "E31",
+   "E32",
+   "E38",
+   "E42",
+   "E48"
+  ]
+ },
+ {
+  "id": "H3",
+  "statement": "High gripper_delay_steps cause MISSED_GRASP because the fixed grasp_hold_steps (10) is too short after the delayed command to establish a stable grasp before lifting.",
+  "region": {
+   "gripper_delay_steps": [
+    12.0,
+    16.0
+   ]
+  },
+  "mechanism": "The gripper command is delayed by gripper_delay_steps. After the command, the controller waits only grasp_hold_steps before lifting. If the delay is long, the cube may have moved or the fingers may not have fully closed before the hold timer starts.",
+  "levers": [
+   {
+    "param": "grasp_hold_steps",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "If grasp_hold_steps is increased, MISSED_GRASP failures in high gripper_delay_steps regions should decrease.",
+  "evidence_refs": [
+   "E36",
+   "E40",
+   "E41",
+   "E44"
+  ]
+ },
+ {
+  "id": "H4",
+  "statement": "Small cube size combined with low friction causes MISSED_GRASP because the reduced contact area lowers the effective friction force for a given grip_force.",
+  "region": {
+   "friction": [
+    0.1,
+    0.4667
+   ],
+   "size_m": [
+    0.03,
+    0.0467
+   ]
+  },
+  "mechanism": "Small cubes have less contact area, so the normal force per finger is lower for a given grip_force, resulting in lower friction force. With low friction coefficient, the grasp cannot hold the cube.",
+  "levers": [
+   {
+    "param": "grip_force",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "If grip_force is increased, MISSED_GRASP failures in the small-size, low-friction region should decrease.",
+  "evidence_refs": [
+   "E13",
+   "E43",
+   "E46",
+   "E47"
+  ]
+ }
+]

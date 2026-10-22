@@ -1,0 +1,13 @@
+17:40:57 attempt 1/12 fast model: HTTP 000 first_byte=0.000000s total=40.010571s
+17:42:37 attempt 2/12 fast model: HTTP 000 first_byte=0.000000s total=40.004102s
+17:44:19 attempt 3/12 fast model: HTTP 000 first_byte=0.000000s total=40.003766s
+17:46:00 attempt 4/12 fast model: HTTP 000 first_byte=0.000000s total=40.002793s
+17:47:40 attempt 5/12 fast model: HTTP 000 first_byte=0.000000s total=40.013762s
+17:49:21 attempt 6/12 fast model: HTTP 000 first_byte=0.000000s total=40.003997s
+17:51:02 attempt 7/12 fast model: HTTP 000 first_byte=0.000000s total=40.005653s
+17:52:43 attempt 8/12 fast model: HTTP 000 first_byte=0.000000s total=40.010028s
+17:54:23 attempt 9/12 fast model: HTTP 000 first_byte=0.000000s total=40.008050s
+17:56:04 attempt 10/12 fast model: HTTP 000 first_byte=0.000000s total=40.015994s
+17:57:45 attempt 11/12 fast model: HTTP 000 first_byte=0.000000s total=40.005277s
+17:59:07 attempt 12/12 fast model: HTTP 200 first_byte=22.019457s total=22.019764s
+FAST MODEL RECOVERED

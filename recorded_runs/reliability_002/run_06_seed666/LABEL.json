@@ -1,0 +1,20 @@
+{
+ "label": "REHEARSAL, NOT AN OFFICIAL RESULT. Verification used the rehearsal seed block; held-out seeds were not run.",
+ "official": false,
+ "rehearsal": true,
+ "master_seed": 666,
+ "started": "2026-10-22 14:01:44",
+ "provenance": {
+  "commit": "f18ed6b8f95325f11e548f28881a6563334567c1",
+  "working_tree_clean": false,
+  "pipeline_hash": "f64b55a93c84c6ef69a050c833bd86f25c1568ef9b745a0c182d972c64d608a8",
+  "image_build_id": "sha256:75d76a1c492894f195aec0990a29a5f8f886c13cac90f8fa23f8d07fa6bcedab",
+  "model_fast": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+  "model_reasoning": "nvidia/Nemotron-3-Ultra-550b-a55b",
+  "runner_name": "local",
+  "official": false,
+  "python": "3.11.17",
+  "pipeline_version": "v2",
+  "tag_expected": "pipeline-frozen-v2"
+ }
+}

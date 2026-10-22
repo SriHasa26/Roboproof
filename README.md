@@ -56,11 +56,22 @@ So an incomplete run is UNVERIFIED even if another check also failed, and a comp
 
 **Diagnostic G5:** `finalize(..., diagnostic_g5=True)` runs G5 even though an earlier check failed, to show what it would have said. It exists for rehearsal blocks only (it is refused for held-out blocks) and can never change a verdict: a FAILED verdict stays FAILED.
 
+## Pipeline v2: what changed and why
+
+Pipeline v1 (tag `pipeline-frozen`) was measured in `recorded_runs/reliability_001`: 1 of 5 runs VERIFIED, 2 FAILED, 2 without a verdict. The diagnosis (`docs/P46_DIAGNOSIS.md`) found that both dead runs were lost to **one invalid region out of three** (the other two were fine) and that the fixer saw only one number per attempt. Pipeline v2 (tag `pipeline-frozen-v2`) changes exactly that, and nothing about the gate:
+
+- **Generator:** each region is validated on its own (valid ones are kept, dropped ones are logged with the reason; values up to 10% of an axis range outside the bounds are clamped and logged). Fallback chain, all NVIDIA Nemotron: fast model with reasoning off (60 s per-call timeout) -> `nemotron-3-super-120b-a12b` -> a code-made coverage-only analysis set labelled `coverage_only_fallback`. The source and model are recorded in every run.
+- **Fixer:** one reasoning-model call returns 4 diverse candidate patches. **Code** measures every candidate on the analysis set and picks one with a fixed rule (highest targeted fix within the regression budget; ties: fewer changed parameters, lower grip force); only the selected candidate goes through the gate, and G5 still runs at most once per run. The model sees a table of every candidate it proposed, with per-hypothesis results, on later attempts (analysis-set numbers only).
+- **Exact comparisons:** every gate threshold is compared on integers/exact fractions with inclusive boundaries (one run cleared G3 at exactly 0.70).
+- Thresholds are unchanged: G3 0.70, G4 2%, G5 0.90 with minimum improvement 0.10, held-out size 400.
+
 ## Pipeline freeze and official runs
 
-The prompts, generator, evidence, analyst, fixer, gate, gate thresholds, seed guard, ledger, LLM client and runner base are fingerprinted (`backend/app/core/FROZEN_PIPELINE_HASH.txt`, list in `backend/app/core/provenance.py`) and marked by the git tag `pipeline-frozen`. `backend/tests/test_pipeline_frozen.py` fails with an explanation if any of them changes. Anything run before the tag is a **rehearsal**; changing a frozen file is a deliberate re-freeze (`scripts/refreeze_pipeline.py`, a new commit and a new tag) and makes every earlier run a rehearsal again.
+The prompts, generator, evidence, analyst, fixer, selection rule, gate, gate thresholds, seed guard, ledger, LLM client and controls, runner base, pipeline orchestrator and `docs/OFFICIAL_PROTOCOL.md` are fingerprinted (`backend/app/core/FROZEN_PIPELINE_HASH.txt`, list in `backend/app/core/provenance.py`) and marked by the git tag `pipeline-frozen-v2` (v1 stays as `pipeline-frozen`). `backend/tests/test_pipeline_frozen.py` fails with an explanation if any of them changes. Anything run before the tag is a **rehearsal**; changing a frozen file is a deliberate re-freeze (`scripts/refreeze_pipeline.py`, a new commit and a new tag) and makes every earlier run a rehearsal again.
 
-An **official** run (`PipelineConfig(official=True, rehearsal=False)`, driven by `scripts/run_official.py`) refuses to start unless the working tree is clean, the frozen files equal their content at the tag, the committed hash file agrees, and the container image build id is known. It also refuses with `LLM_DEV_CACHE=1`. It records the commit, tag, pipeline hash, image build id, model ids and runner name in its artifacts. Line endings alone never count as a change.
+An **official** run (`PipelineConfig(official=True, rehearsal=False)`) refuses to start unless the working tree is clean, the frozen files equal their content at the tag, the committed hash file agrees, the official protocol is committed, the container image build id is known, and no `GATE_*`/`FIXER_N_CANDIDATES` override is set in the environment. It refuses with `LLM_DEV_CACHE=1`. It records the commit, tag, pipeline hash, image build id, protocol commit, model ids and runner name in its artifacts. Line endings alone never count as a change.
+
+The official evaluation is a **pre-registered batch of 5 runs** with fixed master seeds and a fresh held-out block each, all reported, with run 1 as the headline by rule: [docs/OFFICIAL_PROTOCOL.md](docs/OFFICIAL_PROTOCOL.md). `scripts/run_official.py` implements it and has not been run.
 
 ## Layout
 

@@ -1,0 +1,114 @@
+[
+ {
+  "id": "H1",
+  "statement": "High sensor noise combined with high gripper delay and small object size causes missed grasps due to perception-error-induced misalignment.",
+  "region": {
+   "sensor_noise_m": [
+    0.0139,
+    0.03
+   ],
+   "gripper_delay_steps": [
+    13.5,
+    20.0
+   ],
+   "size_m": [
+    0.03,
+    0.0384
+   ]
+  },
+  "mechanism": "Sensor noise corrupts perceived cube position; gripper delay means the grasp command uses stale perception; small size leaves no margin for error, so fingers close at the wrong location and miss the cube entirely.",
+  "levers": [
+   {
+    "param": "retry_count",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing retry_count to at least 1 should allow fresh perception on retry and eliminate MISSED_GRASP failures in this region.",
+  "evidence_refs": [
+   "E46"
+  ]
+ },
+ {
+  "id": "H2",
+  "statement": "Low friction combined with high mass causes slip on lift due to insufficient grip force.",
+  "region": {
+   "mass_kg": [
+    0.6833,
+    1.0
+   ],
+   "friction": [
+    0.1,
+    0.4667
+   ]
+  },
+  "mechanism": "High mass increases inertial load during lift; low friction reduces maximum tangential force before slip; current grip_force (15 N) may be too low to hold the cube.",
+  "levers": [
+   {
+    "param": "grip_force",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grip_force should reduce SLIPPED_ON_LIFT failures in this region.",
+  "evidence_refs": [
+   "E38"
+  ]
+ },
+ {
+  "id": "H3",
+  "statement": "High sensor noise combined with low friction and low gripper delay causes missed grasps due to perception error and insufficient grip force to compensate.",
+  "region": {
+   "sensor_noise_m": [
+    0.0139,
+    0.03
+   ],
+   "gripper_delay_steps": [
+    0.0,
+    13.5
+   ],
+   "friction": [
+    0.1,
+    0.3614
+   ]
+  },
+  "mechanism": "Sensor noise causes position error; low friction means even small misalignment leads to slip; low delay means grasp closes quickly but at wrong position, resulting in missed grasp.",
+  "levers": [
+   {
+    "param": "grip_force",
+    "direction": "increase"
+   },
+   {
+    "param": "retry_count",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing both grip_force and retry_count should reduce MISSED_GRASP failures in this region.",
+  "evidence_refs": [
+   "E47"
+  ]
+ },
+ {
+  "id": "H4",
+  "statement": "Small object size combined with high gripper delay causes missed grasps due to delayed closure on a small target.",
+  "region": {
+   "size_m": [
+    0.03,
+    0.0467
+   ],
+   "gripper_delay_steps": [
+    13.33,
+    20.0
+   ]
+  },
+  "mechanism": "Small objects require precise finger placement; high delay means the cube may move or perception is outdated by the time the grasp command executes, leading to missed grasps.",
+  "levers": [
+   {
+    "param": "retry_count",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Adding retry_count should allow re-perception and successful grasp, reducing MISSED_GRASP failures in this region.",
+  "evidence_refs": [
+   "E40"
+  ]
+ }
+]

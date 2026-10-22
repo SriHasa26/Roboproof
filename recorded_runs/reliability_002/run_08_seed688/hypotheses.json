@@ -1,0 +1,117 @@
+[
+ {
+  "id": "H1",
+  "statement": "Low friction causes missed grasps because the current grip force cannot generate enough friction force to hold the cube against gravity and inertial loads.",
+  "region": {
+   "friction": [
+    0.1,
+    0.32
+   ]
+  },
+  "mechanism": "The maximum friction force is the product of the friction coefficient and the normal force (limited by grip_force). At low friction, the required normal force to prevent slip exceeds what 15 N provides, leading to MISSED_GRASP and SLIPPED_ON_LIFT.",
+  "levers": [
+   {
+    "param": "grip_force",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grip_force should reduce MISSED_GRASP and SLIPPED_ON_LIFT failure rates in the low-friction region.",
+  "evidence_refs": [
+   "E8",
+   "E39"
+  ]
+ },
+ {
+  "id": "H2",
+  "statement": "Small cubes (size_m \u2248 0.03\u20130.04 m) combined with high gripper delay cause missed grasps because the grasp geometry is marginal and the delay allows the cube to shift before the fingers close.",
+  "region": {
+   "size_m": [
+    0.03,
+    0.0467
+   ],
+   "gripper_delay_steps": [
+    13.3333,
+    20.0
+   ]
+  },
+  "mechanism": "The fingers have less surface contact on small cubes, so any positional error from sensor noise or delay-induced motion leads to a missed grasp. The high gripper delay means the cube can move during the delay before the close command takes effect.",
+  "levers": [
+   {
+    "param": "grasp_hold_steps",
+    "direction": "increase"
+   },
+   {
+    "param": "retry_count",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grasp_hold_steps (waiting longer after close command) should reduce MISSED_GRASP in this region; increasing retry_count should also help by allowing re-perception and re-grasp.",
+  "evidence_refs": [
+   "E13",
+   "E38",
+   "E47"
+  ]
+ },
+ {
+  "id": "H3",
+  "statement": "High sensor noise combined with high gripper delay causes missed grasps because the noisy position estimate leads to a misaligned grasp, and the delay allows the cube to move further before the fingers close.",
+  "region": {
+   "sensor_noise_m": [
+    0.02,
+    0.03
+   ],
+   "gripper_delay_steps": [
+    13.3333,
+    20.0
+   ]
+  },
+  "mechanism": "The controller uses a single noisy perception to plan the grasp. When sensor noise is high, the planned finger positions may not contact the cube properly. The gripper delay exacerbates this because the cube may move during the delay.",
+  "levers": [
+   {
+    "param": "retry_count",
+    "direction": "increase"
+   },
+   {
+    "param": "grasp_hold_steps",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing retry_count should reduce MISSED_GRASP by allowing fresh perceptions; increasing grasp_hold_steps should give the gripper more time to close despite the delay.",
+  "evidence_refs": [
+   "E32",
+   "E40",
+   "E37"
+  ]
+ },
+ {
+  "id": "H4",
+  "statement": "Heavy cubes (mass_kg > 0.68) with low friction (friction < 0.47) cause slipped or missed grasps because the required holding force exceeds what the current grip force can provide, especially during lift acceleration.",
+  "region": {
+   "mass_kg": [
+    0.6833,
+    1.0
+   ],
+   "friction": [
+    0.1,
+    0.4667
+   ]
+  },
+  "mechanism": "The inertial load during lift adds to the weight. With low friction, the normal force needed to prevent slip is high. The current lift_speed (0.3 m/s) and grip_force (15 N) may be insufficient for this combination.",
+  "levers": [
+   {
+    "param": "grip_force",
+    "direction": "increase"
+   },
+   {
+    "param": "lift_speed",
+    "direction": "decrease"
+   }
+  ],
+  "prediction": "Increasing grip_force should reduce SLIPPED_ON_LIFT and MISSED_GRASP in this region; decreasing lift_speed should reduce inertial load and also help.",
+  "evidence_refs": [
+   "E39",
+   "E7",
+   "E8"
+  ]
+ }
+]

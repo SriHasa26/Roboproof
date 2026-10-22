@@ -1,0 +1,97 @@
+[
+ {
+  "id": "H1",
+  "statement": "Very small cubes (size_m \u2264 0.038) are frequently missed during the initial grasp because the fingers may not make sufficient contact before the lift begins, leading to MISSED_GRASP failures.",
+  "region": {
+   "size_m": [
+    0.03,
+    0.038
+   ]
+  },
+  "mechanism": "The controller's finger closure may stop before contacting the tiny cube, or the contact area is too small to generate enough friction. With zero retries, a single missed contact ends the episode.",
+  "levers": [
+   {
+    "param": "retry_count",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing retry_count from 0 to 1 or more should reduce MISSED_GRASP failures in the size_m \u2264 0.038 region by allowing a fresh perception and re-grasp attempt.",
+  "evidence_refs": [
+   "E46",
+   "E13"
+  ]
+ },
+ {
+  "id": "H2",
+  "statement": "Low friction coefficients (0.1\u20130.32) prevent the gripper from generating enough tangential force to hold the cube during lift, causing both MISSED_GRASP (cube never leaves table) and SLIPPED_ON_LIFT.",
+  "region": {
+   "friction": [
+    0.1,
+    0.32
+   ]
+  },
+  "mechanism": "The maximum grip force (currently 15 N) combined with low friction yields a holding force below the weight or inertial load of the cube, so the cube slips immediately when the lift starts.",
+  "levers": [
+   {
+    "param": "grip_force",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grip_force should raise the holding force and reduce failures in the low friction region, particularly converting MISSED_GRASP and SLIPPED_ON_LIFT into successes.",
+  "evidence_refs": [
+   "E8",
+   "E2"
+  ]
+ },
+ {
+  "id": "H3",
+  "statement": "High sensor noise (0.024\u20130.03 m) corrupts the perceived cube pose, leading to misaligned grasps that miss the cube entirely (MISSED_GRASP).",
+  "region": {
+   "sensor_noise_m": [
+    0.024,
+    0.03
+   ]
+  },
+  "mechanism": "The controller plans the grasp using a noisy pose estimate; the resulting finger placement fails to contact the cube. With no retries, the episode fails immediately.",
+  "levers": [
+   {
+    "param": "retry_count",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing retry_count should allow the controller to re-perceive the cube with a new noise sample, reducing MISSED_GRASP failures in the high sensor noise region.",
+  "evidence_refs": [
+   "E32",
+   "E2"
+  ]
+ },
+ {
+  "id": "H4",
+  "statement": "Heavy cubes (mass_kg 0.68\u20131.0) combined with low friction (0.1\u20130.47) create an interaction where the required holding force exceeds what the current grip_force and lift_speed can provide, causing excess failures over marginal expectations.",
+  "region": {
+   "mass_kg": [
+    0.68,
+    1.0
+   ],
+   "friction": [
+    0.1,
+    0.47
+   ]
+  },
+  "mechanism": "The inertial load during lifting (proportional to mass and lift_speed) adds to the weight, demanding higher friction force. The current grip_force and lift_speed are insufficient for this regime, leading to SLIPPED_ON_LIFT or MISSED_GRASP.",
+  "levers": [
+   {
+    "param": "grip_force",
+    "direction": "increase"
+   },
+   {
+    "param": "lift_speed",
+    "direction": "decrease"
+   }
+  ],
+  "prediction": "Increasing grip_force or decreasing lift_speed should reduce the excess failure rate in the high-mass, low-friction region by raising the available holding force and lowering the inertial load.",
+  "evidence_refs": [
+   "E43"
+  ]
+ }
+]
