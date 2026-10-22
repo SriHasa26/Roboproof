@@ -16,13 +16,14 @@ from pathlib import Path
 from .analysis.analyst import analyze, targeted_failures
 from .analysis.evidence import compute_evidence
 from .analysis.fixer import MAX_ATTEMPTS, propose
-from .analysis.models import DevFeedback
+from .analysis.models import CandidateRow, DevFeedback
+from .analysis.selection import CandidateEval, select_candidate
 from .core import gate_config as cfg_gate
 from .core.config import Settings
 from .core.provenance import describe_unofficial, official_preflight
 from .core.schemas import Policy, Result, Scenario
 from .core.stats import wilson
-from .gate.gate import ProofGate
+from .gate.gate import ProofGate, regression_budget
 from .gate.verification import make_verification_set
 from .llm.client import LLMClient, LLMError
 from .runner.base import JobRunner
@@ -109,7 +110,7 @@ def _dump(path: Path, obj) -> None:
 
 
 def run_pipeline(settings: Settings, runner: JobRunner, db: Database, ledger: SeedLedger, cfg: PipelineConfig,
-                 env: dict | None = None, pricing: dict | None = None) -> dict:
+                 env: dict | None = None, pricing: dict | None = None, openai_client=None) -> dict:
     env = dict(os.environ) if env is None else env
     if cfg.official and cfg.rehearsal:
         raise ValueError("an official run cannot be a rehearsal")
@@ -123,7 +124,7 @@ def run_pipeline(settings: Settings, runner: JobRunner, db: Database, ledger: Se
     label = OFFICIAL_LABEL if cfg.official else REHEARSAL_LABEL
     _dump(out / "LABEL.json", {"label": label, "official": cfg.official, "rehearsal": cfg.rehearsal, "master_seed": cfg.master_seed,
                                "started": time.strftime("%Y-%m-%d %H:%M:%S"), "provenance": prov})
-    client = LLMClient(settings, sink=lambda rec: db.log_llm_call(rec, cfg.run_id), keep_transcript=True)
+    client = LLMClient(settings, openai_client=openai_client, sink=lambda rec: db.log_llm_call(rec, cfg.run_id), keep_transcript=True)
     T = Timer()
     res: dict = {"run_id": cfg.run_id, "label": label, "official": cfg.official, "rehearsal": cfg.rehearsal, "master_seed": cfg.master_seed,
                  "provenance": prov, "verdict": None, "error": None, "attempts": [], "n_attempts": 0}
@@ -132,9 +133,12 @@ def run_pipeline(settings: Settings, runner: JobRunner, db: Database, ledger: Se
         with T("generate_scenarios_llm"):
             gen = ScenarioGenerator(llm=client).generate(cfg.n, cfg.master_seed)
         scns = gen.scenarios
-        _dump(out / "analysis_set.json", {"source": gen.source, "master_seed": gen.master_seed, "n_coverage": gen.n_coverage,
-                                           "n_targeted": gen.n_targeted, "proposal_validated": gen.proposal.model_dump(),
-                                           "scenarios": [s.model_dump() for s in scns]})
+        res["generator"] = {"source": gen.source, "model": gen.model, "n_regions_used": len(gen.proposal.regions) if gen.proposal else 0,
+                            "dropped_regions": gen.dropped_regions, "clamped_values": gen.clamped_values, "trail": gen.generator_trail}
+        _dump(out / "analysis_set.json", {"source": gen.source, "model": gen.model, "master_seed": gen.master_seed, "n_coverage": gen.n_coverage,
+                                           "n_targeted": gen.n_targeted, "proposal_validated": gen.proposal.model_dump() if gen.proposal else None,
+                                           "dropped_regions": gen.dropped_regions, "clamped_values": gen.clamped_values,
+                                           "generator_trail": gen.generator_trail, "scenarios": [s.model_dump() for s in scns]})
         with T("baseline_run"):
             base = runner.run(Policy(), scns, shards=cfg.shards)
         _dump(out / "baseline_results.json", {"runner_name": base.runner_name, "image_build_id": base.image_build_id, "complete": base.complete,
@@ -162,22 +166,47 @@ def run_pipeline(settings: Settings, runner: JobRunner, db: Database, ledger: Se
         dev = last = None
         for k in range(1, MAX_ATTEMPTS + 1):
             with T(f"fixer_llm_attempt{k}"):
-                fr = propose(client, hyps, Policy(), feedback, base_pass)[0]
-            with T(f"dev_stage_attempt{k}"):
-                dev = gate.dev_stage(fr.patched_policy)
-            last = fr.patched_policy
-            c = dev.checks
-            after = (sum(r.success for r in dev.patched_run.results) / len(dev.patched_run.results)) if dev.patched_run.complete else None
-            fb = DevFeedback(attempt=k, patch=fr.output.changes, g3_target_fix_rate=c["G3"].observed.get("fix_rate"),
-                             g3_threshold=cfg_gate.GATE_TARGET_FIX_RATE, g4_regressions=c["G4"].observed.get("regressions"),
-                             g4_budget=c["G4"].threshold.get("budget", 0),
-                             g2_all_reproduced=None if c["G2"].status.value == "not_run" else c["G2"].status.value == "pass",
-                             g1_deterministic=None if c["G1"].status.value == "not_run" else c["G1"].status.value == "pass",
-                             g6_complete=dev.complete, analysis_pass_rate_before=round(base_pass, 4), analysis_pass_rate_after=after)
-            feedback.append(fb)
+                cs = propose(client, hyps, Policy(), feedback, base_pass)
+            with T(f"candidate_evals_attempt{k}"):  # every candidate is measured on the ANALYSIS set only
+                meas = [gate.evaluate_candidate(c.patched_policy, targets["by_hypothesis"], label=f"attempt{k}_cand{c.index}") for c in cs.candidates]
+            done = [m for m in meas if m.complete]
+            if not done:
+                raise RuntimeError(f"attempt {k}: no candidate evaluation completed")
+            budget = regression_budget(done[0].previously_passing)
+            evals = [CandidateEval(index=c.index, fixed=m.fixed, targeted=m.targeted, regressions=m.regressions, n_changed=len(c.changed),
+                                   grip_force=c.patched_policy.grip_force, complete=m.complete) for c, m in zip(cs.candidates, meas)]
+            sel = select_candidate(evals, budget)  # deterministic rule in code; the model does not choose
+            chosen, chosen_m = cs.candidates[sel], meas[sel]
+            with T(f"dev_stage_attempt{k}"):  # only the selected candidate goes through the gate (reuses its measured run)
+                dev = gate.dev_stage(chosen.patched_policy, run=chosen_m.run)
+            last = chosen.patched_policy
+            c_ = dev.checks
+            rows, cand_records = [], []
+            for c, m in zip(cs.candidates, meas):
+                applied = {q: float(getattr(c.patched_policy, q)) for q in c.changed}
+                if m.complete:
+                    rows.append(CandidateRow(index=c.index, changes=applied, n_changed=len(c.changed), fixed=m.fixed, targeted=m.targeted,
+                                             fix_rate=round(m.fixed / m.targeted, 4), per_hypothesis_fixed={h: f"{a}/{b}" for h, (a, b) in m.per_hypothesis.items()},
+                                             regressions=m.regressions, previously_passing=m.previously_passing, budget=budget,
+                                             pass_rate=round(m.passes / m.total, 4), collision_rate=round(m.collisions / m.total, 4), selected=c.index == sel))
+                cand_records.append({"index": c.index, "model_proposal": c.output.model_dump(), "applied": applied, "clamped": c.clamped, "rounded": c.rounded,
+                                     "complete": m.complete, "fixed": m.fixed, "targeted": m.targeted, "regressions": m.regressions,
+                                     "previously_passing": m.previously_passing, "pass_rate": round(m.passes / m.total, 4) if m.complete else None,
+                                     "collision_rate": round(m.collisions / m.total, 4) if m.complete else None,
+                                     "per_hypothesis_fixed": {h: f"{a}/{b}" for h, (a, b) in m.per_hypothesis.items()}, "selected": c.index == sel})
+            feedback.append(DevFeedback(
+                attempt=k, candidates=rows, selected_index=sel, g3_threshold=cfg_gate.GATE_TARGET_FIX_RATE, g4_budget=budget,
+                g2_all_reproduced=None if c_["G2"].status.value == "not_run" else c_["G2"].status.value == "pass",
+                g1_deterministic=None if c_["G1"].status.value == "not_run" else c_["G1"].status.value == "pass",
+                g6_complete=dev.complete, analysis_pass_rate_before=round(base_pass, 4),
+                note=f"{len(cs.dropped)} candidate(s) dropped by validation" if cs.dropped else ""))
             res["attempts"].append({
-                "attempt": k, "model_proposal": fr.output.model_dump(), "clamped": fr.clamped, "patched_policy": fr.patched_policy.model_dump(),
-                "dev_checks": {i: ch.model_dump(mode="json") for i, ch in c.items()}, "regressed_scenario_ids": dev.regressed_ids,
+                "attempt": k, "candidates": cand_records, "dropped_candidates": cs.dropped, "diversity_violations": cs.diversity_violations,
+                "selection_rule": "highest targeted fix among candidates within the regression budget; ties: fewer changed params, lower grip; "
+                                  "none within budget: fewest regressions", "selected_index": sel, "regression_budget": budget,
+                "model_proposal": chosen.output.model_dump(), "clamped": chosen.clamped, "rounded": chosen.rounded,
+                "patched_policy": chosen.patched_policy.model_dump(),
+                "dev_checks": {i: ch.model_dump(mode="json") for i, ch in c_.items()}, "regressed_scenario_ids": dev.regressed_ids,
                 "dev_stage_passed": dev.passed})
             if dev.passed:
                 break

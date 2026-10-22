@@ -72,21 +72,37 @@ class HypothesisList(Strict):
     hypotheses: list[Hypothesis] = Field(min_length=1, max_length=5)
 
 
+class CandidateRow(Strict):
+    """One evaluated candidate, as shown to the fixer on the next attempt. ANALYSIS-SET numbers only."""
+
+    index: int
+    changes: dict[str, float]            # as applied (after clamping and integer rounding)
+    n_changed: int
+    fixed: int                           # targeted failures that now pass
+    targeted: int
+    fix_rate: float
+    per_hypothesis_fixed: dict[str, str]  # hypothesis id -> "fixed/total" (which targets are still failing)
+    regressions: int
+    previously_passing: int
+    budget: int
+    pass_rate: float
+    collision_rate: float
+    selected: bool
+
+
 class DevFeedback(Strict):
-    """What the fixer may learn about an earlier attempt: dev-stage checks (G1 to G4, G6) on the ANALYSIS set only.
-    There is deliberately no field for G5 or any verification-set number."""
+    """What the fixer may learn about an earlier attempt: every candidate evaluated on the ANALYSIS set, which one the selection rule
+    chose, and the dev-stage checks (G1, G2, G6) of the chosen one. There is deliberately no field for G5 or any verification-set number."""
 
     attempt: int
-    patch: dict[str, float]
-    g3_target_fix_rate: float | None
-    g3_threshold: float
-    g4_regressions: int | None
-    g4_budget: int
-    g2_all_reproduced: bool | None
+    candidates: list[CandidateRow]
+    selected_index: int
     g1_deterministic: bool | None
+    g2_all_reproduced: bool | None
+    g3_threshold: float
+    g4_budget: int
     g6_complete: bool
     analysis_pass_rate_before: float
-    analysis_pass_rate_after: float | None
     note: str = ""
 
 
@@ -97,3 +113,7 @@ class FixerOutput(Strict):
 
     def to_patch(self) -> PolicyPatch:
         return PolicyPatch(changes=self.changes, justification=self.rationale)
+
+
+class FixerCandidates(Strict):
+    candidates: list[FixerOutput] = Field(min_length=1, max_length=8)

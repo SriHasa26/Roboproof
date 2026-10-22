@@ -22,6 +22,7 @@ from __future__ import annotations
 import math
 import time
 from dataclasses import dataclass, field
+from fractions import Fraction
 
 from ..core import gate_config as cfg
 from ..core.schemas import (CheckStatus, GateCheck, GateReport, Policy, Result, Scenario, SetMetrics, Verdict)
@@ -45,6 +46,21 @@ def metrics_of(results: list[Result]) -> SetMetrics:
         n=n, pass_rate=round(len(ok) / n, 4) if n else 0.0, pass_rate_ci95=[round(lo, 4), round(hi, 4)],
         collision_rate=round(sum(r.collision for r in results) / n, 4) if n else 0.0,
         mean_completion_time_s=round(sum(r.completion_time_s for r in ok) / len(ok), 3) if ok else None)
+
+
+def frac(x) -> Fraction:
+    """A config threshold as an EXACT fraction: Fraction(str(0.7)) is 7/10, never 0.69999... (floats are not used for boundaries)."""
+    return Fraction(str(x))
+
+
+def meets_fraction(k: int, n: int, threshold) -> bool:
+    """k/n >= threshold, computed on integers. The boundary is INCLUSIVE: exactly at the threshold passes, one below fails."""
+    return n > 0 and Fraction(k, n) >= frac(threshold)
+
+
+def regression_budget(previously_passing: int) -> int:
+    """floor(GATE_REGRESSION_BUDGET_FRAC x previously_passing), exact. A scenario count <= budget passes G4 (inclusive)."""
+    return math.floor(frac(cfg.GATE_REGRESSION_BUDGET_FRAC) * previously_passing)
 
 
 def _check(id_: str, name: str, status: CheckStatus, observed=None, threshold=None, details="") -> GateCheck:
@@ -84,6 +100,21 @@ class DevStage:
     @property
     def passed(self) -> bool:
         return self.complete and all(self.checks[k].status == PASS for k in ("G1", "G2", "G3", "G4"))
+
+
+@dataclass
+class CandidateMeasurement:
+    """Analysis-set measurement of one candidate patch (integers). Never touches a verification set."""
+    run: RunResult
+    complete: bool
+    fixed: int = 0
+    targeted: int = 0
+    regressions: int = 0
+    previously_passing: int = 0
+    passes: int = 0
+    total: int = 0
+    collisions: int = 0
+    per_hypothesis: dict = field(default_factory=dict)  # hypothesis id -> (fixed, total)
 
 
 @dataclass
@@ -154,13 +185,37 @@ class ProofGate:
         self._prepared = p
 
     # ------------------------------------------------------------------ stage 1 (per patch)
-    def dev_stage(self, patched_policy: Policy) -> DevStage:
-        """G3 and G4 for one patch, on the analysis set (G1/G2 come from prepare())."""
+    def evaluate_candidate(self, policy: Policy, by_hypothesis: dict | None = None, label: str = "candidate_eval") -> CandidateMeasurement:
+        """Measure one candidate on the ANALYSIS set only: targeted fix count, regressions, pass and collision counts.
+        The run is not part of the verdict (G6 covers only the runs the verdict relies on); the selected candidate is gated by dev_stage()."""
+        p = self._prepared
+        if not p:
+            raise RuntimeError("call prepare() first")
+        key = f"{label}_{len([k for k in self.timings if k.startswith(label)]) + 1}_s"
+        run = self._timed_run(key, policy, p["scenarios"], shards=self.shards)  # analysis scenarios only
+        self.timings["candidate_evals_total_s"] = round(self.timings.get("candidate_evals_total_s", 0.0) + self.timings[key], 2)
+        if not run.complete or not p["targeted"] or len(p["base"]) != len(p["scenarios"]):
+            return CandidateMeasurement(run=run, complete=False)
+        now = {r.scenario_id: r for r in run.results}
+        passing_before = [i for i, r in p["base"].items() if r.success]
+        per_h = {h: (sum(now[i].success for i in ids), len(ids)) for h, ids in (by_hypothesis or {}).items()}
+        return CandidateMeasurement(
+            run=run, complete=True, fixed=sum(now[i].success for i in p["targeted"]), targeted=len(p["targeted"]),
+            regressions=sum(not now[i].success for i in passing_before), previously_passing=len(passing_before),
+            passes=sum(r.success for r in run.results), total=len(run.results), collisions=sum(r.collision for r in run.results),
+            per_hypothesis=per_h)
+
+    def dev_stage(self, patched_policy: Policy, run: RunResult | None = None) -> DevStage:
+        """G3 and G4 for one patch, on the analysis set (G1/G2 come from prepare()). `run` may be the already-measured analysis-set
+        run of this exact policy (from evaluate_candidate); otherwise the patched run is made here."""
         p = self._prepared
         if not p:
             raise RuntimeError("call prepare() first")
         scenarios, base = p["scenarios"], p["base"]
-        run = self._timed_run(f'dev_patched_analysis_run_{len([k for k in self.timings if k.startswith("dev_patched")]) + 1}_s', patched_policy, scenarios, shards=self.shards)
+        if run is None:
+            run = self._timed_run(f'dev_patched_analysis_run_{len([k for k in self.timings if k.startswith("dev_patched")]) + 1}_s', patched_policy, scenarios, shards=self.shards)
+        else:
+            self._check_same_runner("dev_stage_reused_run", run)
         self._runs = [r for r in self._runs if r[0] != "patched_analysis"] + [("patched_analysis", run)]
         passing_before = [i for i, r in base.items() if r.success]
         strict = {"regressions": None, "pass": None}
@@ -172,11 +227,11 @@ class ProofGate:
             now = {r.scenario_id: r for r in run.results}
             fixed = [i for i in p["targeted"] if now[i].success]
             rate = len(fixed) / len(p["targeted"])
-            g3 = _check("G3", "Targeted failures fixed", PASS if rate >= cfg.GATE_TARGET_FIX_RATE else FAIL,
+            g3 = _check("G3", "Targeted failures fixed", PASS if meets_fraction(len(fixed), len(p["targeted"]), cfg.GATE_TARGET_FIX_RATE) else FAIL,
                         observed={"fixed": len(fixed), "targeted": len(p["targeted"]), "fix_rate": round(rate, 4)},
-                        threshold={"min_fix_rate": cfg.GATE_TARGET_FIX_RATE})
+                        threshold={"min_fix_rate": cfg.GATE_TARGET_FIX_RATE, "comparison": "exact fraction, inclusive"})
             regressed = sorted(i for i in passing_before if not now[i].success)
-            budget = math.floor(cfg.GATE_REGRESSION_BUDGET_FRAC * len(passing_before))
+            budget = regression_budget(len(passing_before))
             strict = {"regressions": len(regressed), "pass": len(regressed) == 0}
             g4 = _check("G4", "No regressions", PASS if len(regressed) <= budget else FAIL,
                         observed={"regressions": len(regressed), "previously_passing": len(passing_before), "strict_zero_budget_pass": strict["pass"]},
@@ -224,15 +279,19 @@ class ProofGate:
             else:
                 mb, mp = metrics_of(base_run.results), metrics_of(new_run.results)
                 verification_metrics = {"before": mb, "after": mp}
+                n = len(new_run.results)
+                kb, kp = sum(r.success for r in base_run.results), sum(r.success for r in new_run.results)
                 lo = mp.pass_rate_ci95[0]
-                conds = {"target": mp.pass_rate >= cfg.GATE_HELDOUT_TARGET,
-                         "improvement": mp.pass_rate - mb.pass_rate >= cfg.GATE_MIN_IMPROVEMENT - 1e-9,
-                         "wilson_lower_above_baseline": lo > mb.pass_rate}
+                wl, _ = wilson(kp, n)  # unrounded Wilson lower bound (a float by nature); compared strictly with the unpatched rate
+                conds = {"target": meets_fraction(kp, n, cfg.GATE_HELDOUT_TARGET),
+                         "improvement": Fraction(kp - kb, n) >= frac(cfg.GATE_MIN_IMPROVEMENT),
+                         "wilson_lower_above_baseline": wl > kb / n}
                 g5 = _check("G5", "Held-out generalization", PASS if all(conds.values()) else FAIL,
                             observed={"patched_pass_rate": mp.pass_rate, "patched_wilson95_lower": lo, "unpatched_pass_rate": mb.pass_rate,
-                                      "improvement": round(mp.pass_rate - mb.pass_rate, 4), "n": mp.n, "conditions": conds},
+                                      "improvement": round(mp.pass_rate - mb.pass_rate, 4), "n": mp.n, "patched_passes": kp, "unpatched_passes": kb,
+                                      "conditions": conds},
                             threshold={"min_pass_rate": cfg.GATE_HELDOUT_TARGET, "min_improvement": cfg.GATE_MIN_IMPROVEMENT,
-                                       "wilson_lower_must_exceed_unpatched_pass_rate": True},
+                                       "wilson_lower_must_exceed_unpatched_pass_rate": True, "comparison": "target and improvement: exact fractions, inclusive; Wilson: strict, float"},
                             details=(("DIAGNOSTIC (an earlier check had already failed). " if run_anyway and not dev_ok else "")
                                      + (("failed: " + ", ".join(k for k, v in conds.items() if not v)) if not all(conds.values()) else "all conditions met")))
 

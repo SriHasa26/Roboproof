@@ -10,14 +10,15 @@ import pytest
 from app.core.schemas import CheckStatus, FailureReason, Policy, Result, Verdict
 from app.runner.base import JobRunner, RunResult
 from app.core.schemas import ShardResult
-from app.gate.gate import ProofGate, RunnerMismatchError, decide_verdict
+from app.core import gate_config as cfg
+from app.gate.gate import ProofGate, RunnerMismatchError, decide_verdict, frac, meets_fraction, regression_budget
 from app.gate.verification import make_verification_set
 from app.scenarios.sweep import latin_hypercube
 from app.store.db import Database
 from app.store.ledger import SeedBlockReusedError, SeedLedger
 
 BASE_GRIP = Policy().grip_force
-FIX = {50: (50, 0), 41: (30, 0), 42: (50, 5), 43: (50, 4)}  # grip -> (targeted fixed out of 50, regressions)
+FIX = {50: (50, 0), 41: (30, 0), 42: (50, 5), 43: (50, 4), 44: (35, 0), 45: (34, 0)}  # grip -> (targeted fixed out of 50, regressions)
 
 
 def res(s, ok, t=3.0):
@@ -30,7 +31,7 @@ class StubRunner(JobRunner):
 
     def __init__(self, ver=None, fail=None, nondeterministic=False, unreproduce_first_target=False, name="stub", image=None):
         self.name, self.image = name, image
-        self.ver = {"base": 0.70, 50: 0.95, 41: 0.95, 42: 0.95, 43: 0.95, **(ver or {})}
+        self.ver = {"base": 0.70, 50: 0.95, 41: 0.95, 42: 0.95, 43: 0.95, 44: 0.95, 45: 0.95, **(ver or {})}
         self.fail, self.nondet, self.unrepro = fail, nondeterministic, unreproduce_first_target
         self.calls: list[tuple] = []
         self.base_calls = 0
@@ -49,7 +50,7 @@ class StubRunner(JobRunner):
         fixed_n, _ = FIX[g]
         if failing:
             return res(s, (idx // 5) < fixed_n)
-        return res(s, True)  # passing scenarios stay passing here; setup() adds the intended regressions
+        return res(s, not (idx % 5 == 1 and idx // 5 < FIX[g][1]))  # the first FIX[g][1] scenarios with idx%5==1 regress
 
     def _run(self, policy, scenarios, shards, held_out):
         g = round(policy.grip_force)
@@ -358,3 +359,98 @@ def test_same_runner_and_image_pass_the_rule(world):
     gate = ProofGate(stub, shards=5, rehearsal=True)
     gate.prepare(Policy(), world, baseline, [r.scenario_id for r in baseline.results if not r.success])
     gate.dev_stage(Policy(grip_force=50))  # no exception
+
+
+# ---------------------------------------------------------------- P4.6: exact threshold comparisons (inclusive boundaries)
+def test_helpers_are_exact_and_inclusive():
+    assert frac(0.7) == __import__("fractions").Fraction(7, 10) and frac(0.02) == __import__("fractions").Fraction(1, 50)
+    assert meets_fraction(7, 10, 0.7) and not meets_fraction(6, 10, 0.7) and not meets_fraction(0, 0, 0.7)
+    assert meets_fraction(360, 400, 0.90) and not meets_fraction(359, 400, 0.90)
+
+
+def test_meets_fraction_equals_integer_cross_multiplication_for_every_small_case():
+    for n in range(1, 61):
+        for k in range(0, n + 1):
+            assert meets_fraction(k, n, 0.7) == (10 * k >= 7 * n), (k, n)
+            assert meets_fraction(k, n, 0.9) == (10 * k >= 9 * n), (k, n)
+
+
+def test_regression_budget_is_exact_floor_of_two_percent():
+    for n in range(0, 2000):
+        assert regression_budget(n) == (2 * n) // 100, n
+    assert regression_budget(200) == 4 and regression_budget(199) == 3 and regression_budget(49) == 0 and regression_budget(50) == 1
+
+
+def test_g3_exactly_at_the_threshold_passes_and_one_below_fails(world):
+    at = verdict_of(StubRunner(), world, 44)  # 35 of 50 fixed = exactly 0.70
+    g3 = next(c for c in at.checks if c.id == "G3")
+    assert g3.status == CheckStatus.PASS and (g3.observed["fixed"], g3.observed["targeted"]) == (35, 50)
+    below = verdict_of(StubRunner(), world, 45)  # 34 of 50 = 0.68
+    g3b = next(c for c in below.checks if c.id == "G3")
+    assert g3b.status == CheckStatus.FAIL and g3b.observed["fixed"] == 34 and below.verdict == Verdict.FAILED
+
+
+def test_g4_budget_boundary_is_inclusive(world):
+    # 200 previously passing -> budget 4: exactly 4 regressions pass, 5 fail (also covered above with the verdict)
+    assert next(c for c in verdict_of(StubRunner(), world, 43).checks if c.id == "G4").status == CheckStatus.PASS
+    assert next(c for c in verdict_of(StubRunner(), world, 42).checks if c.id == "G4").status == CheckStatus.FAIL
+
+
+def g5_conditions(ver, n):
+    rep = verdict_of(StubRunner(ver=ver), [] or latin_hypercube(250, 3), 50, vset_n=n)
+    return next(c for c in rep.checks if c.id == "G5").observed["conditions"]
+
+
+def test_g5_target_boundary_exactly_0_90_passes_and_0_85_fails():
+    assert g5_conditions({"base": 0.50, 50: 0.90}, 20)["target"] is True     # 18/20 = 0.90
+    assert g5_conditions({"base": 0.50, 50: 0.85}, 20)["target"] is False    # 17/20 = 0.85
+
+
+def test_g5_improvement_boundary_exactly_0_10_passes_and_one_count_below_fails():
+    assert g5_conditions({"base": 0.70, 50: 0.80}, 20)["improvement"] is True    # 16/20 - 14/20 = exactly 0.10
+    assert g5_conditions({"base": 0.70, 50: 0.75}, 20)["improvement"] is False   # 15/20 - 14/20 = 0.05
+    # the float trap: 0.95 - 0.85 is 0.0999999... in floating point, but exactly 0.10 in counts (380/400 vs 340/400)
+    assert 0.95 - 0.85 < 0.1
+    assert g5_conditions({"base": 0.85, 50: 0.95}, 400)["improvement"] is True
+
+
+# ---------------------------------------------------------------- P4.6: candidate evaluation never touches a verification set
+def test_candidates_are_measured_on_the_analysis_set_only_and_only_the_selected_one_is_verified(world):
+    stub = StubRunner()
+    base = stub.run(Policy(), world, shards=5)
+    targeted = [r.scenario_id for r in base.results if not r.success]
+    gate = ProofGate(stub, shards=5, rehearsal=True)
+    gate.prepare(Policy(), world, base, targeted)
+    ms = {g: gate.evaluate_candidate(Policy(grip_force=g)) for g in (41, 42, 44, 50)}
+    assert ms[50].fixed == 50 and ms[50].regressions == 0 and ms[44].fixed == 35 and ms[41].fixed == 30
+    assert ms[42].regressions == 5 and ms[42].previously_passing == 200 and ms[50].total == 250
+    assert all(h is False for _, n, h in stub.calls if n == 250)          # analysis runs never use the held-out flag
+    assert not [c for c in stub.calls if c[1] == 400]                     # nothing touched a verification-sized set yet
+    dev = gate.dev_stage(Policy(grip_force=50), run=ms[50].run)           # the selected candidate reuses its measured run
+    rep = gate.finalize(dev, Policy(grip_force=50), make_verification_set(SeedLedger(Database(":memory:")), "r", rehearsal=True))
+    ver_grips = sorted({g for g, n, _ in stub.calls if n == 400})
+    assert ver_grips == sorted({BASE_GRIP, 50}) and rep.verdict == Verdict.VERIFIED  # candidates 41, 42, 44 never reached it
+
+
+def test_candidate_measurement_reports_per_hypothesis_fixes(world):
+    stub = StubRunner()
+    base = stub.run(Policy(), world, shards=5)
+    targeted = [r.scenario_id for r in base.results if not r.success]
+    gate = ProofGate(stub, shards=5, rehearsal=True)
+    gate.prepare(Policy(), world, base, targeted)
+    m = gate.evaluate_candidate(Policy(grip_force=41), {"H1": targeted[:10], "H2": targeted[10:50]})
+    assert m.per_hypothesis["H1"][1] == 10 and m.per_hypothesis["H2"][1] == 40
+    assert m.per_hypothesis["H1"][0] + m.per_hypothesis["H2"][0] == m.fixed == 30
+
+
+def test_incomplete_candidate_run_is_flagged_incomplete_and_not_part_of_g6(world):
+    stub = StubRunner(fail=lambda p, scns: "FAILED" if round(p.grip_force) == 41 and len(scns) == 250 else None)
+    base = stub.run(Policy(), world, shards=5)
+    targeted = [r.scenario_id for r in base.results if not r.success]
+    gate = ProofGate(stub, shards=5, rehearsal=True)
+    gate.prepare(Policy(), world, base, targeted)
+    bad = gate.evaluate_candidate(Policy(grip_force=41))
+    assert bad.complete is False
+    good = gate.evaluate_candidate(Policy(grip_force=50))
+    dev = gate.dev_stage(Policy(grip_force=50), run=good.run)
+    assert dev.complete and dev.passed  # an unselected candidate's crash does not make the selected one UNVERIFIED
