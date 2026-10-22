@@ -1,6 +1,7 @@
 """Pydantic v2 schemas shared by every stage."""
 from __future__ import annotations
 
+import math
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Literal
@@ -61,20 +62,41 @@ class Policy(Strict):
     retry_count: int = _f("retry_count")
 
 
+# The fixer may only touch these. approach_speed and place_slow_factor stay in Policy but are excluded because
+# one-at-a-time sweeps measured no effect on pass rate (docs/SIM_FIDELITY.md).
+PATCHABLE_PARAMS = ("grip_force", "grasp_hold_steps", "retry_count", "lift_speed", "lift_height")
+MAX_PATCH_FIELDS = 5
+
+
 class PolicyPatch(Strict):
-    """Bounded diff over policy parameters. Unknown keys are rejected; out-of-range values are clamped by apply()."""
+    """Bounded diff over the five effective policy parameters.
+
+    Unknown or excluded keys are rejected, values must be finite, at most MAX_PATCH_FIELDS fields.
+    Out-of-range values are clamped to bounds by apply() (and reported).
+    """
 
     changes: dict[str, float]
     justification: str = ""
 
     @field_validator("changes")
     @classmethod
-    def _known_keys(cls, v):
-        bad = set(v) - set(POLICY_BOUNDS)
-        if bad:
-            raise ValueError(f"unknown policy parameters: {sorted(bad)}")
+    def _valid_changes(cls, v):
         if not v:
             raise ValueError("patch has no changes")
+        unknown = set(v) - set(POLICY_BOUNDS)
+        if unknown:
+            raise ValueError(f"unknown policy parameters: {sorted(unknown)}")
+        excluded = set(v) - set(PATCHABLE_PARAMS)
+        if excluded:
+            raise ValueError(
+                f"parameters not patchable (measured no effect on pass rate): {sorted(excluded)}; "
+                f"allowed: {list(PATCHABLE_PARAMS)}"
+            )
+        if len(v) > MAX_PATCH_FIELDS:
+            raise ValueError(f"at most {MAX_PATCH_FIELDS} fields per patch")
+        bad = [k for k, x in v.items() if not math.isfinite(x)]
+        if bad:
+            raise ValueError(f"non-finite values for: {bad}")
         return v
 
     def apply(self, policy: Policy) -> tuple[Policy, dict[str, bool]]:

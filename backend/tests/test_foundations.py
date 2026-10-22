@@ -81,6 +81,21 @@ def test_patch_clamps_and_rejects_unknown():
         PolicyPatch(changes={})
 
 
+def test_patch_only_five_effective_params_and_finite():
+    from app.core.schemas import PATCHABLE_PARAMS
+    assert set(PATCHABLE_PARAMS) == {"grip_force", "grasp_hold_steps", "retry_count", "lift_speed", "lift_height"}
+    for excluded in ("approach_speed", "place_slow_factor"):
+        Policy(**{excluded: Policy().model_dump()[excluded]})  # still valid Policy fields
+        with pytest.raises(ValidationError, match="not patchable"):
+            PolicyPatch(changes={excluded: 0.2})
+    PolicyPatch(changes={k: Policy().model_dump()[k] for k in PATCHABLE_PARAMS})  # all five at once is fine
+    for bad in (float("nan"), float("inf")):
+        with pytest.raises(ValidationError, match="non-finite"):
+            PolicyPatch(changes={"grip_force": bad})
+    with pytest.raises(ValidationError):
+        PolicyPatch(changes={"grip_force": 20}, justification="ok", extra=1)
+
+
 def test_result_reason_consistency():
     ok = dict(scenario_id="a", seed=1, collision=False, completion_time_s=1.0, final_place_error_m=0.01, max_slip_m=0.0)
     Result(success=True, **ok)
