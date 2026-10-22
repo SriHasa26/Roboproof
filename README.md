@@ -1,80 +1,121 @@
 # RoboProof
 
-[MIT License](LICENSE)
+[MIT License](LICENSE) · NVIDIA x Nebius Global AI Hackathon · Track: Physical AI (simulation only, no hardware)
 
-An AI test engineer for robot policies. It stress-tests a simulated pick-and-place arm, diagnoses failures, proposes a bounded parameter fix, and returns VERIFIED / FAILED / UNVERIFIED from a deterministic Proof-of-Robustness Gate. Built for the NVIDIA x Nebius Global AI Hackathon (Physical AI track).
+RoboProof stress-tests a robot policy in simulation, asks NVIDIA Nemotron models to explain the failures and propose a bounded parameter fix, and only certifies the fix through a deterministic Proof-of-Robustness Gate. If the gate cannot prove the fix, the answer is FAILED or UNVERIFIED, never a quiet pass.
 
-**This is a simulation, not a real robot.** Nothing here has been validated on hardware. See `docs/SIM_FIDELITY.md` for simulator limits.
+**This is a simulation of a simplified robot (a two-finger gripper in PyBullet), not a real robot. Nothing was validated on hardware.** One built-in task: pick a cube and place it in a target zone. Read [docs/LIMITATIONS.md](docs/LIMITATIONS.md) before trusting any number here.
 
-**Status: work in progress.** P1 (foundations), P2 (simulator + policy) and P3 (freeze, ceiling search, scenario generator, LocalRunner) in progress. Everything that needs a real Nebius call is marked `PENDING_KEY` in [docs/NEBIUS_NOTES.md](docs/NEBIUS_NOTES.md). No measured results exist yet, so none are claimed.
+**Where it ran (honest):** language-model calls used Nebius Token Factory with NVIDIA Nemotron models. Simulations ran in a local Docker container (`LocalRunner`), **not on Nebius Serverless Jobs**; the container was never tested on Nebius. Every run is labelled "local fallback, not Nebius". Cost figures are estimates (tokens x API-reported prices); actual billing is UNCONFIRMED.
 
-## Setup and run
+## Official result (pre-registered batch, pipeline v2 frozen, LocalRunner)
 
-The whole backend (FastAPI + runner + PyBullet simulator) runs in one Docker image (Python 3.11). The Windows host has Python 3.13 where PyBullet has no wheel, so the host only runs the browser and, later, the frontend dev server. The same image is intended for Nebius Serverless Jobs (P5, not done yet: PENDING_KEY).
+Protocol: [docs/OFFICIAL_PROTOCOL.md](docs/OFFICIAL_PROTOCOL.md). 5 runs, fixed master seeds, each with its own single-use held-out block; all reported, none repeated or discarded. Full table with candidates: `recorded_runs/official_001/official_summary.md`.
 
-```bash
-cp .env.example .env                  # fill in NEBIUS_API_KEY etc. (passed to containers at run time, never baked in)
-scripts/dock.sh build                 # docker build -f docker/Dockerfile.sim -t roboproof-sim:dev .  (first build ~5 min)
-scripts/dock.sh test                  # whole test suite, including the simulator
-scripts/dock.sh api                   # backend on http://localhost:8000  (/health, /api/version)
-scripts/dock.sh baseline              # 200 dev scenarios on the default policy with LocalRunner, stored in SQLite
-scripts/dock.sh sweep --n 200         # dev baseline table by parameter bin
-scripts/dock.sh python scripts/ceiling_search.py   # any other command inside the image
+| Run (master seed) | Verdict | Attempts | Held-out pass, before -> after (n=400) |
+|---|---|---|---|
+| official_01 (3101) | VERIFIED | 2 | 71.2% -> 96.8% |
+| official_02 (3202) | VERIFIED | 2 | 68.8% -> 95.5% |
+| official_03 (3303) | FAILED (G5: 348/400, needed 360) | 1 | 69.0% -> 87.0% |
+| official_04 (3404) | VERIFIED | 1 | 69.2% -> 97.5% |
+| official_05 (3505) | VERIFIED | 1 | 71.2% -> 96.8% |
+
+**4 of 5 VERIFIED = 80%, Wilson 95% interval [37.6%, 96.4%]**: a small sample. Two of the four VERIFIED runs had 3 and 1 regressions on the analysis set, within the 2% budget but not zero. Measured per run: 109 to 193 s wall clock, 15k to 26k tokens, estimated cost $0.026 to $0.055 (total $0.181, estimate). Earlier rehearsal studies (v1: 1/5, v2: 4/8) are in the dashboard.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  T[Built-in task] --> G[Scenario generator<br/>Nemotron Nano]
+  C[Code: Latin-hypercube coverage] --> S
+  G --> S[Scenario set, fixed seeds]
+  S --> R[Fleet: LocalRunner<br/>PyBullet, container]
+  R --> E[Evidence in code:<br/>failure rates, bins]
+  E --> A[Failure analyst<br/>Nemotron Ultra]
+  A --> F[Fixer: 4 candidate patches<br/>Nemotron Ultra]
+  F --> M[Code measures every candidate,<br/>picks one by fixed rule]
+  M --> P[Proof-of-Robustness Gate G1-G6<br/>pure code, no LLM]
+  H[Fresh held-out set, single-use seeds] --> P
+  P --> V{VERIFIED / FAILED / UNVERIFIED}
+  V --> D[Static dashboard]
 ```
 
-`scripts/dock.sh` mounts the repo at `/app`, so edits take effect without rebuilding. The database defaults to `backend/data/roboproof.sqlite` (gitignored). Without a Nebius key, scenario regions come from a labelled hand-written fixture, never from a model (PENDING_KEY); model IDs and keys come only from environment variables.
+## Where each Nemotron model is used, and why that size
 
-The non-simulator tests also run on the host (`cd backend && python -m pytest`); simulator tests skip there.
+All inference goes through Nebius Token Factory (OpenAI-compatible API). Model IDs come only from env vars, never hardcoded.
 
-Simulator fidelity limits, the freeze and the tuning log: [docs/SIM_FIDELITY.md](docs/SIM_FIDELITY.md). Ceiling search and gate thresholds: [docs/CEILING_SEARCH.md](docs/CEILING_SEARCH.md).
+| Stage | Model | Why this size |
+|---|---|---|
+| Scenario generator | Nemotron-3-Nano-30B-A3B (`NEBIUS_MODEL_FAST`), reasoning off. Fallback: Nemotron-3-Super-120B-A12B, then a code-only coverage set | Cheap, quick structured JSON: it proposes risky parameter regions. Code validates each region and adds the coverage sweep. |
+| Failure analyst | Nemotron-3-Ultra-550B-A55B (`NEBIUS_MODEL_REASONING`) | Needs reasoning over code-computed statistics to write testable hypotheses. It never invents numbers; the dashboard looks numbers up by evidence id and marks the model's wording as unverified. |
+| Fixer | Nemotron-3-Ultra | Proposes 4 bounded patches (schema-validated, clamped). Code measures all of them and selects one. |
+| Gate | none | Pass/fail is decided by simulator results and deterministic code only. |
 
-## Gate rules (Proof-of-Robustness Gate, pure code)
+## Where Nebius is used
 
-The verdict is exactly one of VERIFIED, FAILED, UNVERIFIED, computed from simulator results only (`backend/app/gate/gate.py`; thresholds in `backend/app/core/gate_config.py`; derivation in [docs/CEILING_SEARCH.md](docs/CEILING_SEARCH.md)).
+- **Token Factory:** every model call above, with latency and token counts logged. See [FEEDBACK.md](FEEDBACK.md) (measured notes only).
+- **Serverless Jobs:** NOT used. `LocalRunner` ran every simulation. A `NebiusJobRunner` was never validated.
+
+## Gate rules (pure code, `backend/app/gate/gate.py`)
+
+Verdict is exactly one of VERIFIED, FAILED, UNVERIFIED. Thresholds: `backend/app/core/gate_config.py`; derivation: [docs/CEILING_SEARCH.md](docs/CEILING_SEARCH.md).
 
 | Check | Rule |
 |---|---|
-| G1 determinism | 30 evenly spaced baseline scenarios are re-run in fresh processes; every `Result` must be identical |
+| G1 determinism | 30 evenly spaced baseline scenarios re-run in fresh processes give identical results |
 | G2 reproduced | every targeted failure fails again on the unpatched policy |
-| G3 fixed | at least 70% of the targeted failures now pass (`GATE_TARGET_FIX_RATE`, set before the rehearsal, not tuned to the trap) |
-| G4 no regressions | previously passing analysis-set scenarios that now fail <= floor(2% x previously passing) (about 4 of 200). **The strict zero-budget result and every regressed scenario id are always shown next to it** |
-| G5 held-out | on a fresh, code-only verification set of 400 scenarios from a single-use seed block: patched pass rate >= 0.90, improvement over the unpatched policy on the same set >= 0.10, **and** the patched Wilson 95% lower bound > the unpatched pass rate |
-| G6 complete | every run the gate relied on finished with no failed or timed-out shard |
+| G3 fixed | at least 70% of targeted failures now pass |
+| G4 no regressions | previously passing analysis scenarios that now fail <= floor(2% x previously passing); the strict zero-budget result is always shown |
+| G5 held-out | fresh 400-scenario code-made set, single-use seeds: patched pass rate >= 0.90, improvement >= 0.10, and patched Wilson 95% lower bound > unpatched pass rate |
+| G6 complete | all shards finished, none failed or timed out |
 
-**Check statuses:** `pass`, `fail`, `not_run` (the check could not run: missing or incomplete data) and `skipped_after_failure` (deliberately not run because an earlier check already failed).
+Statuses: `pass`, `fail`, `not_run` (could not run), `skipped_after_failure` (an earlier check already failed, so the single-use held-out set is not spent). Precedence: UNVERIFIED (G6 fails or a required check is not run) > FAILED (a check that ran failed) > VERIFIED. Each path is unit-tested in `backend/tests/test_gate.py`. The thresholds were set from development data, not tuned on held-out seeds; they are judgments, see the limits page.
 
-**Verdict precedence** (each line has a test in `backend/tests/test_gate.py`):
-1. **UNVERIFIED** if G6 fails (incomplete execution) or any required check is `not_run`.
-2. Otherwise **FAILED** if any check that ran failed. Checks that are `skipped_after_failure` do not change this.
-3. Otherwise **VERIFIED** (and only if nothing was skipped).
+**Scripted trap:** a hand-written overfit patch (not model output) that fixes most targeted failures but is rejected by G4 and G5. Its stored gate result is shown in the dashboard and labelled as such.
 
-So an incomplete run is UNVERIFIED even if another check also failed, and a complete run with a failed G3 is FAILED with G5 `skipped_after_failure`. A crash, timeout or missing result never counts as a pass.
+## Setup (Windows + Docker Desktop)
 
-**Regression budget (G4), decided by the project owner: 2%.** The budget is `floor(0.02 x previously passing)` (about 4 of 200). The strict zero-budget result and every regressed scenario id are always shown next to it. The strict check would reject even the best patch found by the ceiling search (3 regressions of 216 on dev set A; 1 of 188 in rehearsal_001), which is why a zero budget would make VERIFIED practically unreachable. The budget is a documented compromise, not a physical law.
+The simulator needs Python 3.11 (PyBullet has no wheel for the host's 3.13), so the backend runs in a container. Git Bash is needed for `scripts/dock.sh`.
 
-**Skipped after failure (approved):** if G3 or G4 already failed on the analysis set, G5 is `skipped_after_failure`, so the single-use verification block is not spent on a patch that is already rejected. G5 is terminal: its details are never fed back to the fixer, and a failed G5 means a new run with a fresh seed block is needed.
+```bash
+cp .env.example .env            # fill NEBIUS_API_KEY, NEBIUS_BASE_URL, model ids (never commit .env)
+python scripts/list_models.py   # (needs the openai package) lists models for your key; fill NEBIUS_MODEL_* in .env
+scripts/dock.sh build           # first build ~5 min
+scripts/dock.sh test            # test suite inside the image
+```
 
-**Diagnostic G5:** `finalize(..., diagnostic_g5=True)` runs G5 even though an earlier check failed, to show what it would have said. It exists for rehearsal blocks only (it is refused for held-out blocks) and can never change a verdict: a FAILED verdict stays FAILED.
+## Run the pipeline
 
-## Pipeline v2: what changed and why
+A live run on rehearsal seeds (not held-out, so it can be repeated; it does spend Token Factory credits, roughly $0.03 estimated). Set `LLM_DEV_CACHE=0` in `.env`.
 
-Pipeline v1 (tag `pipeline-frozen`) was measured in `recorded_runs/reliability_001`: 1 of 5 runs VERIFIED, 2 FAILED, 2 without a verdict. The diagnosis (`docs/P46_DIAGNOSIS.md`) found that both dead runs were lost to **one invalid region out of three** (the other two were fine) and that the fixer saw only one number per attempt. Pipeline v2 (tag `pipeline-frozen-v2`) changes exactly that, and nothing about the gate:
+```bash
+scripts/dock.sh python scripts/run_rehearsal.py --name my_run --master-seed 11
+```
 
-- **Generator:** each region is validated on its own (valid ones are kept, dropped ones are logged with the reason; values up to 10% of an axis range outside the bounds are clamped and logged). Fallback chain, all NVIDIA Nemotron: fast model with reasoning off (60 s per-call timeout) -> `nemotron-3-super-120b-a12b` -> a code-made coverage-only analysis set labelled `coverage_only_fallback`. The source and model are recorded in every run.
-- **Fixer:** one reasoning-model call returns 4 diverse candidate patches. **Code** measures every candidate on the analysis set and picks one with a fixed rule (highest targeted fix within the regression budget; ties: fewer changed parameters, lower grip force); only the selected candidate goes through the gate, and G5 still runs at most once per run. The model sees a table of every candidate it proposed, with per-hypothesis results, on later attempts (analysis-set numbers only).
-- **Exact comparisons:** every gate threshold is compared on integers/exact fractions with inclusive boundaries (one run cleared G3 at exactly 0.70).
-- Thresholds are unchanged: G3 0.70, G4 2%, G5 0.90 with minimum improvement 0.10, held-out size 400.
+Artifacts land in `recorded_runs/my_run/`, including `gate_report.json`. Official runs (`scripts/run_official.py`) refuse to start unless the tree is clean and the frozen pipeline hash matches tag `pipeline-frozen-v2`; they spend single-use held-out seeds and are not meant to be re-run.
 
-## Pipeline freeze and official runs
+## Dashboard (static, no backend)
 
-The prompts, generator, evidence, analyst, fixer, selection rule, gate, gate thresholds, seed guard, ledger, LLM client and controls, runner base, pipeline orchestrator and `docs/OFFICIAL_PROTOCOL.md` are fingerprinted (`backend/app/core/FROZEN_PIPELINE_HASH.txt`, list in `backend/app/core/provenance.py`) and marked by the git tag `pipeline-frozen-v2` (v1 stays as `pipeline-frozen`). `backend/tests/test_pipeline_frozen.py` fails with an explanation if any of them changes. Anything run before the tag is a **rehearsal**; changing a frozen file is a deliberate re-freeze (`scripts/refreeze_pipeline.py`, a new commit and a new tag) and makes every earlier run a rehearsal again.
+It reads only exported JSON from recorded real runs. Nothing is computed live and no model is called.
 
-An **official** run (`PipelineConfig(official=True, rehearsal=False)`) refuses to start unless the working tree is clean, the frozen files equal their content at the tag, the committed hash file agrees, the official protocol is committed, the container image build id is known, and no `GATE_*`/`FIXER_N_CANDIDATES` override is set in the environment. It refuses with `LLM_DEV_CACHE=1`. It records the commit, tag, pipeline hash, image build id, protocol commit, model ids and runner name in its artifacts. Line endings alone never count as a change.
+```bash
+python scripts/export_demo_data.py   # regenerate frontend/public/data from recorded_runs (run in the sim image: scripts/dock.sh python scripts/export_demo_data.py)
+cd frontend
+npm install
+npm run dev                          # http://localhost:5173
+npm run build && npm run preview     # production build from frontend/dist
+```
 
-The official evaluation is a **pre-registered batch of 5 runs** with fixed master seeds and a fresh held-out block each, all reported, with run 1 as the headline by rule: [docs/OFFICIAL_PROTOCOL.md](docs/OFFICIAL_PROTOCOL.md). `scripts/run_official.py` implements it and has not been run.
+Pages: Overview (official batch), Run detail (gate checklist, candidates, hypotheses, heatmaps, same-seed replay), Scripted trap, Limits. `DEMO_MODE` is simply this: the site is the recorded real runs.
 
-## Layout
+## Tests
 
-`backend/app/{api,core,llm,sim,scenarios,runner,analysis,gate,store}`, `backend/tests`, `frontend/`, `scripts/`, `docker/`, `docs/`, `recorded_runs/`.
+`scripts/dock.sh test` (full suite incl. simulator). On the host, `cd backend && python -m pytest -q` runs the non-simulator tests and skips the rest.
 
-See [CLAUDE.md](CLAUDE.md) and [PROJECT_BRIEF.md](PROJECT_BRIEF.md) for scope and gate rules.
+## Layout and further docs
+
+`backend/app/{api,core,llm,sim,scenarios,runner,analysis,gate,store}`, `frontend/`, `scripts/`, `docker/`, `docs/`, `recorded_runs/`. Simulator limits: [docs/SIM_FIDELITY.md](docs/SIM_FIDELITY.md). Pipeline v1 vs v2 diagnosis: [docs/P46_DIAGNOSIS.md](docs/P46_DIAGNOSIS.md). Scope: [CLAUDE.md](CLAUDE.md), [PROJECT_BRIEF.md](PROJECT_BRIEF.md). Progress: [STATUS.md](STATUS.md).
+
+## License
+
+MIT, see [LICENSE](LICENSE).
