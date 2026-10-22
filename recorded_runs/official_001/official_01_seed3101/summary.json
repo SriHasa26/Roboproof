@@ -1,0 +1,708 @@
+{
+ "run_id": "official_01_seed3101",
+ "label": "OFFICIAL RUN. Verification used a fresh single-use held-out seed block.",
+ "official": true,
+ "rehearsal": false,
+ "master_seed": 3101,
+ "provenance": {
+  "commit": "bac5f38d45eaa3ab7d0cceb4f05923927b10c627",
+  "tag": "pipeline-frozen-v2",
+  "tag_commit": "f18ed6b8f95325f11e548f28881a6563334567c1",
+  "pipeline_hash": "f64b55a93c84c6ef69a050c833bd86f25c1568ef9b745a0c182d972c64d608a8",
+  "image_build_id": "sha256:75d76a1c492894f195aec0990a29a5f8f886c13cac90f8fa23f8d07fa6bcedab",
+  "model_fast": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+  "model_reasoning": "nvidia/Nemotron-3-Ultra-550b-a55b",
+  "runner_name": "local",
+  "official": true,
+  "python": "3.11.17",
+  "pipeline_version": "v2",
+  "protocol_commit": "8171c7d5bff60a25307cb0a5bc1320b405cad81b"
+ },
+ "verdict": "VERIFIED",
+ "error": null,
+ "attempts": [
+  {
+   "attempt": 1,
+   "candidates": [
+    {
+     "index": 0,
+     "model_proposal": {
+      "changes": {
+       "grip_force": 60.0
+      },
+      "rationale": "Large increase in grip force to address H1 (low-friction, small cubes) by providing much higher friction capacity, testing if further gains are possible beyond the 40 N measured point.",
+      "expected_effect": "Reduce MISSED_GRASP in H1 region; may improve overall pass rate but could increase motor current or cause cube deformation if too high."
+     },
+     "applied": {
+      "grip_force": 60.0
+     },
+     "clamped": {
+      "grip_force": false
+     },
+     "rounded": {},
+     "complete": true,
+     "fixed": 10,
+     "targeted": 50,
+     "regressions": 0,
+     "previously_passing": 181,
+     "pass_rate": 0.804,
+     "collision_rate": 0.0,
+     "per_hypothesis_fixed": {
+      "H1": "8/18",
+      "H2": "6/36",
+      "H3": "1/13"
+     },
+     "selected": false
+    },
+    {
+     "index": 1,
+     "model_proposal": {
+      "changes": {
+       "retry_count": 1.0
+      },
+      "rationale": "Minimal retry addition to address H2 (high sensor noise) with low time cost, giving one recovery chance for misperceived grasps.",
+      "expected_effect": "Reduce MISSED_GRASP due to sensor noise; slight increase in cycle time but should not affect passing scenarios."
+     },
+     "applied": {
+      "retry_count": 1.0
+     },
+     "clamped": {
+      "retry_count": false
+     },
+     "rounded": {},
+     "complete": true,
+     "fixed": 2,
+     "targeted": 50,
+     "regressions": 0,
+     "previously_passing": 181,
+     "pass_rate": 0.74,
+     "collision_rate": 0.016,
+     "per_hypothesis_fixed": {
+      "H1": "1/18",
+      "H2": "2/36",
+      "H3": "0/13"
+     },
+     "selected": false
+    },
+    {
+     "index": 2,
+     "model_proposal": {
+      "changes": {
+       "grip_force": 30.0,
+       "grasp_hold_steps": 30.0,
+       "lift_speed": 0.2
+      },
+      "rationale": "Moderate combined adjustments targeting H1 (grip force), H3 (hold steps), and inertial load (lift speed) simultaneously for synergistic improvement.",
+      "expected_effect": "Broad reduction in MISSED_GRASP across low-friction, small-size, and high-delay regions; lower lift speed reduces dynamic loads during lift."
+     },
+     "applied": {
+      "grip_force": 30.0,
+      "grasp_hold_steps": 30.0,
+      "lift_speed": 0.2
+     },
+     "clamped": {
+      "grip_force": false,
+      "grasp_hold_steps": false,
+      "lift_speed": false
+     },
+     "rounded": {},
+     "complete": true,
+     "fixed": 22,
+     "targeted": 50,
+     "regressions": 0,
+     "previously_passing": 181,
+     "pass_rate": 0.864,
+     "collision_rate": 0.0,
+     "per_hypothesis_fixed": {
+      "H1": "11/18",
+      "H2": "11/36",
+      "H3": "11/13"
+     },
+     "selected": false
+    },
+    {
+     "index": 3,
+     "model_proposal": {
+      "changes": {
+       "retry_count": 2.0,
+       "grasp_hold_steps": 50.0,
+       "lift_height": 0.2
+      },
+      "rationale": "Higher retries for sensor noise robustness, longer hold for small cubes with gripper delay, and increased lift height to ensure clearance over the 6 cm wall.",
+      "expected_effect": "Address H2 and H3 more aggressively; higher lift height prevents wall collisions while maintaining safe grasp."
+     },
+     "applied": {
+      "grasp_hold_steps": 50.0,
+      "retry_count": 2.0,
+      "lift_height": 0.2
+     },
+     "clamped": {
+      "retry_count": false,
+      "grasp_hold_steps": false,
+      "lift_height": false
+     },
+     "rounded": {},
+     "complete": true,
+     "fixed": 28,
+     "targeted": 50,
+     "regressions": 0,
+     "previously_passing": 181,
+     "pass_rate": 0.884,
+     "collision_rate": 0.012,
+     "per_hypothesis_fixed": {
+      "H1": "9/18",
+      "H2": "19/36",
+      "H3": "12/13"
+     },
+     "selected": true
+    }
+   ],
+   "dropped_candidates": [],
+   "diversity_violations": [],
+   "selection_rule": "highest targeted fix among candidates within the regression budget; ties: fewer changed params, lower grip; none within budget: fewest regressions",
+   "selected_index": 3,
+   "regression_budget": 3,
+   "model_proposal": {
+    "changes": {
+     "retry_count": 2.0,
+     "grasp_hold_steps": 50.0,
+     "lift_height": 0.2
+    },
+    "rationale": "Higher retries for sensor noise robustness, longer hold for small cubes with gripper delay, and increased lift height to ensure clearance over the 6 cm wall.",
+    "expected_effect": "Address H2 and H3 more aggressively; higher lift height prevents wall collisions while maintaining safe grasp."
+   },
+   "clamped": {
+    "retry_count": false,
+    "grasp_hold_steps": false,
+    "lift_height": false
+   },
+   "rounded": {},
+   "patched_policy": {
+    "grip_force": 15.0,
+    "approach_speed": 0.3,
+    "lift_height": 0.2,
+    "lift_speed": 0.3,
+    "grasp_hold_steps": 50,
+    "place_slow_factor": 1.0,
+    "retry_count": 2
+   },
+   "dev_checks": {
+    "G1": {
+     "id": "G1",
+     "name": "Determinism",
+     "status": "pass",
+     "observed": {
+      "sample": 30,
+      "mismatches": 0
+     },
+     "threshold": {
+      "mismatches": 0
+     },
+     "details": "all outcomes identical"
+    },
+    "G2": {
+     "id": "G2",
+     "name": "Targeted failures reproduced",
+     "status": "pass",
+     "observed": {
+      "targeted": 50,
+      "not_reproduced": 0
+     },
+     "threshold": {
+      "not_reproduced": 0
+     },
+     "details": "all reproduced"
+    },
+    "G3": {
+     "id": "G3",
+     "name": "Targeted failures fixed",
+     "status": "fail",
+     "observed": {
+      "fixed": 28,
+      "targeted": 50,
+      "fix_rate": 0.56
+     },
+     "threshold": {
+      "min_fix_rate": 0.7,
+      "comparison": "exact fraction, inclusive"
+     },
+     "details": ""
+    },
+    "G4": {
+     "id": "G4",
+     "name": "No regressions",
+     "status": "pass",
+     "observed": {
+      "regressions": 0,
+      "previously_passing": 181,
+      "strict_zero_budget_pass": true
+     },
+     "threshold": {
+      "budget": 3,
+      "budget_frac": 0.02
+     },
+     "details": "none"
+    }
+   },
+   "regressed_scenario_ids": [],
+   "dev_stage_passed": false
+  },
+  {
+   "attempt": 2,
+   "candidates": [
+    {
+     "index": 0,
+     "model_proposal": {
+      "changes": {
+       "lift_speed": 0.1
+      },
+      "rationale": "Reducing lift speed reduces inertial load during the initial lift phase, which should help retain low-friction and small cubes (H1) and also benefit small cubes with high gripper delay (H3) by giving the grasp more stability.",
+      "expected_effect": "Increase pass rate by reducing MISSED_GRASP failures due to slippage during acceleration, particularly in the low-friction small-cube region."
+     },
+     "applied": {
+      "lift_speed": 0.1
+     },
+     "clamped": {
+      "lift_speed": false
+     },
+     "rounded": {},
+     "complete": true,
+     "fixed": 15,
+     "targeted": 50,
+     "regressions": 0,
+     "previously_passing": 181,
+     "pass_rate": 0.812,
+     "collision_rate": 0.004,
+     "per_hypothesis_fixed": {
+      "H1": "5/18",
+      "H2": "7/36",
+      "H3": "10/13"
+     },
+     "selected": false
+    },
+    {
+     "index": 1,
+     "model_proposal": {
+      "changes": {
+       "grip_force": 40.0,
+       "lift_speed": 0.2,
+       "retry_count": 2.0
+      },
+      "rationale": "Moderate increase in grip force directly addresses H1 (insufficient friction). Moderate reduction in lift speed reduces inertial load, complementing the grip force increase. Adding two retries addresses H2 (sensor noise) without the maximum time cost of three retries.",
+      "expected_effect": "Improve both H1 and H2 failure counts while keeping changes moderate to avoid regressions in already-passing scenarios."
+     },
+     "applied": {
+      "grip_force": 40.0,
+      "retry_count": 2.0,
+      "lift_speed": 0.2
+     },
+     "clamped": {
+      "grip_force": false,
+      "lift_speed": false,
+      "retry_count": false
+     },
+     "rounded": {},
+     "complete": true,
+     "fixed": 34,
+     "targeted": 50,
+     "regressions": 0,
+     "previously_passing": 181,
+     "pass_rate": 0.932,
+     "collision_rate": 0.008,
+     "per_hypothesis_fixed": {
+      "H1": "16/18",
+      "H2": "21/36",
+      "H3": "12/13"
+     },
+     "selected": false
+    },
+    {
+     "index": 2,
+     "model_proposal": {
+      "changes": {
+       "grip_force": 80.0,
+       "grasp_hold_steps": 100.0,
+       "retry_count": 3.0,
+       "lift_speed": 0.05
+      },
+      "rationale": "Push parameters to their extremes: maximum grip force for maximum friction, maximum grasp hold steps to ensure full closure even with high gripper delay, maximum retries to recover from sensor noise, and minimum lift speed to minimize inertial disturbance. This explores whether the remaining failures require aggressive tuning.",
+      "expected_effect": "Potentially fix the remaining H1 (9/18) and H2 (17/36) failures and the last H3 failure, but may increase cycle time or introduce new failure modes."
+     },
+     "applied": {
+      "grip_force": 80.0,
+      "grasp_hold_steps": 100.0,
+      "retry_count": 3.0,
+      "lift_speed": 0.05
+     },
+     "clamped": {
+      "grip_force": false,
+      "grasp_hold_steps": false,
+      "retry_count": false,
+      "lift_speed": false
+     },
+     "rounded": {},
+     "complete": true,
+     "fixed": 38,
+     "targeted": 50,
+     "regressions": 0,
+     "previously_passing": 181,
+     "pass_rate": 0.948,
+     "collision_rate": 0.008,
+     "per_hypothesis_fixed": {
+      "H1": "17/18",
+      "H2": "24/36",
+      "H3": "13/13"
+     },
+     "selected": true
+    },
+    {
+     "index": 3,
+     "model_proposal": {
+      "changes": {
+       "grip_force": 20.0,
+       "grasp_hold_steps": 15.0,
+       "lift_speed": 0.25,
+       "lift_height": 0.18
+      },
+      "rationale": "Small incremental adjustments across all parameters: slightly more grip force, slightly longer hold, slightly slower lift, and slightly higher lift to clear the wall. This tests whether gentle nudges can accumulate fixes without risking regressions.",
+      "expected_effect": "Slight improvements across H1, H2, and H3, maintaining the high pass rate of the current best candidate while possibly fixing a few more failures."
+     },
+     "applied": {
+      "grip_force": 20.0,
+      "grasp_hold_steps": 15.0,
+      "lift_speed": 0.25,
+      "lift_height": 0.18
+     },
+     "clamped": {
+      "grip_force": false,
+      "grasp_hold_steps": false,
+      "lift_speed": false,
+      "lift_height": false
+     },
+     "rounded": {},
+     "complete": true,
+     "fixed": 12,
+     "targeted": 50,
+     "regressions": 1,
+     "previously_passing": 181,
+     "pass_rate": 0.808,
+     "collision_rate": 0.008,
+     "per_hypothesis_fixed": {
+      "H1": "5/18",
+      "H2": "7/36",
+      "H3": "6/13"
+     },
+     "selected": false
+    }
+   ],
+   "dropped_candidates": [],
+   "diversity_violations": [],
+   "selection_rule": "highest targeted fix among candidates within the regression budget; ties: fewer changed params, lower grip; none within budget: fewest regressions",
+   "selected_index": 2,
+   "regression_budget": 3,
+   "model_proposal": {
+    "changes": {
+     "grip_force": 80.0,
+     "grasp_hold_steps": 100.0,
+     "retry_count": 3.0,
+     "lift_speed": 0.05
+    },
+    "rationale": "Push parameters to their extremes: maximum grip force for maximum friction, maximum grasp hold steps to ensure full closure even with high gripper delay, maximum retries to recover from sensor noise, and minimum lift speed to minimize inertial disturbance. This explores whether the remaining failures require aggressive tuning.",
+    "expected_effect": "Potentially fix the remaining H1 (9/18) and H2 (17/36) failures and the last H3 failure, but may increase cycle time or introduce new failure modes."
+   },
+   "clamped": {
+    "grip_force": false,
+    "grasp_hold_steps": false,
+    "retry_count": false,
+    "lift_speed": false
+   },
+   "rounded": {},
+   "patched_policy": {
+    "grip_force": 80.0,
+    "approach_speed": 0.3,
+    "lift_height": 0.15,
+    "lift_speed": 0.05,
+    "grasp_hold_steps": 100,
+    "place_slow_factor": 1.0,
+    "retry_count": 3
+   },
+   "dev_checks": {
+    "G1": {
+     "id": "G1",
+     "name": "Determinism",
+     "status": "pass",
+     "observed": {
+      "sample": 30,
+      "mismatches": 0
+     },
+     "threshold": {
+      "mismatches": 0
+     },
+     "details": "all outcomes identical"
+    },
+    "G2": {
+     "id": "G2",
+     "name": "Targeted failures reproduced",
+     "status": "pass",
+     "observed": {
+      "targeted": 50,
+      "not_reproduced": 0
+     },
+     "threshold": {
+      "not_reproduced": 0
+     },
+     "details": "all reproduced"
+    },
+    "G3": {
+     "id": "G3",
+     "name": "Targeted failures fixed",
+     "status": "pass",
+     "observed": {
+      "fixed": 38,
+      "targeted": 50,
+      "fix_rate": 0.76
+     },
+     "threshold": {
+      "min_fix_rate": 0.7,
+      "comparison": "exact fraction, inclusive"
+     },
+     "details": ""
+    },
+    "G4": {
+     "id": "G4",
+     "name": "No regressions",
+     "status": "pass",
+     "observed": {
+      "regressions": 0,
+      "previously_passing": 181,
+      "strict_zero_budget_pass": true
+     },
+     "threshold": {
+      "budget": 3,
+      "budget_frac": 0.02
+     },
+     "details": "none"
+    }
+   },
+   "regressed_scenario_ids": [],
+   "dev_stage_passed": true
+  }
+ ],
+ "n_attempts": 2,
+ "g5_executed": true,
+ "generator": {
+  "source": "llm",
+  "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+  "n_regions_used": 2,
+  "dropped_regions": [
+   {
+    "name": "Edge_Pull_Catch",
+    "reason": "size_m: range must be [lo, hi]"
+   }
+  ],
+  "clamped_values": [],
+  "trail": [
+   {
+    "stage": "primary",
+    "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+    "outcome": "ok",
+    "seconds": 3.93,
+    "regions_valid": 2,
+    "regions_dropped": 1
+   }
+  ]
+ },
+ "generator_value": {
+  "cov": {
+   "n": 150,
+   "n_fail": 45,
+   "fail_rate": 0.3,
+   "wilson95": [
+    0.2324,
+    0.3776
+   ]
+  },
+  "tgt": {
+   "n": 100,
+   "n_fail": 24,
+   "fail_rate": 0.24,
+   "wilson95": [
+    0.1669,
+    0.3323
+   ]
+  },
+  "per_region_fail": {
+   "Unanchored_Clearance_Fall": "17/50",
+   "Late_Response_Friction_Tradeoff": "7/50"
+  }
+ },
+ "n_hypotheses": 3,
+ "n_targeted": 50,
+ "checks": {
+  "G1": "pass",
+  "G2": "pass",
+  "G3": "pass",
+  "G4": "pass",
+  "G5": "pass",
+  "G6": "pass"
+ },
+ "strict_zero_budget": {
+  "regressions": 0,
+  "pass": true
+ },
+ "metrics": {
+  "analysis": {
+   "before": {
+    "n": 250,
+    "pass_rate": 0.724,
+    "pass_rate_ci95": [
+     0.6655,
+     0.7757
+    ],
+    "collision_rate": 0.004,
+    "mean_completion_time_s": 3.647
+   },
+   "after": {
+    "n": 250,
+    "pass_rate": 0.948,
+    "pass_rate_ci95": [
+     0.9131,
+     0.9694
+    ],
+    "collision_rate": 0.008,
+    "mean_completion_time_s": 6.776
+   }
+  },
+  "verification": {
+   "before": {
+    "n": 400,
+    "pass_rate": 0.7125,
+    "pass_rate_ci95": [
+     0.6663,
+     0.7547
+    ],
+    "collision_rate": 0.0075,
+    "mean_completion_time_s": 3.649
+   },
+   "after": {
+    "n": 400,
+    "pass_rate": 0.9675,
+    "pass_rate_ci95": [
+     0.9452,
+     0.9809
+    ],
+    "collision_rate": 0.01,
+    "mean_completion_time_s": 6.825
+   }
+  }
+ },
+ "gate_timings_s": {
+  "g1_fresh_process_rerun_s": 1.01,
+  "g2_targeted_rerun_s": 0.9,
+  "attempt1_cand0_1_s": 8.74,
+  "candidate_evals_total_s": 78.08,
+  "attempt1_cand1_1_s": 7.37,
+  "attempt1_cand2_1_s": 8.17,
+  "attempt1_cand3_1_s": 10.1,
+  "attempt2_cand0_1_s": 10.04,
+  "attempt2_cand1_1_s": 8.83,
+  "attempt2_cand2_1_s": 16.23,
+  "attempt2_cand3_1_s": 8.6,
+  "g5_unpatched_run_s": 11.77,
+  "g5_patched_run_s": 31.91
+ },
+ "verification_set": {
+  "block": "held_out",
+  "start": 900000,
+  "count": 400,
+  "sampler": "latin_hypercube",
+  "rehearsal": false
+ },
+ "timings_s": {
+  "generate_scenarios_llm": 3.94,
+  "baseline_run": 7.19,
+  "evidence": 0.02,
+  "analyst_llm": 16.27,
+  "gate_prepare_g1_g2": 1.91,
+  "fixer_llm_attempt1": 7.12,
+  "candidate_evals_attempt1": 34.38,
+  "dev_stage_attempt1": 0.0,
+  "fixer_llm_attempt2": 9.05,
+  "candidate_evals_attempt2": 43.7,
+  "dev_stage_attempt2": 0.0,
+  "verification_g5": 43.73
+ },
+ "wall_clock_total_s": 167.4,
+ "llm_usage": {
+  "calls_total": 4,
+  "calls_real": 4,
+  "calls_cached": 0,
+  "prompt_tokens": 10834,
+  "completion_tokens": 10535,
+  "max_calls": 16,
+  "any_cached": false
+ },
+ "llm_calls": [
+  {
+   "purpose": "scenario_generation",
+   "model_kind": "fast",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "attempt": 1,
+   "latency_s": 3.897470716998214,
+   "prompt_tokens": 835,
+   "completion_tokens": 359,
+   "ok": true,
+   "error": null,
+   "cached": false
+  },
+  {
+   "purpose": "analyst",
+   "model_kind": "reasoning",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "latency_s": 16.234692875998007,
+   "prompt_tokens": 6375,
+   "completion_tokens": 5423,
+   "ok": true,
+   "error": null,
+   "cached": false
+  },
+  {
+   "purpose": "fixer",
+   "model_kind": "reasoning",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "latency_s": 7.09475267200105,
+   "prompt_tokens": 1528,
+   "completion_tokens": 1647,
+   "ok": true,
+   "error": null,
+   "cached": false
+  },
+  {
+   "purpose": "fixer",
+   "model_kind": "reasoning",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "latency_s": 9.016713337998226,
+   "prompt_tokens": 2096,
+   "completion_tokens": 3106,
+   "ok": true,
+   "error": null,
+   "cached": false
+  }
+ ],
+ "pricing_per_token_from_api": {
+  "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B": {
+   "prompt": 6e-08,
+   "completion": 2.4e-07
+  },
+  "nvidia/Nemotron-3-Ultra-550b-a55b": {
+   "prompt": 1e-06,
+   "completion": 3e-06
+  }
+ },
+ "estimated_cost_usd": 0.040663,
+ "llm_seconds": 36.24,
+ "cost_note": "ESTIMATE = tokens x per-token prices from GET /models?verbose=true; hidden reasoning tokens are included in completion tokens; actual billing UNCONFIRMED"
+}

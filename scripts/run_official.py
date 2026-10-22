@@ -63,7 +63,8 @@ def main():
             print(stop)
             break
     summarize(rows, out, "OFFICIAL BATCH per docs/OFFICIAL_PROTOCOL.md. " + (stop or "All pre-registered runs executed.") +
-              " Run 1 is the headline run by rule. LocalRunner (local fallback, not Nebius). Held-out blocks were single use.")
+              " Run 1 is the headline run by rule. LocalRunner (local fallback, not Nebius). Held-out blocks were single use.",
+              title="official_001", kind="OFFICIAL BATCH (pre-registered, docs/OFFICIAL_PROTOCOL.md)", stem="official_summary", sidebyside=False)
     print("summary written to", out)
 
 

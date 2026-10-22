@@ -1,0 +1,105 @@
+[
+ {
+  "id": "H1",
+  "statement": "Low friction causes insufficient grip force leading to MISSED_GRASP and SLIPPED_ON_LIFT failures.",
+  "region": {
+   "friction": [
+    0.1,
+    0.4667
+   ]
+  },
+  "mechanism": "At low friction, the current grip_force (15 N) generates insufficient normal force to prevent slip during lift and to overcome initial stiction, causing the cube to remain on the table or slide during lift.",
+  "levers": [
+   {
+    "param": "grip_force",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grip_force will reduce MISSED_GRASP and SLIPPED_ON_LIFT failures in low friction regions.",
+  "evidence_refs": [
+   "E8",
+   "E38",
+   "E40",
+   "E2"
+  ]
+ },
+ {
+  "id": "H2",
+  "statement": "Small cube size combined with high gripper delay causes MISSED_GRASP because fingers lack time to stabilize on the small cube before lift.",
+  "region": {
+   "size_m": [
+    0.03,
+    0.0364
+   ],
+   "gripper_delay_steps": [
+    10.5,
+    20.0
+   ]
+  },
+  "mechanism": "High gripper_delay_steps delays the close command; with very small cubes (size_m <= 0.0364), the fingers need more hold time after the delayed command to achieve stable contact. Current grasp_hold_steps=10 is insufficient when delay is high.",
+  "levers": [
+   {
+    "param": "grasp_hold_steps",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grasp_hold_steps will reduce MISSED_GRASP failures in the region where size_m <= 0.0364 and gripper_delay_steps > 10.5.",
+  "evidence_refs": [
+   "E46",
+   "E42",
+   "E13"
+  ]
+ },
+ {
+  "id": "H3",
+  "statement": "High sensor noise combined with high mass causes MISSED_GRASP due to misperception, and with retry_count=0 there is no recovery.",
+  "region": {
+   "mass_kg": [
+    0.6833,
+    1.0
+   ],
+   "sensor_noise_m": [
+    0.02,
+    0.03
+   ]
+  },
+  "mechanism": "Sensor noise causes position estimation error; heavy cubes require more precise grasp placement. Without retries (retry_count=0), a single misperception leads to a missed grasp.",
+  "levers": [
+   {
+    "param": "retry_count",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing retry_count from 0 to 1 or more will reduce MISSED_GRASP failures in the high mass, high sensor noise region.",
+  "evidence_refs": [
+   "E39",
+   "E32",
+   "E7",
+   "E2"
+  ]
+ },
+ {
+  "id": "H4",
+  "statement": "High lift_speed causes SLIPPED_ON_LIFT for heavy cubes because inertial forces exceed the friction hold.",
+  "region": {
+   "mass_kg": [
+    0.62,
+    1.0
+   ]
+  },
+  "mechanism": "During rapid lift, the cube's inertia creates a force that can overcome the friction hold, especially for heavier cubes (mass > 0.62 kg). Current lift_speed=0.3 m/s may be too high for these masses.",
+  "levers": [
+   {
+    "param": "lift_speed",
+    "direction": "decrease"
+   }
+  ],
+  "prediction": "Decreasing lift_speed will reduce SLIPPED_ON_LIFT failures in high mass regions.",
+  "evidence_refs": [
+   "E6",
+   "E7",
+   "E38",
+   "E2"
+  ]
+ }
+]

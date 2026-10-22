@@ -1,0 +1,89 @@
+[
+ {
+  "id": "H1",
+  "statement": "Insufficient grip force causes MISSED_GRASP for heavy cubes with low friction.",
+  "region": {
+   "mass_kg": [
+    0.68,
+    1.0
+   ],
+   "friction": [
+    0.1,
+    0.47
+   ]
+  },
+  "mechanism": "The current grip force (15 N) cannot generate enough friction to hold the cube against gravity during lift, so the cube never leaves the table (MISSED_GRASP).",
+  "levers": [
+   {
+    "param": "grip_force",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grip_force should eliminate MISSED_GRASP failures in the high-mass, low-friction region.",
+  "evidence_refs": [
+   "E3",
+   "E4",
+   "E5",
+   "E6",
+   "E7",
+   "E8",
+   "E38"
+  ]
+ },
+ {
+  "id": "H2",
+  "statement": "Insufficient grasp hold time when gripper delay is high and object is small leads to MISSED_GRASP.",
+  "region": {
+   "size_m": [
+    0.03,
+    0.04
+   ],
+   "gripper_delay_steps": [
+    15.0,
+    20.0
+   ]
+  },
+  "mechanism": "The gripper delay consumes the fixed grasp_hold_steps (10 steps), leaving insufficient time for fingers to close fully before lift starts, causing the cube to be missed.",
+  "levers": [
+   {
+    "param": "grasp_hold_steps",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grasp_hold_steps should eliminate failures in the small-size, high-delay region.",
+  "evidence_refs": [
+   "E13",
+   "E37",
+   "E40",
+   "E46"
+  ]
+ },
+ {
+  "id": "H3",
+  "statement": "Sensor noise causes misalignment for small objects, leading to MISSED_GRASP; retries could recover.",
+  "region": {
+   "size_m": [
+    0.03,
+    0.047
+   ],
+   "sensor_noise_m": [
+    0.02,
+    0.03
+   ]
+  },
+  "mechanism": "Sensor noise displaces the perceived cube position; with small cubes, the fingers miss the cube entirely. Retries allow re-perception with fresh noise.",
+  "levers": [
+   {
+    "param": "retry_count",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Adding retries (retry_count > 0) should reduce MISSED_GRASP in the small-size, high-noise region.",
+  "evidence_refs": [
+   "E13",
+   "E31",
+   "E32",
+   "E42"
+  ]
+ }
+]

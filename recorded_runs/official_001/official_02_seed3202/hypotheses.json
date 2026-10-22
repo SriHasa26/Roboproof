@@ -1,0 +1,92 @@
+[
+ {
+  "id": "H1",
+  "statement": "Low friction causes missed grasps because the current grip force is insufficient to generate the friction force needed to hold the cube during lift.",
+  "region": {
+   "friction": [
+    0.1,
+    0.32
+   ]
+  },
+  "mechanism": "In low friction scenarios, the normal force from the fingers produces too little tangential friction force to counteract gravity and inertial loads, leading to MISSED_GRASP (E2). The failure rate in this friction band is the highest marginal rate (E8). The interaction with high sensor noise (E46) shows an extreme fail rate of 0.8846, indicating that perception noise exacerbates the weak grasp.",
+  "levers": [
+   {
+    "param": "grip_force",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grip_force should reduce MISSED_GRASP failures in the low friction region (E8) and in the low-friction/high-sensor-noise interaction (E46).",
+  "evidence_refs": [
+   "E2",
+   "E8",
+   "E46"
+  ]
+ },
+ {
+  "id": "H2",
+  "statement": "Small cube size leads to missed grasps due to reduced contact area and higher sensitivity to position offsets, and the current grasp hold time is too short for the fingers to settle securely.",
+  "region": {
+   "size_m": [
+    0.03,
+    0.04
+   ]
+  },
+  "mechanism": "Cubes at the smallest size have the highest marginal fail rate (E13). Interactions with pos_offset_y near zero (E28) and pos_offset_x near zero (E40) show excess failure rates over marginals, indicating that small size amplifies misalignment effects. A short grasp_hold_steps (current 10) may not allow enough time for the fingers to conform and stabilize on the small contact patch before lifting.",
+  "levers": [
+   {
+    "param": "grasp_hold_steps",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grasp_hold_steps should reduce MISSED_GRASP failures in the small size region (E13) and in the interacting regions with pos_offset_x (E40) and pos_offset_y (E28).",
+  "evidence_refs": [
+   "E13",
+   "E28",
+   "E40"
+  ]
+ },
+ {
+  "id": "H3",
+  "statement": "High sensor noise causes missed grasps by degrading pose estimation, and the controller has no retry mechanism to re-perceive after a failed grasp attempt.",
+  "region": {
+   "sensor_noise_m": [
+    0.024,
+    0.03
+   ]
+  },
+  "mechanism": "The highest sensor noise band has a fail rate of 0.4231 (E32). The interaction with low friction (E46) yields a fail rate of 0.8846, far above the marginal maximum. With retry_count currently 0, a single noisy perception leads to a failed grasp with no second chance.",
+  "levers": [
+   {
+    "param": "retry_count",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing retry_count to at least 1 should reduce MISSED_GRASP failures in the high sensor noise region (E32) and in the low-friction/high-sensor-noise interaction (E46).",
+  "evidence_refs": [
+   "E32",
+   "E46"
+  ]
+ },
+ {
+  "id": "H4",
+  "statement": "Gripper delay steps exceeding the controller's grasp hold steps cause the lift to begin before the fingers have closed, resulting in missed grasps.",
+  "region": {
+   "gripper_delay_steps": [
+    12.0,
+    20.0
+   ]
+  },
+  "mechanism": "The controller waits grasp_hold_steps (current 10) after commanding close before lifting. The scenario delays the actual close command by gripper_delay_steps. When delay > 10 (E36, E37), the lift starts while fingers are still open, causing MISSED_GRASP. Fail rates in these delay bands are 0.3846 and 0.4074 respectively.",
+  "levers": [
+   {
+    "param": "grasp_hold_steps",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grasp_hold_steps to exceed the maximum gripper_delay_steps (20) should eliminate MISSED_GRASP failures in the high delay region (E36, E37).",
+  "evidence_refs": [
+   "E36",
+   "E37"
+  ]
+ }
+]

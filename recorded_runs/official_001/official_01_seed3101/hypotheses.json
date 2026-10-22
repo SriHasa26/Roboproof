@@ -1,0 +1,77 @@
+[
+ {
+  "id": "H1",
+  "statement": "The grip force is too low to generate sufficient friction for grasping low-friction and small cubes, causing MISSED_GRASP.",
+  "region": {
+   "friction": [
+    0.1,
+    0.4667
+   ],
+   "size_m": [
+    0.03,
+    0.0467
+   ]
+  },
+  "mechanism": "For cubes with low friction coefficients and small contact areas, the current grip force (15 N) cannot produce enough tangential friction force to overcome gravity and inertial loads during lift initiation, so the cube never leaves the table.",
+  "levers": [
+   {
+    "param": "grip_force",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grip_force should reduce MISSED_GRASP failures in the low-friction, small-size region.",
+  "evidence_refs": [
+   "E38",
+   "E45"
+  ]
+ },
+ {
+  "id": "H2",
+  "statement": "High sensor noise causes misperception of cube position, leading to MISSED_GRASP, and with zero retries the controller cannot recover.",
+  "region": {
+   "sensor_noise_m": [
+    0.02,
+    0.03
+   ]
+  },
+  "mechanism": "Sensor noise in the high range causes the perceived cube position to deviate enough that the grasp misses the cube entirely; with retry_count=0, there is no second chance.",
+  "levers": [
+   {
+    "param": "retry_count",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Setting retry_count to at least 1 should reduce MISSED_GRASP failures in the high sensor noise region.",
+  "evidence_refs": [
+   "E32",
+   "E40",
+   "E44"
+  ]
+ },
+ {
+  "id": "H3",
+  "statement": "The grasp hold steps are too short for small cubes, especially when gripper delay is high, causing the lift to start before the fingers have fully closed.",
+  "region": {
+   "size_m": [
+    0.03,
+    0.04
+   ],
+   "gripper_delay_steps": [
+    13.3333,
+    20.0
+   ]
+  },
+  "mechanism": "Small cubes require more time for the fingers to close completely after the close command; with high gripper delay steps, the command is already delayed, and the current grasp_hold_steps (10) is insufficient, so the cube is not securely held when lift begins.",
+  "levers": [
+   {
+    "param": "grasp_hold_steps",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grasp_hold_steps should reduce MISSED_GRASP failures in the small-size, high-gripper-delay region.",
+  "evidence_refs": [
+   "E13",
+   "E43"
+  ]
+ }
+]

@@ -1,0 +1,118 @@
+[
+ {
+  "id": "H1",
+  "statement": "Insufficient grip_force causes MISSED_GRASP under high mass and low friction because the normal force is too low to generate adequate friction force against gravity.",
+  "region": {
+   "mass_kg": [
+    0.58,
+    1.0
+   ],
+   "friction": [
+    0.1,
+    0.28
+   ]
+  },
+  "mechanism": "At low friction coefficients, the available tangential force is friction * normal_force. With grip_force at 15 N and high cube mass (up to 1 kg, weight ~9.8 N), the friction force may be less than weight, so the cube never lifts off the table.",
+  "levers": [
+   {
+    "param": "grip_force",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grip_force should reduce MISSED_GRASP failures in the high-mass, low-friction region (E40, E46), with the largest improvement where friction <= 0.28 and mass_kg >= 0.58.",
+  "evidence_refs": [
+   "E8",
+   "E40",
+   "E46",
+   "E6",
+   "E7"
+  ]
+ },
+ {
+  "id": "H2",
+  "statement": "Insufficient grasp_hold_steps causes MISSED_GRASP when gripper_delay_steps is high and size_m is small because the gripper does not wait long enough for contact forces to stabilize before lifting.",
+  "region": {
+   "size_m": [
+    0.03,
+    0.047
+   ],
+   "gripper_delay_steps": [
+    13.0,
+    20.0
+   ]
+  },
+  "mechanism": "The grasp command is delayed by gripper_delay_steps; after the fingers close, the controller waits only grasp_hold_steps (currently 10) before lifting. With high delay and small cubes, the grasp may be unstable or misaligned, and the short hold time does not allow settling, leading to immediate slip or missed grasp.",
+  "levers": [
+   {
+    "param": "grasp_hold_steps",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Increasing grasp_hold_steps should reduce MISSED_GRASP failures in the small-size, high-gripper-delay region (E39) and also in the small-size, centered-pos_offset_y region (E38) where sensor noise compounds the instability.",
+  "evidence_refs": [
+   "E39",
+   "E38",
+   "E32",
+   "E37"
+  ]
+ },
+ {
+  "id": "H3",
+  "statement": "Zero retry_count makes MISSED_GRASP terminal when sensor noise or pos_offset_y causes the initial grasp to miss or land on the cube.",
+  "region": {
+   "pos_offset_y": [
+    -0.0267,
+    0.0267
+   ],
+   "sensor_noise_m": [
+    0.02,
+    0.03
+   ]
+  },
+  "mechanism": "With retry_count=0, any grasp that fails to pick up the cube (due to sensor noise shifting perceived position or pos_offset_y centering causing alignment issues) cannot be retried. The cube is never lifted, resulting in MISSED_GRASP.",
+  "levers": [
+   {
+    "param": "retry_count",
+    "direction": "increase"
+   }
+  ],
+  "prediction": "Setting retry_count >= 1 should convert a fraction of MISSED_GRASP failures to successes in the centered-pos_offset_y, high-sensor-noise region (E42) and the small-size, centered-pos_offset_y region (E38), because fresh perception on retry can correct the initial misalignment.",
+  "evidence_refs": [
+   "E42",
+   "E38",
+   "E31",
+   "E32",
+   "E2"
+  ]
+ },
+ {
+  "id": "H4",
+  "statement": "Excessive lift_speed causes SLIPPED_ON_LIFT under high mass and low friction because the inertial load during acceleration exceeds the friction-limited grip force.",
+  "region": {
+   "mass_kg": [
+    0.6,
+    1.0
+   ],
+   "friction": [
+    0.1,
+    0.3
+   ]
+  },
+  "mechanism": "Lifting at 0.3 m/s accelerates the cube upward; the required force is mass * (g + a). With low friction, the maximum tangential force (friction * grip_force) may be below this, causing the cube to slide down during lift (SLIPPED_ON_LIFT).",
+  "levers": [
+   {
+    "param": "lift_speed",
+    "direction": "decrease"
+   }
+  ],
+  "prediction": "Decreasing lift_speed should reduce SLIPPED_ON_LIFT failures in the high-mass, low-friction region (E40, E46) where the marginal SLIPPED_ON_LIFT rate is elevated (E2 shows 12 SLIPPED_ON_LIFT total).",
+  "evidence_refs": [
+   "E40",
+   "E46",
+   "E8",
+   "E6",
+   "E7",
+   "E2"
+  ]
+ }
+]

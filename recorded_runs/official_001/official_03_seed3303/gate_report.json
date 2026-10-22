@@ -1,0 +1,427 @@
+{
+ "label": "OFFICIAL RUN. Verification used a fresh single-use held-out seed block.",
+ "attempts": [
+  {
+   "attempt": 1,
+   "candidates": [
+    {
+     "index": 0,
+     "model_proposal": {
+      "changes": {
+       "retry_count": 3.0
+      },
+      "rationale": "Hypothesis H3 indicates that zero retry_count makes MISSED_GRASP terminal when sensor noise or pos_offset_y causes initial grasp to miss. Measured one-at-a-time effect shows retry_count 0->3 increases overall pass rate from 70% to 81%, the largest single-parameter improvement. This change directly addresses the centered pos_offset_y, high sensor noise region (E42, E38) by allowing fresh perception on retry.",
+      "expected_effect": "Convert a significant fraction of MISSED_GRASP failures to successes in regions E42 and E38, raising overall pass rate toward 81% while increasing cycle time due to re-perception."
+     },
+     "applied": {
+      "retry_count": 3.0
+     },
+     "clamped": {
+      "retry_count": false
+     },
+     "rounded": {},
+     "complete": true,
+     "fixed": 3,
+     "targeted": 47,
+     "regressions": 0,
+     "previously_passing": 177,
+     "pass_rate": 0.768,
+     "collision_rate": 0.064,
+     "per_hypothesis_fixed": {
+      "H1": "0/26",
+      "H2": "0/13",
+      "H3": "3/14",
+      "H4": "0/27"
+     },
+     "selected": false
+    },
+    {
+     "index": 1,
+     "model_proposal": {
+      "changes": {
+       "grip_force": 40.0,
+       "grasp_hold_steps": 60.0,
+       "lift_speed": 0.1
+      },
+      "rationale": "Combines levers from H1 (increase grip_force for high-mass,force), H2 (increase grasp_hold_steps for small-size, high-delay), and H4 (decrease lift_speed for SLIPPED_ON_LIFT in high-mass, low-friction). Each individual change improves pass rate (78.5%, 77.5%, 79% respectively). Together they should synergistically reduce both MISSED_GRASP and SLIPPED_ON_LIFT in overlapping problematic regions (E40, E46, E39).",
+      "expected_effect": "Reduce MISSED_GRASP in high-mass low-friction (E40, E46) and small-size high-delay (E39) regions, and reduce SLIPPED_ON_LIFT in high-mass low-friction regions. Overall pass rate should exceed individual improvements, potentially reaching mid-80s."
+     },
+     "applied": {
+      "grip_force": 40.0,
+      "grasp_hold_steps": 60.0,
+      "lift_speed": 0.1
+     },
+     "clamped": {
+      "grip_force": false,
+      "grasp_hold_steps": false,
+      "lift_speed": false
+     },
+     "rounded": {},
+     "complete": true,
+     "fixed": 33,
+     "targeted": 47,
+     "regressions": 0,
+     "previously_passing": 177,
+     "pass_rate": 0.904,
+     "collision_rate": 0.0,
+     "per_hypothesis_fixed": {
+      "H1": "20/26",
+      "H2": "12/13",
+      "H3": "6/14",
+      "H4": "21/27"
+     },
+     "selected": false
+    },
+    {
+     "index": 2,
+     "model_proposal": {
+      "changes": {
+       "grip_force": 80.0,
+       "grasp_hold_steps": 30.0,
+       "lift_speed": 0.2,
+       "retry_count": 1.0
+      },
+      "rationale": "Explores a larger step on grip_force (80 N, max) beyond the measured 40 N, while making moderate adjustments to other parameters. The large grip_force increase may further secure grasps in extreme high-mass low-friction cases. Moderate grasp_hold_steps increase (30) adds stability without excessive delay. Modest lift_speed reduction (0.2) lowers inertial load while keeping cycle time reasonable. Adding one retry (retry_count=1) captures some sensor-noise misalignments without the full time cost of 3 retries.",
+      "expected_effect": "Stronger grip may eliminate MISSED_GRASP in the most extreme mass/friction combinations. Combined with other tweaks, should improve pass rate in H1, H2, H3, H4 regions, but risk of over-gripping (e.g., cube deformation) is minimal as max force is within spec."
+     },
+     "applied": {
+      "grip_force": 80.0,
+      "grasp_hold_steps": 30.0,
+      "retry_count": 1.0,
+      "lift_speed": 0.2
+     },
+     "clamped": {
+      "grip_force": false,
+      "grasp_hold_steps": false,
+      "lift_speed": false,
+      "retry_count": false
+     },
+     "rounded": {},
+     "complete": true,
+     "fixed": 37,
+     "targeted": 47,
+     "regressions": 0,
+     "previously_passing": 177,
+     "pass_rate": 0.932,
+     "collision_rate": 0.004,
+     "per_hypothesis_fixed": {
+      "H1": "24/26",
+      "H2": "12/13",
+      "H3": "6/14",
+      "H4": "25/27"
+     },
+     "selected": true
+    },
+    {
+     "index": 3,
+     "model_proposal": {
+      "changes": {
+       "grip_force": 25.0,
+       "grasp_hold_steps": 20.0,
+       "lift_speed": 0.25,
+       "retry_count": 1.0
+      },
+      "rationale": "Conservative smaller steps on all four tunable parameters (vs. measured larger steps: grip_force 15->40, grasp_hold_steps 10->60, lift_speed 0.3->0.1, retry_count 0->3). This avoids overcompensation that could break currently passing scenarios (e.g., too high grip_force might cause excessive wear or control instability, too low lift_speed increases cycle time unnecessarily). Each hypothesis gets a slight nudge in the recommended direction.",
+      "expected_effect": "Modest reductions in MISSED_GRASP and SLIPPED_ON_LIFT across all identified regions (E38, E39, E40, E42, E46) with minimal risk of regressions in passing scenarios. Overall pass rate should improve incrementally, perhaps to 75-77%."
+     },
+     "applied": {
+      "grip_force": 25.0,
+      "grasp_hold_steps": 20.0,
+      "retry_count": 1.0,
+      "lift_speed": 0.25
+     },
+     "clamped": {
+      "grip_force": false,
+      "grasp_hold_steps": false,
+      "lift_speed": false,
+      "retry_count": false
+     },
+     "rounded": {},
+     "complete": true,
+     "fixed": 22,
+     "targeted": 47,
+     "regressions": 0,
+     "previously_passing": 177,
+     "pass_rate": 0.868,
+     "collision_rate": 0.012,
+     "per_hypothesis_fixed": {
+      "H1": "11/26",
+      "H2": "9/13",
+      "H3": "2/14",
+      "H4": "12/27"
+     },
+     "selected": false
+    }
+   ],
+   "dropped_candidates": [],
+   "diversity_violations": [],
+   "selection_rule": "highest targeted fix among candidates within the regression budget; ties: fewer changed params, lower grip; none within budget: fewest regressions",
+   "selected_index": 2,
+   "regression_budget": 3,
+   "model_proposal": {
+    "changes": {
+     "grip_force": 80.0,
+     "grasp_hold_steps": 30.0,
+     "lift_speed": 0.2,
+     "retry_count": 1.0
+    },
+    "rationale": "Explores a larger step on grip_force (80 N, max) beyond the measured 40 N, while making moderate adjustments to other parameters. The large grip_force increase may further secure grasps in extreme high-mass low-friction cases. Moderate grasp_hold_steps increase (30) adds stability without excessive delay. Modest lift_speed reduction (0.2) lowers inertial load while keeping cycle time reasonable. Adding one retry (retry_count=1) captures some sensor-noise misalignments without the full time cost of 3 retries.",
+    "expected_effect": "Stronger grip may eliminate MISSED_GRASP in the most extreme mass/friction combinations. Combined with other tweaks, should improve pass rate in H1, H2, H3, H4 regions, but risk of over-gripping (e.g., cube deformation) is minimal as max force is within spec."
+   },
+   "clamped": {
+    "grip_force": false,
+    "grasp_hold_steps": false,
+    "lift_speed": false,
+    "retry_count": false
+   },
+   "rounded": {},
+   "patched_policy": {
+    "grip_force": 80.0,
+    "approach_speed": 0.3,
+    "lift_height": 0.15,
+    "lift_speed": 0.2,
+    "grasp_hold_steps": 30,
+    "place_slow_factor": 1.0,
+    "retry_count": 1
+   },
+   "dev_checks": {
+    "G1": {
+     "id": "G1",
+     "name": "Determinism",
+     "status": "pass",
+     "observed": {
+      "sample": 30,
+      "mismatches": 0
+     },
+     "threshold": {
+      "mismatches": 0
+     },
+     "details": "all outcomes identical"
+    },
+    "G2": {
+     "id": "G2",
+     "name": "Targeted failures reproduced",
+     "status": "pass",
+     "observed": {
+      "targeted": 47,
+      "not_reproduced": 0
+     },
+     "threshold": {
+      "not_reproduced": 0
+     },
+     "details": "all reproduced"
+    },
+    "G3": {
+     "id": "G3",
+     "name": "Targeted failures fixed",
+     "status": "pass",
+     "observed": {
+      "fixed": 37,
+      "targeted": 47,
+      "fix_rate": 0.7872
+     },
+     "threshold": {
+      "min_fix_rate": 0.7,
+      "comparison": "exact fraction, inclusive"
+     },
+     "details": ""
+    },
+    "G4": {
+     "id": "G4",
+     "name": "No regressions",
+     "status": "pass",
+     "observed": {
+      "regressions": 0,
+      "previously_passing": 177,
+      "strict_zero_budget_pass": true
+     },
+     "threshold": {
+      "budget": 3,
+      "budget_frac": 0.02
+     },
+     "details": "none"
+    }
+   },
+   "regressed_scenario_ids": [],
+   "dev_stage_passed": true
+  }
+ ],
+ "report": {
+  "verdict": "FAILED",
+  "rehearsal": false,
+  "checks": [
+   {
+    "id": "G1",
+    "name": "Determinism",
+    "status": "pass",
+    "observed": {
+     "sample": 30,
+     "mismatches": 0
+    },
+    "threshold": {
+     "mismatches": 0
+    },
+    "details": "all outcomes identical"
+   },
+   {
+    "id": "G2",
+    "name": "Targeted failures reproduced",
+    "status": "pass",
+    "observed": {
+     "targeted": 47,
+     "not_reproduced": 0
+    },
+    "threshold": {
+     "not_reproduced": 0
+    },
+    "details": "all reproduced"
+   },
+   {
+    "id": "G3",
+    "name": "Targeted failures fixed",
+    "status": "pass",
+    "observed": {
+     "fixed": 37,
+     "targeted": 47,
+     "fix_rate": 0.7872
+    },
+    "threshold": {
+     "min_fix_rate": 0.7,
+     "comparison": "exact fraction, inclusive"
+    },
+    "details": ""
+   },
+   {
+    "id": "G4",
+    "name": "No regressions",
+    "status": "pass",
+    "observed": {
+     "regressions": 0,
+     "previously_passing": 177,
+     "strict_zero_budget_pass": true
+    },
+    "threshold": {
+     "budget": 3,
+     "budget_frac": 0.02
+    },
+    "details": "none"
+   },
+   {
+    "id": "G5",
+    "name": "Held-out generalization",
+    "status": "fail",
+    "observed": {
+     "patched_pass_rate": 0.87,
+     "patched_wilson95_lower": 0.8335,
+     "unpatched_pass_rate": 0.69,
+     "improvement": 0.18,
+     "n": 400,
+     "patched_passes": 348,
+     "unpatched_passes": 276,
+     "conditions": {
+      "target": false,
+      "improvement": true,
+      "wilson_lower_above_baseline": true
+     }
+    },
+    "threshold": {
+     "min_pass_rate": 0.9,
+     "min_improvement": 0.1,
+     "wilson_lower_must_exceed_unpatched_pass_rate": true,
+     "comparison": "target and improvement: exact fractions, inclusive; Wilson: strict, float"
+    },
+    "details": "failed: target"
+   },
+   {
+    "id": "G6",
+    "name": "Complete execution",
+    "status": "pass",
+    "observed": {
+     "runs": 6,
+     "incomplete_runs": [],
+     "failed_shards": 0,
+     "missing_scenarios": 0
+    },
+    "threshold": {},
+    "details": "all shards finished"
+   }
+  ],
+  "regressed_scenario_ids": [],
+  "strict_zero_budget": {
+   "regressions": 0,
+   "pass": true
+  },
+  "metrics": {
+   "analysis": {
+    "before": {
+     "n": 250,
+     "pass_rate": 0.708,
+     "pass_rate_ci95": [
+      0.6488,
+      0.7609
+     ],
+     "collision_rate": 0.008,
+     "mean_completion_time_s": 3.613
+    },
+    "after": {
+     "n": 250,
+     "pass_rate": 0.932,
+     "pass_rate_ci95": [
+      0.8938,
+      0.9571
+     ],
+     "collision_rate": 0.004,
+     "mean_completion_time_s": 4.05
+    }
+   },
+   "verification": {
+    "before": {
+     "n": 400,
+     "pass_rate": 0.69,
+     "pass_rate_ci95": [
+      0.643,
+      0.7333
+     ],
+     "collision_rate": 0.005,
+     "mean_completion_time_s": 3.658
+    },
+    "after": {
+     "n": 400,
+     "pass_rate": 0.87,
+     "pass_rate_ci95": [
+      0.8335,
+      0.8995
+     ],
+     "collision_rate": 0.005,
+     "mean_completion_time_s": 4.071
+    }
+   }
+  },
+  "verification_set": {
+   "block": "held_out",
+   "start": 900800,
+   "count": 400,
+   "sampler": "latin_hypercube",
+   "rehearsal": false
+  },
+  "config": {
+   "heldout_target": 0.9,
+   "min_improvement": 0.1,
+   "target_fix_rate": 0.7,
+   "regression_budget_frac": 0.02,
+   "determinism_sample": 30,
+   "heldout_size": 400
+  },
+  "timings_s": {
+   "g1_fresh_process_rerun_s": 1.23,
+   "g2_targeted_rerun_s": 0.64,
+   "attempt1_cand0_1_s": 8.28,
+   "candidate_evals_total_s": 45.85,
+   "attempt1_cand1_1_s": 12.28,
+   "attempt1_cand2_1_s": 13.4,
+   "attempt1_cand3_1_s": 11.89,
+   "g5_unpatched_run_s": 14.79,
+   "g5_patched_run_s": 21.21
+  }
+ }
+}

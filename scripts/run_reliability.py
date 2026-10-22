@@ -71,6 +71,11 @@ def fc(r) -> str:
     return " ".join(f"{k}={v.replace('skipped_after_failure', 'skipped')}" for k, v in c.items()) if c else "n/a"
 
 
+def coll(r) -> str:
+    b, a = r.get('verification_before'), r.get('verification_after')
+    return f"{b['collision_rate']:.1%} -> {a['collision_rate']:.1%}" if b and a else 'n/a'
+
+
 def fmt_rate(m) -> str:
     return f"{m['pass_rate']:.1%} [{m['pass_rate_ci95'][0]:.1%}, {m['pass_rate_ci95'][1]:.1%}]" if m else "n/a"
 
@@ -93,7 +98,8 @@ def candidate_table_md(r: dict) -> list[str]:
     return out
 
 
-def summarize(rows: list[dict], out: Path, note: str, title: str = "reliability_002") -> None:
+def summarize(rows: list[dict], out: Path, note: str, title: str = "reliability_002", kind: str = "REHEARSAL STUDY, NOT AN OFFICIAL RESULT",
+              stem: str = "summary", sidebyside: bool = True) -> None:
     done = [r for r in rows if r["verdict"]]
     verdicts = {k: sum(r["verdict"] == k for r in rows) for k in ("VERIFIED", "FAILED", "UNVERIFIED")}
     verdicts["ERROR (no verdict)"] = sum(r["verdict"] is None for r in rows)
@@ -125,12 +131,12 @@ def summarize(rows: list[dict], out: Path, note: str, title: str = "reliability_
         gv[g] = {"n": nn, "n_fail": f, "fail_rate": round(f / nn, 4) if nn else None, "wilson95": [round(l2, 4), round(h2, 4)]}
     agg["generator_value_pooled"] = gv
     v1 = json.loads(V1_SUMMARY.read_text(encoding="utf-8"))["aggregate"] if V1_SUMMARY.exists() else None
-    (out / "summary.json").write_text(json.dumps({"pipeline_version": PIPELINE_VERSION, "note": note, "aggregate": agg, "v1_aggregate": v1, "runs": rows}, indent=1, default=str), encoding="utf-8")
+    (out / f"{stem}.json").write_text(json.dumps({"pipeline_version": PIPELINE_VERSION, "note": note, "aggregate": agg, "v1_aggregate": v1, "runs": rows}, indent=1, default=str), encoding="utf-8")
 
-    L = [f"# {title}: REHEARSAL STUDY, NOT AN OFFICIAL RESULT (pipeline {PIPELINE_VERSION})", "", note, "",
+    L = [f"# {title}: {kind} (pipeline {PIPELINE_VERSION})", "", note, "",
          f"Runs: {n}. Verdicts: {verdicts}. **VERIFIED rate: {k}/{n} = {k / n:.1%} (Wilson 95% [{lo:.1%}, {hi:.1%}])**. "
          f"Attempts needed (runs with a verdict): {att}. Generator sources: {gsrc}.", ""]
-    if v1:
+    if v1 and sidebyside:
         v1c, v1n = v1["verdict_counts"], v1["runs"]
         l1, h1 = wilson(v1c["VERIFIED"], v1n)
         L += ["## Side by side with pipeline v1 (reliability_001)", "", "| | v1 (5 runs) | v2 (" + str(n) + " runs) |", "|---|---|---|",
@@ -139,14 +145,14 @@ def summarize(rows: list[dict], out: Path, note: str, title: str = "reliability_
               f"| no verdict (error) | {v1c['ERROR (no verdict)']} | {verdicts['ERROR (no verdict)']} |",
               f"| median est. cost per run | ${v1['estimated_cost_usd']['median']:.3f} | ${agg['estimated_cost_usd']['median']:.3f} |" if agg["estimated_cost_usd"] else "",
               "", "Small samples: the intervals overlap heavily unless the difference is large. Different master seeds and rehearsal blocks in each study.", ""]
-    L += ["## Runs", "", "| Run | Seed | Verdict | Attempts | Dev-stage checks failed, per attempt | Final G1-G6 | Generator | Analysis pass before -> after | Verification pass before -> after | Tokens (p/c) | Wall s (LLM s) | Est. cost |",
-          "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    L += ["## Runs", "", "| Run | Seed | Verdict | Attempts | Dev-stage checks failed, per attempt | Final G1-G6 | Generator | Analysis pass before -> after | Verification pass before -> after | Collision rate on verification set before -> after | Tokens (p/c) | Wall s (LLM s) | Est. cost |",
+          "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in rows:
         g = r["generator"]
         L.append(f"| {r['run_id']} | {r['master_seed']} | {r['verdict'] or 'ERROR: ' + str(r['error'])[:70]} | {r['attempts']} | {r['failed_checks_per_attempt']} | {fc(r)} | "
                  f"{g['source']} `{(g['model'] or '-').split('/')[-1]}` ({g['dropped']} dropped, {g['clamped']} clamped) | "
                  f"{fmt_rate(r['analysis_before'])} -> {fmt_rate(r['analysis_after'])} | {fmt_rate(r['verification_before'])} -> {fmt_rate(r['verification_after'])} | "
-                 f"{r['prompt_tokens']}/{r['completion_tokens']} | {r['wall_clock_total_s']} ({r['llm_seconds']}) | {r['estimated_cost_usd']} |")
+                 f"{coll(r)} | {r['prompt_tokens']}/{r['completion_tokens']} | {r['wall_clock_total_s']} ({r['llm_seconds']}) | {r['estimated_cost_usd']} |")
     L += ["", "Pass rates are shown with Wilson 95% intervals. Cost is an ESTIMATE (tokens x the per-token prices the API reports); actual billing UNCONFIRMED.", "",
           "## Min / median / max", ""]
     for key in ("total_tokens", "wall_clock_total_s", "llm_seconds", "estimated_cost_usd"):
@@ -159,7 +165,7 @@ def summarize(rows: list[dict], out: Path, note: str, title: str = "reliability_
           "## Appendix: candidate tables (what the model proposed and what code measured)", ""]
     for r in rows:
         L += candidate_table_md(r)
-    (out / "summary.md").write_text("\n".join(L), encoding="utf-8")
+    (out / f"{stem}.md").write_text("\n".join(L), encoding="utf-8")
 
 
 def main():

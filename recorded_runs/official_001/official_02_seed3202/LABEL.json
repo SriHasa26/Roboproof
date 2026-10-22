@@ -1,0 +1,21 @@
+{
+ "label": "OFFICIAL RUN. Verification used a fresh single-use held-out seed block.",
+ "official": true,
+ "rehearsal": false,
+ "master_seed": 3202,
+ "started": "2026-10-22 15:45:50",
+ "provenance": {
+  "commit": "bac5f38d45eaa3ab7d0cceb4f05923927b10c627",
+  "tag": "pipeline-frozen-v2",
+  "tag_commit": "f18ed6b8f95325f11e548f28881a6563334567c1",
+  "pipeline_hash": "f64b55a93c84c6ef69a050c833bd86f25c1568ef9b745a0c182d972c64d608a8",
+  "image_build_id": "sha256:75d76a1c492894f195aec0990a29a5f8f886c13cac90f8fa23f8d07fa6bcedab",
+  "model_fast": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+  "model_reasoning": "nvidia/Nemotron-3-Ultra-550b-a55b",
+  "runner_name": "local",
+  "official": true,
+  "python": "3.11.17",
+  "pipeline_version": "v2",
+  "protocol_commit": "8171c7d5bff60a25307cb0a5bc1320b405cad81b"
+ }
+}
