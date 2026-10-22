@@ -19,5 +19,12 @@ GATE_MIN_IMPROVEMENT = float(os.environ.get("GATE_MIN_IMPROVEMENT", "0.10"))
 # G5 also requires: Wilson 95% lower bound of the patched held-out pass rate > unpatched held-out point estimate.
 # Planned size of the fresh held-out set (Wilson half-width at p=0.9 is about 0.03 for n=400).
 GATE_HELDOUT_SIZE = int(os.environ.get("GATE_HELDOUT_SIZE", "400"))
-# G4: how many previously-passing scenarios may regress (0 = none).
-GATE_REGRESSION_BUDGET = int(os.environ.get("GATE_REGRESSION_BUDGET", "0"))
+# G3: at least this fraction of the targeted failures must now pass. Set before the rehearsal and not tuned to suit
+# the scripted trap.
+GATE_TARGET_FIX_RATE = float(os.environ.get("GATE_TARGET_FIX_RATE", "0.70"))
+# G4: budget = floor(GATE_REGRESSION_BUDGET_FRAC x previously_passing) analysis-set scenarios may regress (0.02 of 216 is 4).
+# A zero budget would reject even the best-found patch (3 regressions), making VERIFIED unreachable. The strict
+# zero-budget result is always computed and shown next to the budgeted one.
+GATE_REGRESSION_BUDGET_FRAC = float(os.environ.get("GATE_REGRESSION_BUDGET_FRAC", "0.02"))
+# G1: how many baseline scenarios are re-run (evenly spaced over the analysis set) to prove determinism.
+GATE_DETERMINISM_SAMPLE = int(os.environ.get("GATE_DETERMINISM_SAMPLE", "30"))

@@ -15,7 +15,7 @@ from ..scenarios.sweep import latin_hypercube
 from ..store.ledger import SeedLedger
 
 
-@dataclass(frozen=True)
+@dataclass
 class VerificationSet:
     scenarios: list[Scenario]
     block_name: str  # "rehearsal" or "held_out"
@@ -23,6 +23,7 @@ class VerificationSet:
     count: int
     rehearsal: bool
     sampler: str = "latin_hypercube"
+    consumed: bool = False  # set by the gate when G5 runs on it; a set can be verified against exactly once
 
     @property
     def held_out(self) -> bool:

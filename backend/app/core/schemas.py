@@ -4,7 +4,7 @@ from __future__ import annotations
 import math
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -145,50 +145,22 @@ class ShardResult(Strict):
         return self.status == "COMPLETED" and len(self.results) == self.n_expected
 
 
-class BinStat(Strict):
-    axis: str
-    lo: float
-    hi: float
-    n: int
-    n_fail: int
-
-    @property
-    def fail_rate(self) -> float:
-        return self.n_fail / self.n if self.n else 0.0
-
-
-class EvidenceReport(Strict):
-    n_scenarios: int
-    n_fail: int
-    pass_rate: float
-    collision_rate: float
-    mean_completion_time_s: float
-    reason_counts: dict[str, int]
-    axis_bins: list[BinStat]
-    interactions: list[dict]  # computed in code; the LLM only interprets
-    tree_rules: list[str] = Field(default_factory=list)
-
-
-class Hypothesis(Strict):
-    statement: str
-    conditions: dict[str, list[float]] = Field(default_factory=dict)  # axis -> [lo, hi]
-    prediction: str
-    targeted_scenario_ids: list[str] = Field(default_factory=list)
-    confidence: Literal["low", "medium", "high"] = "medium"
-
-
 class CheckStatus(str, Enum):
-    PASS = "PASS"
-    FAIL = "FAIL"
-    UNVERIFIED = "UNVERIFIED"
+    PASS = "pass"
+    FAIL = "fail"
+    NOT_RUN = "not_run"
 
 
 class GateCheck(Strict):
     id: Literal["G1", "G2", "G3", "G4", "G5", "G6"]
     name: str
     status: CheckStatus
-    detail: str
-    metrics: dict[str, float | int | str | None] = Field(default_factory=dict)
+    observed: dict[str, Any] = Field(default_factory=dict)
+    threshold: dict[str, Any] = Field(default_factory=dict)
+    details: str = ""
+    # True when the check was deliberately not run because an earlier check already FAILED (for example G5 is not run,
+    # and its single-use held-out block is not spent, after G3/G4 failed). This is NOT "could not run".
+    skipped_after_failure: bool = False
 
 
 class Verdict(str, Enum):
@@ -197,11 +169,23 @@ class Verdict(str, Enum):
     UNVERIFIED = "UNVERIFIED"
 
 
+class SetMetrics(Strict):
+    n: int
+    pass_rate: float
+    pass_rate_ci95: list[float]
+    collision_rate: float
+    mean_completion_time_s: float | None  # over successful scenarios
+
+
 class GateReport(Strict):
     verdict: Verdict
+    rehearsal: bool = False  # True: verification used the rehearsal block, NOT an official result
     checks: list[GateCheck]
-    regression_budget: int = 0
-    heldout_target: float = 0.80
+    regressed_scenario_ids: list[str] = Field(default_factory=list)
+    strict_zero_budget: dict[str, Any] = Field(default_factory=dict)  # shown beside G4
+    metrics: dict[str, dict[str, SetMetrics]] = Field(default_factory=dict)  # {"analysis": {"before":..,"after":..}, "verification": {...}}
+    verification_set: dict[str, Any] = Field(default_factory=dict)
+    config: dict[str, Any] = Field(default_factory=dict)
 
 
 class Run(Strict):

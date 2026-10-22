@@ -113,7 +113,7 @@ def test_shard_complete_property():
 
 def test_run_roundtrip_through_sqlite():
     db = Database(":memory:")
-    gate = GateReport(verdict=Verdict.UNVERIFIED, checks=[GateCheck(id="G6", name="x", status=CheckStatus.UNVERIFIED, detail="d")])
+    gate = GateReport(verdict=Verdict.UNVERIFIED, checks=[GateCheck(id="G6", name="x", status=CheckStatus.NOT_RUN, details="d")])
     db.save_run(Run(id="r1", gate=gate))
     assert db.load_run("r1").gate.verdict == Verdict.UNVERIFIED
     assert db.load_run("nope") is None

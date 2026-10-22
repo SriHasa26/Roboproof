@@ -28,6 +28,25 @@ The non-simulator tests also run on the host (`cd backend && python -m pytest`);
 
 Simulator fidelity limits, the freeze and the tuning log: [docs/SIM_FIDELITY.md](docs/SIM_FIDELITY.md). Ceiling search and gate thresholds: [docs/CEILING_SEARCH.md](docs/CEILING_SEARCH.md).
 
+## Gate rules (Proof-of-Robustness Gate, pure code)
+
+The verdict is exactly one of VERIFIED, FAILED, UNVERIFIED, computed from simulator results only (`backend/app/gate/gate.py`; thresholds in `backend/app/core/gate_config.py`; derivation in [docs/CEILING_SEARCH.md](docs/CEILING_SEARCH.md)).
+
+| Check | Rule |
+|---|---|
+| G1 determinism | 30 evenly spaced baseline scenarios are re-run in fresh processes; every `Result` must be identical |
+| G2 reproduced | every targeted failure fails again on the unpatched policy |
+| G3 fixed | at least 70% of the targeted failures now pass (`GATE_TARGET_FIX_RATE`, set before the rehearsal, not tuned to the trap) |
+| G4 no regressions | previously passing analysis-set scenarios that now fail <= floor(2% x previously passing) (about 4 of 200). **The strict zero-budget result and every regressed scenario id are always shown next to it** |
+| G5 held-out | on a fresh, code-only verification set of 400 scenarios from a single-use seed block: patched pass rate >= 0.90, improvement over the unpatched policy on the same set >= 0.10, **and** the patched Wilson 95% lower bound > the unpatched pass rate |
+| G6 complete | every run the gate relied on finished with no failed or timed-out shard |
+
+**Verdict:** UNVERIFIED if G6 is not a pass or any check could not run; otherwise FAILED if any check ran and failed; otherwise VERIFIED. A crash, timeout or missing result never counts as a pass.
+
+**Why the regression budget is not zero:** with a budget of zero, even the best patch found by the ceiling search (3 regressions of 216 on dev set A) would be rejected, so VERIFIED would be practically unreachable. 2% is a documented compromise, not a physical law; the strict result is displayed so nobody has to take the budget on trust.
+
+**Skipped after failure:** if G3 or G4 already failed on the analysis set, G5 is not run (`skipped_after_failure`), so the single-use verification block is not spent on a patch that is already rejected. That is a deliberate skip, not a check that "could not run": the verdict is FAILED, not UNVERIFIED. G5 is terminal: its details are never fed back to the fixer, and a failed G5 means a new run with a fresh seed block is needed.
+
 ## Layout
 
 `backend/app/{api,core,llm,sim,scenarios,runner,analysis,gate,store}`, `backend/tests`, `frontend/`, `scripts/`, `docker/`, `docs/`, `recorded_runs/`.
