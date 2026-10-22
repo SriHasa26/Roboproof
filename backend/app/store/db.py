@@ -23,6 +23,10 @@ CREATE TABLE IF NOT EXISTS batches (
   runner TEXT, scenario_source TEXT, shards_total INTEGER, shards_ok INTEGER, complete INTEGER,
   wall_clock_s REAL, cpu_count INTEGER, n_missing INTEGER
 );
+CREATE TABLE IF NOT EXISTS seed_ledger (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, run_id TEXT, block_name TEXT, start INTEGER, count INTEGER,
+  purpose TEXT, rehearsal INTEGER, created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
 CREATE TABLE IF NOT EXISTS scenario_results (
   batch_id TEXT, scenario_id TEXT, seed INTEGER, tag TEXT,
   mass_kg REAL, friction REAL, size_m REAL, pos_offset_x REAL, pos_offset_y REAL, sensor_noise_m REAL,

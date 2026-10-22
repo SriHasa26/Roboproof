@@ -12,6 +12,16 @@ from typing import Iterable
 DEV_SEED_BASE = 1_000
 HELDOUT_SEED_BASE = 900_000
 
+# Three disjoint seed blocks, [start, end). See docs/SEEDS_AND_SETS.md.
+#   dev:       sweeps, searches, baselines, analysis sets, tests (so far: 1000-1299, 3000-3023, 50000-50299)
+#   rehearsal: end-to-end gate rehearsals; no dev sweep uses it; each run allocates a fresh sub-block (store/ledger.py)
+#   held_out:  official verification only; gate-only; each sub-block can be used once, ever
+BLOCKS: dict[str, tuple[int, int]] = {
+    "dev": (DEV_SEED_BASE, 100_000),
+    "rehearsal": (800_000, HELDOUT_SEED_BASE),
+    "held_out": (HELDOUT_SEED_BASE, 10_000_000),
+}
+
 
 class HeldOutSeedError(RuntimeError):
     pass
