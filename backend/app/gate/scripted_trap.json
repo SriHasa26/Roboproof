@@ -1,9 +1,9 @@
 {
  "label": "scripted example, not model output",
- "status": "PROVISIONAL CANDIDATE, pending user approval. Does NOT meet the original bar (fix >= 80% of targeted failures on dev set A AND >= 10 regressions); see docs/SIM_FIDELITY.md 'Scripted trap'.",
- "kind": "scripted_trap_candidate",
+ "status": "FINAL (user-approved option 1). The original bar (fix >= 80% of targeted failures on dev set A and >= 10 regressions) was NOT met by any of the 346 patches evaluated, so the bar was relaxed AFTER the search; see docs/SIM_FIDELITY.md 'Scripted trap'. Measured numbers below are for the default policy as baseline on dev sets A and B.",
+ "kind": "scripted_trap",
  "changes": {
-  "grip_force": 80,
+  "grip_force": 80.0,
   "grasp_hold_steps": 60
  },
  "justification": "SCRIPTED EXAMPLE, NOT MODEL OUTPUT. The obvious fix for heavy, slippery cubes: maximum grip force and a longer grasp hold. It helps overall and fixes most targeted failures but breaks some scenarios that passed before and still misses the held-out target.",
