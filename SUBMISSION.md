@@ -8,7 +8,7 @@ RoboProof is an AI test engineer for robot policies. Fixing a robot controller i
 
 The differentiator is the Proof-of-Robustness Gate, pure deterministic code with no LLM. It checks determinism, that targeted failures reproduce and are fixed, that nothing that passed before now fails (within a stated 2% budget), and that the patch generalises to a fresh, single-use held-out set of 400 scenarios with a Wilson 95% confidence interval. The verdict is VERIFIED, FAILED or UNVERIFIED. The model never decides pass or fail.
 
-Official pre-registered batch (5 runs, frozen pipeline): 4 of 5 VERIFIED (Wilson 95% [37.6%, 96.4%]); the fifth was honestly FAILED at the held-out check (348/400 vs 360 needed). A hand-written overfit "trap" patch is rejected by the gate. A static dashboard shows checklists, candidates, hypotheses, heatmaps and same-seed before/after replays, plus a page of limits: this is a simplified simulated robot, thresholds were set on development data, and the sample is small.
+Official pre-registered batch (5 runs, frozen pipeline): 4 of 5 VERIFIED, a small sample (Wilson 95% [37.6%, 96.4%]; the v2 rehearsal study was 4 of 8); the fifth was honestly FAILED at the held-out check (348/400 vs 360 needed). A hand-written overfit "trap" patch is rejected by the gate. A static dashboard shows checklists, candidates, hypotheses, heatmaps and same-seed before/after replays, plus a page of limits: this is a simplified simulated robot, thresholds were set on development data, and the sample is small.
 
 ## How Nebius and NVIDIA are used
 

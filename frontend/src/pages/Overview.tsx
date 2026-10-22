@@ -57,7 +57,7 @@ export default function Overview() {
                 {off.data.runs.map((r: Row, i) => (
                   <tr key={r.run_id} className="rise border-b hair last:border-0 hover:bg-white/[.03]" style={{ animationDelay: `${i * 80}ms` }}>
                     <td className="p-3 font-mono text-xs">{i + 1}{i === 0 && <span className="ml-2 rounded-sm bg-amber px-1.5 py-0.5 text-[10px] font-bold text-ink">HEADLINE</span>}</td>
-                    <td className="font-mono text-xs">{r.master_seed}</td>
+                    <td className="font-mono text-xs">{r.master_seed ?? 'n/a'}</td>
                     <td><Stamp verdict={r.verdict} size="sm" /></td>
                     <td className="font-mono text-xs">{r.attempts}</td>
                     <td className="font-mono text-xs tick">{ci(r.verification_before)} <span className="text-amber">to</span> {ci(r.verification_after)}</td>

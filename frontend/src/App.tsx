@@ -27,7 +27,7 @@ function Runs() {
         {(data ?? []).map((r) => (
           <li key={r.id}><Link to={`/run/${r.id}`} className="flex flex-wrap items-center gap-3 p-4 hover:bg-white/[.03]">
             <span className="font-mono text-sm">{r.id}</span>
-            <span className="font-mono text-[11px] uppercase text-dim">{r.badges.mode} | pipeline {r.badges.pipeline_version} | seed {r.master_seed}</span>
+            <span className="font-mono text-[11px] uppercase text-dim">{r.badges.mode} | pipeline {r.badges.pipeline_version} | seed {r.master_seed ?? 'not recorded'}</span>
             <span className={`ml-auto font-display text-xl font-extrabold uppercase ${r.verdict === 'VERIFIED' ? 'text-phos' : r.verdict === 'FAILED' ? 'text-verm' : 'text-amber'}`}>{r.verdict}</span>
           </Link></li>
         ))}

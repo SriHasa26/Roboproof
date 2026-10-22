@@ -93,7 +93,7 @@ export default function RunPage() {
           <div className="mb-2 font-mono text-[11px] uppercase tracking-[.3em] text-amber">run report</div>
           <h1 className="font-display text-5xl font-black uppercase tracking-tight md:text-6xl">{r.id}</h1>
           <div className="mt-3"><BadgeRow b={r.badges} /></div>
-          <p className="mt-3 font-mono text-xs text-dim">master seed {r.master_seed} | {r.attempts_used} attempt(s) | G5 {r.g5_executed ? 'executed' : 'not executed'} | {r.analysis_set.n} analysis scenarios ({r.analysis_set.n_coverage} coverage, {r.analysis_set.n_targeted} from model-proposed regions)</p>
+          <p className="mt-3 font-mono text-xs text-dim">master seed {r.master_seed ?? 'not recorded'} | {r.attempts_used} attempt(s) | G5 {r.g5_executed ? 'executed' : 'not executed'} | {r.analysis_set.n} analysis scenarios ({r.analysis_set.n_coverage} coverage, {r.analysis_set.n_targeted} from model-proposed regions)</p>
         </div>
         <Stamp verdict={r.verdict} />
       </header>

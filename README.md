@@ -20,7 +20,7 @@ Protocol: [docs/OFFICIAL_PROTOCOL.md](docs/OFFICIAL_PROTOCOL.md). 5 runs, fixed 
 | official_04 (3404) | VERIFIED | 1 | 69.2% -> 97.5% |
 | official_05 (3505) | VERIFIED | 1 | 71.2% -> 96.8% |
 
-**4 of 5 VERIFIED = 80%, Wilson 95% interval [37.6%, 96.4%]**: a small sample. Two of the four VERIFIED runs had 3 and 1 regressions on the analysis set, within the 2% budget but not zero. Measured per run: 109 to 193 s wall clock, 15k to 26k tokens, estimated cost $0.026 to $0.055 (total $0.181, estimate). Earlier rehearsal studies (v1: 1/5, v2: 4/8) are in the dashboard.
+**4 of 5 VERIFIED (small sample), Wilson 95% interval [37.6%, 96.4%].** For comparison, the v2 rehearsal study on rehearsal seeds was **4 of 8 VERIFIED** (Wilson 95% [21.5%, 78.5%]) and v1 was 1 of 5; the intervals overlap heavily, so this is not a reliability claim. Two of the four VERIFIED runs had 3 and 1 regressions on the analysis set, within the 2% budget but not zero. Measured per run: 109 to 193 s wall clock, 15k to 26k tokens, estimated cost $0.026 to $0.055 (total $0.181, estimate). All three studies are in the dashboard.
 
 ## Architecture
 

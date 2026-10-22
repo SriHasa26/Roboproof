@@ -155,7 +155,7 @@ export function Heatmap({ h }: { h: Heat }) {
 
 /** One-line human summary of a gate check's numbers, taken from the stored observed/threshold fields. */
 export function checkLine(c: Check): string {
-  const o = c.observed, t = c.threshold
+  const o: any = c.observed ?? {}, t: any = c.threshold ?? {}
   switch (c.id) {
     case 'G1': return o.sample != null ? `${o.sample} baseline scenarios re-run in fresh processes, ${o.mismatches} differing results` : c.details
     case 'G2': return o.targeted != null ? `${o.targeted - o.not_reproduced} of ${o.targeted} targeted failures failed again on the unpatched policy` : c.details
@@ -186,7 +186,7 @@ export function GateChecklist({ checks }: { checks: Check[] }) {
             <span className="min-w-0 flex-1 text-sm font-medium">{DESC[c.id] ?? c.name}</span>
           </div>
           <p className="mt-1 pl-12 font-mono text-[12px] leading-relaxed text-dim tick">{checkLine(c)}</p>
-          {c.status === 'skipped_after_failure' && <p className="mt-1 pl-12 text-xs text-dim">{c.details}</p>}
+          {c.status === 'skipped_after_failure' && checkLine(c) !== c.details && <p className="mt-1 pl-12 text-xs text-dim">{c.details}</p>}
           <details className="pl-12 pt-1 text-xs text-dim"><summary className="inline-block text-[11px] underline decoration-dotted">raw observed and threshold</summary>
             <pre className="mt-1 overflow-x-auto rounded bg-black/40 p-2 font-mono text-[11px] text-text">{JSON.stringify({ observed: c.observed, threshold: c.threshold }, null, 1)}</pre></details>
         </li>
