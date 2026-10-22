@@ -28,11 +28,12 @@ class RunResult(BaseModel):
     shards_failed: int
     wall_clock_s: float
     cpu_count: int | None = None
+    image_build_id: str | None = None  # container image id/build id the runner executed in (env ROBOPROOF_IMAGE_ID); None if unknown
     complete: bool
 
     @classmethod
     def build(cls, runner_name: str, shards: list[ShardResult], scenario_ids_by_shard: list[list[str]],
-              wall_clock_s: float, cpu_count: int | None = None) -> "RunResult":
+              wall_clock_s: float, cpu_count: int | None = None, image_build_id: str | None = None) -> "RunResult":
         results: list[Result] = []
         missing: list[str] = []
         for sh, ids in zip(shards, scenario_ids_by_shard):
@@ -44,7 +45,7 @@ class RunResult(BaseModel):
         return cls(
             runner_name=runner_name, shards=shards, results=results, missing_scenario_ids=missing,
             shards_total=len(shards), shards_ok=ok, shards_failed=len(shards) - ok,
-            wall_clock_s=wall_clock_s, cpu_count=cpu_count, complete=ok == len(shards),
+            wall_clock_s=wall_clock_s, cpu_count=cpu_count, image_build_id=image_build_id, complete=ok == len(shards),
         )
 
     def pass_rate(self) -> float | None:

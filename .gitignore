@@ -14,3 +14,6 @@ backend/data/
 .coverage
 .rehearsal_*.log
 .trap3_tmp.log
+.fastwait.log
+.probe*.log
+.build*.log

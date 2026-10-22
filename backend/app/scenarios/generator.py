@@ -17,11 +17,12 @@ from typing import Literal
 import numpy as np
 from pydantic import BaseModel, ConfigDict
 
-from ..core.bounds import POLICY_BOUNDS, SCENARIO_BOUNDS
+from ..core.bounds import SCENARIO_BOUNDS
 from ..core.config import Settings
 from ..core.schemas import Scenario
 from ..core.seeds import DEV_SEED_BASE, check_seed
 from ..llm.client import LLMClient
+from ..llm.controls import GENERATOR_EXTRA, GENERATOR_MAX_TOKENS
 from .proposal import ScenarioProposal
 from .sweep import AXES, latin_hypercube
 
@@ -67,14 +68,15 @@ def build_prompt() -> tuple[str, str]:
     user = json.dumps({
         "task": TASK_DESCRIPTION,
         "scenario_parameters": params,
-        "policy_parameters_for_context": {k: {"min": v[0], "max": v[1], "default": v[2]} for k, v in POLICY_BOUNDS.items()},
         "request": "Return 3 to 6 regions. Each: a short name, a one-sentence physical rationale, and ranges "
                    "[lo, hi] for the parameters that define the region (omitted parameters span their full range).",
+        "valid_parameter_names": AXES,
         "rules": [
+            "In 'ranges' use ONLY the names in valid_parameter_names as keys. Nothing else is a valid key (the robot's own control settings are NOT scenario parameters).",
             "Constrain AT MOST 3 parameters per region; leave all others out.",
-            "Each region must cover at least 2% of the whole parameter space (the product of the constrained parameters' "
-            "relative widths), so do not use tiny ranges.",
-            "Stay inside each parameter's min and max.",
+            "Each range is [lo, hi] with lo <= hi, inside that parameter's min and max.",
+            "Each constrained range should span at least 30% of that parameter's min-max width, so that the region covers at least 2% of the "
+            "whole parameter space (the product of the constrained parameters' relative widths). Do not use tiny ranges.",
             "Your rationale is treated as an unverified opinion and is only a hint for people reading the test plan.",
         ],
     }, indent=1)
@@ -97,7 +99,8 @@ class ScenarioGenerator:
     def propose(self) -> tuple[ScenarioProposal, Literal["llm", "fixture"]]:
         if self.llm is not None:
             system, user = build_prompt()
-            return self.llm.complete_json("scenario_generation", "fast", system, user, ScenarioProposal), "llm"
+            return self.llm.complete_json("scenario_generation", "fast", system, user, ScenarioProposal,
+                                          max_tokens=GENERATOR_MAX_TOKENS, **GENERATOR_EXTRA), "llm"
         if self.fixture_path is None:
             raise ScenarioGenError("no LLM client and no fixture proposal configured")
         raw = json.loads(self.fixture_path.read_text(encoding="utf-8"))

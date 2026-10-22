@@ -22,12 +22,13 @@ GOOD = {"regions": [
 
 class Fake:
     def __init__(self, replies):
-        self.replies, self.calls, self.sent = list(replies), 0, []
+        self.replies, self.calls, self.sent, self.kws = list(replies), 0, [], []
         self.chat = SimpleNamespace(completions=SimpleNamespace(create=self._create))
 
     def _create(self, **kw):
         self.calls += 1
         self.sent.append(kw.get("messages"))
+        self.kws.append(kw)
         r = self.replies.pop(0)
         return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=r))],
                                usage=SimpleNamespace(prompt_tokens=1, completion_tokens=1))
@@ -174,3 +175,13 @@ def test_prompt_states_the_constraints():
     from app.scenarios.generator import build_prompt
     _, user = build_prompt()
     assert "AT MOST 3" in user and "2%" in user and "unverified" in user
+
+
+def test_generator_sends_thinking_off_and_a_token_cap_but_analyst_fixer_do_not_disable_reasoning():
+    from app.llm import controls
+    g, fake = gen_with([json.dumps(GOOD)])
+    g.generate(50, master_seed=1)
+    kw = fake.kws[0]
+    assert kw["extra_body"] == {"chat_template_kwargs": {"enable_thinking": False}} and kw["max_tokens"] == controls.GENERATOR_MAX_TOKENS
+    assert "reasoning_effort" not in kw  # reasoning_effort="none" does not work on this model (see controls.py)
+    assert controls.ANALYST_MAX_TOKENS >= 6000 and controls.FIXER_MAX_TOKENS >= 4000  # caps stop runaways only

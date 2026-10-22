@@ -10,6 +10,8 @@ RUN pip wheel --no-cache-dir --wheel-dir /wheels pybullet
 
 # --- stage 2: slim runtime
 FROM python:3.11-slim
+# git: the official-run guard checks the working tree and the pipeline-frozen tag from inside the container
+RUN apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
 COPY --from=wheels /wheels /wheels
 RUN pip install --no-cache-dir --no-index --find-links /wheels pybullet && rm -rf /wheels
 COPY backend/requirements.txt /tmp/requirements.txt

@@ -182,3 +182,31 @@ Completion tokens are far larger than the visible answer (about 25 words): both 
 - **Cost (ESTIMATE):** about $0.033 for the whole run: 9,962 prompt + 11,740 completion tokens x the per-token prices the API reports in `GET /models?verbose=true` ($0.06/$0.24 per 1M for Nano, $1/$3 per 1M for Ultra). Actual billing and the remaining balance were not checked: UNCONFIRMED.
 - **Still untouched and UNCONFIRMED:** K5 to K11 and K13/K14 (Nebius CLI, Container Registry, Serverless Jobs, Endpoints). Everything in the rehearsal ran on the local fallback runner.
 
+## 8. Reasoning-token control on the fast model (2026-10-22, Part 3 of P4.5)
+
+**Problem:** in rehearsal_001 the Nano spent 3,903 completion tokens on a roughly 450-token JSON (hidden reasoning is billed as completion tokens).
+
+**What the docs say.** The [Nebius chat-completion API reference](https://docs.tokenfactory.nebius.com/api-reference/inference/create-chat-completion) lists `reasoning_effort` (none, minimal, low, medium, high, xhigh, max; effect per model not defined) and says `max_completion_tokens` includes reasoning tokens. It does not mention `chat_template_kwargs` or `enable_thinking`. NVIDIA's [Nemotron-3-Nano model card](https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16) documents `enable_thinking=False` as a chat-template switch (reasoning is on by default); the model card page itself could not be fetched here (timeout), the claim comes from search results quoting it and from NVIDIA's [RAG blueprint docs](https://docs.nvidia.com/rag/latest/enable-nemotron-thinking.html).
+
+**What was measured (Nano, real calls; raw files in `docs/reasoning_control_probe*.json`).** The first two probe attempts failed entirely with timeouts and connection errors (`..._attempt1_infra_failure.json`, `..._attempt2_infra_failure.json`): see the outage note below.
+
+| Variant (generator prompt, `max_tokens=4000`) | Completion tokens | Latency | Visible output |
+|---|---:|---:|---|
+| no control (earlier prompt version) | 4,000 (the cap) | 64 s | **empty**: all tokens spent on hidden reasoning |
+| top-level `reasoning_effort="none"` | 523 | 9 s | **empty**: the whole reply sat in a `reasoning` field, `content` was empty. The parameter is accepted but unusable on this model |
+| `extra_body={"chat_template_kwargs": {"enable_thinking": false}}` | 329 | 5.7 s | valid JSON text (that sample failed schema validation, see below) |
+
+`enable_thinking: false` works on Token Factory for the Nano (CONFIRMED-BY-RUN). Pass-through is not documented by Nebius, so it could change without notice (UNCONFIRMED stability).
+
+**Output quality with thinking off (5 real calls each, schema validation plus one retry that feeds the error back):**
+- First prompt (policy parameters listed "for context"): 0 of 5 valid even after the retry; the model used `lift_height`, `grip_force` and `approach_speed` as scenario axes, made regions below the 2% volume floor, or wrote lo > hi.
+- Prompt fixed (policy parameters removed, valid key names listed, rule that each range should span at least 30% of its axis): **4 of 5 valid** (1 on the first try, 3 after the retry); the failure was a 4-axis region plus a region under the volume floor. Tokens 306 to 425 per call, 4.7 to 10.6 s.
+- Same prompt plus a generic format example: 3 of 5 valid (2 first try, 1 after retry). The example was dropped: n=5 cannot tell these apart and a simpler prompt carries less risk of the model copying the example.
+- So with thinking off the generator is fast and cheap (about 350 tokens, 5 to 11 s) but fails validation after the single retry roughly 1 time in 5 on these samples (n=5, wide uncertainty). The pipeline fails loudly in that case; the reliability study reports it.
+
+**Chosen controls (`backend/app/llm/controls.py`, frozen with the pipeline):** generator: `enable_thinking=false`, `max_tokens=1500`. Analyst and fixer (Ultra): reasoning stays on; `max_tokens` 10,000 and 6,000 only to stop a runaway (measured usage was 4,660 and 1,261 to 1,916).
+
+**Before and after for the generator:** about 3,900 to 4,000+ completion tokens and 32 to 64+ s (and an empty reply in one sample) -> about 300 to 550 tokens and 5 to 15 s.
+
+**Availability incident, 2026-10-22 (~17:00 to 17:59 local):** chat completions on the **Nano** hung with no first byte (HTTP 000 after 40 s) while `GET /models` and the **Ultra** (about 1 s), Lightning (1.1 s) and Super-120B (1.1 s) answered normally with the same key. It recovered at 17:59 (first byte 22 s for a trivial call). Two probe attempts failed during this window; both failed files are kept. The cause is on the service side (UNCONFIRMED which). The LLM client's per-call timeout is 120 s with one retry, so an outage costs up to four minutes per call before failing.
+

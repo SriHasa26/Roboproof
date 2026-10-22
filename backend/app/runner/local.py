@@ -111,4 +111,5 @@ class LocalRunner(JobRunner):
 
         shards_out = [status[i] for i in range(len(specs))]
         return RunResult.build("local", shards_out, [[s.id for s in c] for c in chunks],
-                               wall_clock_s=round(time.perf_counter() - t0, 3), cpu_count=os.cpu_count())
+                               wall_clock_s=round(time.perf_counter() - t0, 3), cpu_count=os.cpu_count(),
+                               image_build_id=os.environ.get("ROBOPROOF_IMAGE_ID"))

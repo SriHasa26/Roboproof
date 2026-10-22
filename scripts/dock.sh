@@ -11,8 +11,10 @@ IMAGE=${ROBOPROOF_IMAGE:-roboproof-sim:dev}
 ROOT=$(pwd -W 2>/dev/null || pwd)
 ENVFILE=""
 [ -f .env ] && ENVFILE="--env-file .env"
+# the image build id is recorded in every run's artifacts (official runs refuse to start without it)
+IMAGE_ID=$(docker image inspect -f '{{.Id}}' "$IMAGE" 2>/dev/null)
 run() {
-  MSYS_NO_PATHCONV=1 docker run --rm $ENVFILE -v "$ROOT:/app" -w /app "$@"
+  MSYS_NO_PATHCONV=1 docker run --rm $ENVFILE -e ROBOPROOF_IMAGE_ID="$IMAGE_ID" -v "$ROOT:/app" -w /app "$@"
 }
 cmd=$1
 case "$cmd" in

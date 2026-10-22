@@ -1,0 +1,188 @@
+{
+ "A_reasoning_effort_none_fields": {
+  "finish_reason": "stop",
+  "content_len": 0,
+  "reasoning_content_len": 0,
+  "reasoning_len": 1144,
+  "completion_tokens": 383,
+  "message_extra_keys": [
+   "reasoning"
+  ]
+ },
+ "B_enable_thinking_false": [
+  {
+   "i": 0,
+   "final_valid": false,
+   "first_try_valid": false,
+   "attempts": 2,
+   "completion_tokens": [
+    425,
+    379
+   ],
+   "latency_s": 10.63,
+   "first_error": "validation: 2 validation errors for ScenarioProposal\nregions.0.ranges\n  Value error, a region may constrain at most 3 axes (got 4: ['friction', 'pos_offset_x', 'pos_offset_y', 'size_m']); leave the others unconst",
+   "final_error": "probe_gen: output failed validation after retry: 2 validation errors for ScenarioProposal\nregions.0\n  Value error, region 'LowFriction-LargeOffset' covers only 0.57% of the parameter space; at least 2% is required, widen it [type=value_erro",
+   "regions": null
+  },
+  {
+   "i": 1,
+   "final_valid": true,
+   "first_try_valid": false,
+   "attempts": 2,
+   "completion_tokens": [
+    323,
+    319
+   ],
+   "latency_s": 9.56,
+   "first_error": "validation: 2 validation errors for ScenarioProposal\nregions.0\n  Value error, region 'HeavyCube_LoFriction' covers only 0.96% of the parameter space; at least 2% is required, widen it [type=value_error, input_val",
+   "final_error": null,
+   "regions": [
+    [
+     "HeavyCube_LoFriction",
+     [
+      "friction",
+      "gripper_delay_steps",
+      "mass_kg"
+     ]
+    ],
+    [
+     "SmallCube_HiFriction",
+     [
+      "friction",
+      "mass_kg",
+      "size_m"
+     ]
+    ],
+    [
+     "Skew_SensorNoise",
+     [
+      "pos_offset_x",
+      "pos_offset_y",
+      "sensor_noise_m"
+     ]
+    ]
+   ]
+  },
+  {
+   "i": 2,
+   "final_valid": true,
+   "first_try_valid": false,
+   "attempts": 2,
+   "completion_tokens": [
+    345,
+    327
+   ],
+   "latency_s": 9.23,
+   "first_error": "validation: 1 validation error for ScenarioProposal\nregions.0\n  Value error, region 'HeavyFrictionWall' covers only 1.44% of the parameter space; at least 2% is required, widen it [type=value_error, input_value={",
+   "final_error": null,
+   "regions": [
+    [
+     "HeavyFrictionWall",
+     [
+      "friction",
+      "gripper_delay_steps",
+      "mass_kg"
+     ]
+    ],
+    [
+     "PreciseNoisyPos",
+     [
+      "pos_offset_y",
+      "sensor_noise_m"
+     ]
+    ],
+    [
+     "LargeLowFrictionCube",
+     [
+      "friction",
+      "size_m"
+     ]
+    ]
+   ]
+  },
+  {
+   "i": 3,
+   "final_valid": true,
+   "first_try_valid": true,
+   "attempts": 1,
+   "completion_tokens": [
+    306
+   ],
+   "latency_s": 4.65,
+   "first_error": null,
+   "final_error": null,
+   "regions": [
+    [
+     "heavy_friction",
+     [
+      "friction",
+      "mass_kg"
+     ]
+    ],
+    [
+     "misaligned_low_mass",
+     [
+      "pos_offset_x",
+      "size_m"
+     ]
+    ],
+    [
+     "sensor_noise_drift",
+     [
+      "gripper_delay_steps",
+      "sensor_noise_m"
+     ]
+    ]
+   ]
+  },
+  {
+   "i": 4,
+   "final_valid": true,
+   "first_try_valid": false,
+   "attempts": 2,
+   "completion_tokens": [
+    357,
+    357
+   ],
+   "latency_s": 9.99,
+   "first_error": "validation: 1 validation error for ScenarioProposal\nregions.0\n  Value error, region 'grab_failure' covers only 1.48% of the parameter space; at least 2% is required, widen it [type=value_error, input_value={'name",
+   "final_error": null,
+   "regions": [
+    [
+     "grab_failure",
+     [
+      "mass_kg",
+      "pos_offset_x",
+      "pos_offset_y"
+     ]
+    ],
+    [
+     "wall_crash",
+     [
+      "pos_offset_x",
+      "pos_offset_y"
+     ]
+    ],
+    [
+     "loss_on_failure",
+     [
+      "friction",
+      "sensor_noise_m"
+     ]
+    ],
+    [
+     "uncertain_pos",
+     [
+      "sensor_noise_m"
+     ]
+    ],
+    [
+     "slow_delay",
+     [
+      "gripper_delay_steps"
+     ]
+    ]
+   ]
+  }
+ ]
+}

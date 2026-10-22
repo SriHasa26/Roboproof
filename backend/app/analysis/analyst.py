@@ -16,6 +16,7 @@ import json
 from ..core.bounds import POLICY_BOUNDS, SCENARIO_BOUNDS
 from ..core.schemas import PATCHABLE_PARAMS, Policy, Result, Scenario
 from ..llm.client import LLMClient
+from ..llm.controls import ANALYST_MAX_TOKENS
 from .evidence import scenarios_in_region
 from .models import EvidenceReport, Hypothesis, HypothesisList
 
@@ -81,7 +82,7 @@ def ground(hyps: HypothesisList, evidence: EvidenceReport, scenarios: list[Scena
 def analyze(client: LLMClient, evidence: EvidenceReport, scenarios: list[Scenario], policy: Policy) -> list[Hypothesis]:
     system, user = build_prompt(evidence, policy)
     out = client.complete_json("analyst", "reasoning", system, user, HypothesisList,
-                               validator=lambda h: ground(h, evidence, scenarios), max_tokens=6000)
+                               validator=lambda h: ground(h, evidence, scenarios), max_tokens=ANALYST_MAX_TOKENS)
     return out.hypotheses
 
 

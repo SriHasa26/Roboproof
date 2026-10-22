@@ -1,0 +1,84 @@
+{
+ "A_reasoning_effort_none_fields": {
+  "finish_reason": "stop",
+  "content_len": 0,
+  "reasoning_content_len": 0,
+  "reasoning_len": 1284,
+  "completion_tokens": 397,
+  "message_extra_keys": [
+   "reasoning"
+  ]
+ },
+ "B_enable_thinking_false": [
+  {
+   "i": 0,
+   "final_valid": false,
+   "first_try_valid": false,
+   "attempts": 2,
+   "completion_tokens": [
+    481,
+    315
+   ],
+   "latency_s": 10.39,
+   "first_error": "validation: 4 validation errors for ScenarioProposal\nregions.1.ranges\n  Value error, unknown scenario parameter 'lift_height'; allowed: ['mass_kg', 'friction', 'size_m', 'pos_offset_x', 'pos_offset_y', 'sensor_no",
+   "final_error": "probe_gen: output failed validation after retry: 1 validation error for ScenarioProposal\nregions.3.ranges\n  Value error, unknown scenario parameter 'approach_speed'; allowed: ['mass_kg', 'friction', 'size_m', 'pos_offset_x', 'pos_offset_y',",
+   "regions": null
+  },
+  {
+   "i": 1,
+   "final_valid": false,
+   "first_try_valid": false,
+   "attempts": 2,
+   "completion_tokens": [
+    381,
+    359
+   ],
+   "latency_s": 11.04,
+   "first_error": "validation: 4 validation errors for ScenarioProposal\nregions.0\n  Value error, region 'HeavyFragileTop' covers only 1.15% of the parameter space; at least 2% is required, widen it [type=value_error, input_value={'",
+   "final_error": "probe_gen: output failed validation after retry: 1 validation error for ScenarioProposal\nregions.2.ranges\n  Value error, unknown scenario parameter 'grip_force'; allowed: ['mass_kg', 'friction', 'size_m', 'pos_offset_x', 'pos_offset_y', 'se",
+   "regions": null
+  },
+  {
+   "i": 2,
+   "final_valid": false,
+   "first_try_valid": false,
+   "attempts": 2,
+   "completion_tokens": [
+    297,
+    296
+   ],
+   "latency_s": 8.49,
+   "first_error": "validation: 2 validation errors for ScenarioProposal\nregions.0\n  Value error, region 'HeavyFragileWall' covers only 0.48% of the parameter space; at least 2% is required, widen it [type=value_error, input_value={",
+   "final_error": "probe_gen: output failed validation after retry: 2 validation errors for ScenarioProposal\nregions.0\n  Value error, region 'HeavyFragileWall' covers only 0.19% of the parameter space; at least 2% is required, widen it [type=value_error, inpu",
+   "regions": null
+  },
+  {
+   "i": 3,
+   "final_valid": false,
+   "first_try_valid": false,
+   "attempts": 2,
+   "completion_tokens": [
+    318,
+    321
+   ],
+   "latency_s": 9.63,
+   "first_error": "validation: 2 validation errors for ScenarioProposal\nregions.1.ranges\n  Value error, unknown scenario parameter 'approach_speed'; allowed: ['mass_kg', 'friction', 'size_m', 'pos_offset_x', 'pos_offset_y', 'sensor",
+   "final_error": "probe_gen: output failed validation after retry: 1 validation error for ScenarioProposal\nregions.2.ranges\n  Value error, unknown scenario parameter 'grip_force'; allowed: ['mass_kg', 'friction', 'size_m', 'pos_offset_x', 'pos_offset_y', 'se",
+   "regions": null
+  },
+  {
+   "i": 4,
+   "final_valid": false,
+   "first_try_valid": false,
+   "attempts": 2,
+   "completion_tokens": [
+    351,
+    305
+   ],
+   "latency_s": 8.65,
+   "first_error": "validation: 1 validation error for ScenarioProposal\nregions.1.ranges\n  Value error, pos_offset_x: lo 0.3 > hi 0.08 [type=value_error, input_value={'pos_offset_x': [0.3, 0....ift_height': [0.3, 0.3]}, input_type=d",
+   "final_error": "probe_gen: output failed validation after retry: 1 validation error for ScenarioProposal\nregions.1.ranges\n  Value error, pos_offset_y: lo 0.3 > hi 0.08 [type=value_error, input_value={'pos_offset_y': [0.3, 0....ift_height': [0.3, 0.3]}, inp",
+   "regions": null
+  }
+ ]
+}

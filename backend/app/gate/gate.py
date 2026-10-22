@@ -30,6 +30,10 @@ from ..runner.base import JobRunner, RunResult
 from ..store.ledger import SeedBlockReusedError
 from .verification import VerificationSet
 
+class RunnerMismatchError(RuntimeError):
+    """Within one pipeline run the baseline and every patched evaluation must use the same runner and image build."""
+
+
 PASS, FAIL, NOT_RUN, SKIPPED = CheckStatus.PASS, CheckStatus.FAIL, CheckStatus.NOT_RUN, CheckStatus.SKIPPED_AFTER_FAILURE
 
 
@@ -95,7 +99,15 @@ class ProofGate:
         t0 = time.perf_counter()
         rr = self.runner.run(*a, **kw)
         self.timings[label] = round(time.perf_counter() - t0, 2)
+        self._check_same_runner(label, rr)
         return rr
+
+    def _check_same_runner(self, label: str, rr: RunResult) -> None:
+        ref = self._runs[0][1] if self._runs else None
+        if ref is not None and (rr.runner_name, rr.image_build_id) != (ref.runner_name, ref.image_build_id):
+            raise RunnerMismatchError(
+                f"'{label}' ran on runner={rr.runner_name!r} image={rr.image_build_id!r} but the baseline ran on "
+                f"runner={ref.runner_name!r} image={ref.image_build_id!r}; all evaluations in one run must use the same runner")
 
     # ------------------------------------------------------------------ stage 1 (patch independent)
     def prepare(self, baseline_policy: Policy, scenarios: list[Scenario], baseline_run: RunResult, targeted_ids: list[str]) -> None:

@@ -56,6 +56,12 @@ So an incomplete run is UNVERIFIED even if another check also failed, and a comp
 
 **Diagnostic G5:** `finalize(..., diagnostic_g5=True)` runs G5 even though an earlier check failed, to show what it would have said. It exists for rehearsal blocks only (it is refused for held-out blocks) and can never change a verdict: a FAILED verdict stays FAILED.
 
+## Pipeline freeze and official runs
+
+The prompts, generator, evidence, analyst, fixer, gate, gate thresholds, seed guard, ledger, LLM client and runner base are fingerprinted (`backend/app/core/FROZEN_PIPELINE_HASH.txt`, list in `backend/app/core/provenance.py`) and marked by the git tag `pipeline-frozen`. `backend/tests/test_pipeline_frozen.py` fails with an explanation if any of them changes. Anything run before the tag is a **rehearsal**; changing a frozen file is a deliberate re-freeze (`scripts/refreeze_pipeline.py`, a new commit and a new tag) and makes every earlier run a rehearsal again.
+
+An **official** run (`PipelineConfig(official=True, rehearsal=False)`, driven by `scripts/run_official.py`) refuses to start unless the working tree is clean, the frozen files equal their content at the tag, the committed hash file agrees, and the container image build id is known. It also refuses with `LLM_DEV_CACHE=1`. It records the commit, tag, pipeline hash, image build id, model ids and runner name in its artifacts. Line endings alone never count as a change.
+
 ## Layout
 
 `backend/app/{api,core,llm,sim,scenarios,runner,analysis,gate,store}`, `backend/tests`, `frontend/`, `scripts/`, `docker/`, `docs/`, `recorded_runs/`.

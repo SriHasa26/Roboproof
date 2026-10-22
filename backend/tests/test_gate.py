@@ -10,7 +10,7 @@ import pytest
 from app.core.schemas import CheckStatus, FailureReason, Policy, Result, Verdict
 from app.runner.base import JobRunner, RunResult
 from app.core.schemas import ShardResult
-from app.gate.gate import ProofGate, decide_verdict
+from app.gate.gate import ProofGate, RunnerMismatchError, decide_verdict
 from app.gate.verification import make_verification_set
 from app.scenarios.sweep import latin_hypercube
 from app.store.db import Database
@@ -28,7 +28,8 @@ def res(s, ok, t=3.0):
 class StubRunner(JobRunner):
     name = "stub"
 
-    def __init__(self, ver=None, fail=None, nondeterministic=False, unreproduce_first_target=False):
+    def __init__(self, ver=None, fail=None, nondeterministic=False, unreproduce_first_target=False, name="stub", image=None):
+        self.name, self.image = name, image
         self.ver = {"base": 0.70, 50: 0.95, 41: 0.95, 42: 0.95, 43: 0.95, **(ver or {})}
         self.fail, self.nondet, self.unrepro = fail, nondeterministic, unreproduce_first_target
         self.calls: list[tuple] = []
@@ -62,7 +63,7 @@ class StubRunner(JobRunner):
         else:
             shard = ShardResult(shard_id="s0", status="COMPLETED", runner="local", n_expected=n,
                                 results=[self.outcome(policy, s, self.base_calls) for s in scenarios])
-        return RunResult.build("stub", [shard], [[s.id for s in scenarios]], 0.01)
+        return RunResult.build(self.name, [shard], [[s.id for s in scenarios]], 0.01, image_build_id=self.image)
 
 
 @pytest.fixture
@@ -328,3 +329,32 @@ def test_precedence_3_verified_only_with_everything_passing_and_nothing_skipped(
 
 def test_skipped_status_is_distinct_from_not_run():
     assert CheckStatus.SKIPPED_AFTER_FAILURE != CheckStatus.NOT_RUN and CheckStatus.SKIPPED_AFTER_FAILURE.value == "skipped_after_failure"
+
+
+# ---------------------------------------------------------------- same-runner rule (P4.5 Part 6)
+def test_runresult_records_runner_name_and_image_build_id(world):
+    rr = StubRunner(name="local", image="sha256:abc").run(Policy(), world[:5], shards=1)
+    assert rr.runner_name == "local" and rr.image_build_id == "sha256:abc"
+    assert StubRunner().run(Policy(), world[:5], shards=1).image_build_id is None
+
+
+def test_baseline_and_evaluations_must_use_the_same_runner(world):
+    baseline = StubRunner(name="local").run(Policy(), world, shards=5)
+    gate = ProofGate(StubRunner(name="nebius"), shards=5, rehearsal=True)  # a different runner than the baseline's
+    with pytest.raises(RunnerMismatchError, match="same runner"):
+        gate.prepare(Policy(), world, baseline, [r.scenario_id for r in baseline.results if not r.success])
+
+
+def test_same_runner_but_different_image_build_is_also_refused(world):
+    baseline = StubRunner(name="local", image="sha256:aaa").run(Policy(), world, shards=5)
+    gate = ProofGate(StubRunner(name="local", image="sha256:bbb"), shards=5, rehearsal=True)
+    with pytest.raises(RunnerMismatchError):
+        gate.prepare(Policy(), world, baseline, [r.scenario_id for r in baseline.results if not r.success])
+
+
+def test_same_runner_and_image_pass_the_rule(world):
+    stub = StubRunner(name="local", image="sha256:aaa")
+    baseline = stub.run(Policy(), world, shards=5)
+    gate = ProofGate(stub, shards=5, rehearsal=True)
+    gate.prepare(Policy(), world, baseline, [r.scenario_id for r in baseline.results if not r.success])
+    gate.dev_stage(Policy(grip_force=50))  # no exception

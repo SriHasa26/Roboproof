@@ -1,0 +1,29 @@
+{
+ "baseline": {
+  "error": null,
+  "latency_s": 64.38,
+  "prompt_tokens": 866,
+  "completion_tokens": 4000,
+  "reply_chars": 0,
+  "validates": null,
+  "has_think_tags": false
+ },
+ "reasoning_effort_none": {
+  "error": null,
+  "latency_s": 9.1,
+  "prompt_tokens": 866,
+  "completion_tokens": 523,
+  "reply_chars": 0,
+  "validates": null,
+  "has_think_tags": false
+ },
+ "enable_thinking_false": {
+  "error": null,
+  "latency_s": 5.73,
+  "prompt_tokens": 866,
+  "completion_tokens": 329,
+  "reply_chars": 1038,
+  "validates": "no: ValidationError: 3 validation errors for ScenarioProposal\nregions.0.ranges\n  Value error, unknown scenario parameter 'grip_force'; allowed: ['mass_kg', 'friction', 'si",
+  "has_think_tags": false
+ }
+}

@@ -15,6 +15,7 @@ from pydantic import ValidationError
 from ..core.bounds import POLICY_BOUNDS
 from ..core.schemas import PATCHABLE_PARAMS, Policy
 from ..llm.client import LLMClient
+from ..llm.controls import FIXER_MAX_TOKENS
 from .analyst import PARAM_DOCS
 from .models import DevFeedback, FixerOutput, Hypothesis
 
@@ -70,5 +71,5 @@ def propose(client: LLMClient, hypotheses: list[Hypothesis], policy: Policy, att
             raise ValueError("the patch changes nothing (every value equals the current policy)")
         box["patched"], box["clamped"] = patched, clamped
 
-    out = client.complete_json("fixer", "reasoning", system, user, FixerOutput, validator=check, max_tokens=4000)
+    out = client.complete_json("fixer", "reasoning", system, user, FixerOutput, validator=check, max_tokens=FIXER_MAX_TOKENS)
     return [FixerResult(output=out, patched_policy=box["patched"], clamped=box["clamped"], attempt=len(attempts) + 1)]

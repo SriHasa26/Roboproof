@@ -1,0 +1,29 @@
+{
+ "baseline": {
+  "error": "APITimeoutError: Request timed out.",
+  "latency_s": 182.41,
+  "prompt_tokens": null,
+  "completion_tokens": null,
+  "reply_chars": 0,
+  "validates": null,
+  "has_think_tags": false
+ },
+ "reasoning_effort_none": {
+  "error": "APITimeoutError: Request timed out.",
+  "latency_s": 182.33,
+  "prompt_tokens": null,
+  "completion_tokens": null,
+  "reply_chars": 0,
+  "validates": null,
+  "has_think_tags": false
+ },
+ "enable_thinking_false": {
+  "error": "APITimeoutError: Request timed out.",
+  "latency_s": 181.94,
+  "prompt_tokens": null,
+  "completion_tokens": null,
+  "reply_chars": 0,
+  "validates": null,
+  "has_think_tags": false
+ }
+}

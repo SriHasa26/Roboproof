@@ -1,0 +1,29 @@
+{
+ "baseline": {
+  "error": "APITimeoutError: Request timed out.",
+  "latency_s": 243.02,
+  "prompt_tokens": null,
+  "completion_tokens": null,
+  "reply_chars": 0,
+  "validates": null,
+  "has_think_tags": false
+ },
+ "reasoning_effort_none": {
+  "error": "APIConnectionError: Connection error.",
+  "latency_s": 146.49,
+  "prompt_tokens": null,
+  "completion_tokens": null,
+  "reply_chars": 0,
+  "validates": null,
+  "has_think_tags": false
+ },
+ "enable_thinking_false": {
+  "error": "APIConnectionError: Connection error.",
+  "latency_s": 3.22,
+  "prompt_tokens": null,
+  "completion_tokens": null,
+  "reply_chars": 0,
+  "validates": null,
+  "has_think_tags": false
+ }
+}

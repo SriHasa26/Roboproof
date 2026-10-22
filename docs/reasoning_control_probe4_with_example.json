@@ -1,0 +1,165 @@
+{
+ "A_reasoning_effort_none_fields": null,
+ "B_enable_thinking_false": [
+  {
+   "i": 0,
+   "final_valid": true,
+   "first_try_valid": false,
+   "attempts": 2,
+   "completion_tokens": [
+    552,
+    508
+   ],
+   "latency_s": 15.01,
+   "first_error": "validation: 1 validation error for ScenarioProposal\nregions.0\n  Value error, region 'HeavyLowFrictionShiftRightNoiseHigh' covers only 1.56% of the parameter space; at least 2% is required, widen it [type=value_er",
+   "final_error": null,
+   "regions": [
+    [
+     "HeavyLowFrictionShiftRightNoiseHigh",
+     [
+      "friction",
+      "mass_kg",
+      "pos_offset_x"
+     ]
+    ],
+    [
+     "LightHighFrictionNegativeOffsetNoiseLow",
+     [
+      "friction",
+      "mass_kg",
+      "pos_offset_y"
+     ]
+    ],
+    [
+     "OverlapMidSizeLowNoiseHighDelay",
+     [
+      "gripper_delay_steps",
+      "sensor_noise_m",
+      "size_m"
+     ]
+    ],
+    [
+     "WideSidePlacementStick",
+     [
+      "friction",
+      "pos_offset_x",
+      "size_m"
+     ]
+    ]
+   ]
+  },
+  {
+   "i": 1,
+   "final_valid": true,
+   "first_try_valid": true,
+   "attempts": 1,
+   "completion_tokens": [
+    300
+   ],
+   "latency_s": 4.64,
+   "first_error": null,
+   "final_error": null,
+   "regions": [
+    [
+     "heavy_fragile",
+     [
+      "friction",
+      "mass_kg",
+      "size_m"
+     ]
+    ],
+    [
+     "noisy_near_wall_offset",
+     [
+      "pos_offset_x",
+      "sensor_noise_m"
+     ]
+    ],
+    [
+     "large_gap_high_friction",
+     [
+      "friction",
+      "pos_offset_x"
+     ]
+    ]
+   ]
+  },
+  {
+   "i": 2,
+   "final_valid": true,
+   "first_try_valid": true,
+   "attempts": 1,
+   "completion_tokens": [
+    441
+   ],
+   "latency_s": 5.91,
+   "first_error": null,
+   "final_error": null,
+   "regions": [
+    [
+     "delayed_grasp",
+     [
+      "gripper_delay_steps",
+      "pos_offset_y"
+     ]
+    ],
+    [
+     "low_friction_width",
+     [
+      "friction",
+      "size_m"
+     ]
+    ],
+    [
+     "wide_offset",
+     [
+      "pos_offset_x",
+      "sensor_noise_m"
+     ]
+    ],
+    [
+     "heavy_indoor_wall",
+     [
+      "mass_kg",
+      "pos_offset_y"
+     ]
+    ],
+    [
+     "noise_wall_slide",
+     [
+      "pos_offset_x",
+      "sensor_noise_m"
+     ]
+    ]
+   ]
+  },
+  {
+   "i": 3,
+   "final_valid": false,
+   "first_try_valid": false,
+   "attempts": 2,
+   "completion_tokens": [
+    404,
+    368
+   ],
+   "latency_s": 10.09,
+   "first_error": "validation: 3 validation errors for ScenarioProposal\nregions.0.ranges\n  Value error, a region may constrain at most 3 axes (got 5: ['friction', 'gripper_delay_steps', 'mass_kg', 'sensor_noise_m', 'size_m']); leav",
+   "final_error": "probe_gen: output failed validation after retry: 1 validation error for ScenarioProposal\nregions.1.ranges\n  Value error, a region may constrain at most 3 axes (got 4: ['friction', 'gripper_delay_steps', 'mass_kg', 'size_m']); leave the othe",
+   "regions": null
+  },
+  {
+   "i": 4,
+   "final_valid": false,
+   "first_try_valid": false,
+   "attempts": 2,
+   "completion_tokens": [
+    353,
+    380
+   ],
+   "latency_s": 9.0,
+   "first_error": "validation: 3 validation errors for ScenarioProposal\nregions.0\n  Value error, region 'Viscous_effect' covers only 0.96% of the parameter space; at least 2% is required, widen it [type=value_error, input_value={'n",
+   "final_error": "probe_gen: output failed validation after retry: 1 validation error for ScenarioProposal\nregions.2.ranges\n  Value error, a region may constrain at most 3 axes (got 4: ['friction', 'gripper_delay_steps', 'mass_kg', 'pos_offset_x']); leave th",
+   "regions": null
+  }
+ ]
+}
