@@ -1,0 +1,34 @@
+{
+ "batch_id": "baseline-default-policy-1-200",
+ "runner": "local (LOCAL FALLBACK, not Nebius)",
+ "scenario_source": "fixture",
+ "scenarios_requested": 200,
+ "scenarios_run": 200,
+ "complete": true,
+ "missing": 0,
+ "pass_rate": 0.66,
+ "collision_rate": 0.0,
+ "mean_completion_time_s_successes": 3.639550757575758,
+ "failure_reasons": {
+  "SLIPPED_ON_LIFT": 7,
+  "MISSED_GRASP": 59,
+  "DROPPED_IN_TRANSIT": 1,
+  "PLACED_OUTSIDE_ZONE": 1
+ },
+ "shards": 10,
+ "shards_ok": 10,
+ "cpu_count": 12,
+ "workers": 12,
+ "wall_clock_s": 6.072,
+ "n_coverage": 120,
+ "n_targeted": 80,
+ "policy": {
+  "grip_force": 15.0,
+  "approach_speed": 0.3,
+  "lift_height": 0.15,
+  "lift_speed": 0.3,
+  "grasp_hold_steps": 10,
+  "place_slow_factor": 1.0,
+  "retry_count": 0
+ }
+}

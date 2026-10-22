@@ -129,3 +129,10 @@ Everything below needs a real Nebius key and/or CLI profile. Nothing in the code
 | K9 | Decide how to return `results.json` (bucket vs logs) | CLI profile |
 | K10 | Real per-job cost and wall-clock for 10 shards | CLI profile |
 | K11 | Endpoint CPU preset availability and public-access behaviour | CLI profile |
+| K12 | Real scenario-region proposal from the fast model (`ScenarioGenerator` has only run against a mocked client and a labelled fixture; outputs say `source: "fixture"` until then) | API key + `NEBIUS_MODEL_FAST` |
+| K13 | Build state: `docker/Dockerfile.sim` (multi-stage, 1.03 GB, Python 3.11 slim + PyBullet) builds and runs the tests, API and a 200-scenario baseline locally. It has NOT been pushed to Nebius Container Registry or run as a Serverless Job; image pull and job startup behaviour are unmeasured | CLI profile, registry |
+| K14 | `LocalRunner` writes one `results.json` per shard to a local directory. How `NebiusJobRunner` will get the same file back (bucket vs logs, see section 2) is undecided | CLI profile |
+
+## 5. Local measurements so far (LocalRunner, not Nebius)
+
+200 dev scenarios, default policy, 10 shards, 12 CPUs on the development machine: 6.1 s wall-clock, all shards completed. These say nothing about Nebius timing or cost.

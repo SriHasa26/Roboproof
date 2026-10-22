@@ -1,0 +1,15 @@
+{
+  "_label": "FIXTURE: hand-written by the developers for tests and for running without an API key. This is NOT model output.",
+  "proposal": {
+    "regions": [
+      {"name": "heavy_slippery", "rationale": "Heavy slippery cubes need more friction force than a light grip provides.",
+       "ranges": {"mass_kg": [0.5, 1.0], "friction": [0.1, 0.4]}},
+      {"name": "slow_gripper_small_cube", "rationale": "High actuation latency lets the lift start before small cubes are gripped.",
+       "ranges": {"gripper_delay_steps": [12, 20], "size_m": [0.03, 0.045]}},
+      {"name": "noisy_perception", "rationale": "Large position noise makes the fingers land on the cube or grasp it off-centre.",
+       "ranges": {"sensor_noise_m": [0.02, 0.03]}},
+      {"name": "far_offsets", "rationale": "Cubes near the edge of the workspace stress the approach geometry.",
+       "ranges": {"pos_offset_x": [0.05, 0.08], "pos_offset_y": [0.05, 0.08]}}
+    ]
+  }
+}

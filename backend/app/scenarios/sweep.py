@@ -12,9 +12,10 @@ from ..core.seeds import DEV_SEED_BASE, HELDOUT_SEED_BASE, check_seed  # noqa: F
 AXES = list(SCENARIO_BOUNDS)
 
 
-def latin_hypercube(n: int, sweep_seed: int, tag: str = "lhs", seed_base: int = DEV_SEED_BASE) -> list[Scenario]:
-    check_seed(seed_base)
-    check_seed(seed_base + n - 1)
+def latin_hypercube(n: int, sweep_seed: int, tag: str = "lhs", seed_base: int = DEV_SEED_BASE,
+                    held_out: bool = False) -> list[Scenario]:
+    check_seed(seed_base, held_out)
+    check_seed(seed_base + n - 1, held_out)
     rng = np.random.default_rng(sweep_seed)
     d = len(AXES)
     u = np.empty((n, d))

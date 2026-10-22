@@ -86,3 +86,43 @@ From this point the simulator, parameter bounds and default policy are frozen. C
 - **Deliberate re-freeze:** `python scripts/refreeze.py --i-understand-this-invalidates-results`, then re-run the dev baseline and ceiling search and note the reason here.
 - **Git tag `sim-frozen`:** marks the commit that introduced the fingerprint. The P2 commit (`007bec9`) differs from it only by the held-out seed guard in `run_scenario`; the dev baseline was re-run after adding the guard and was unchanged (70.0%, sweep seed 7, n=200).
 - **Seed guard:** `backend/app/core/seeds.py`. Seeds >= 900000 raise `HeldOutSeedError` in `run_scenario`, the sweep sampler, the scenario generator and the runners unless `held_out=True`, and `held_out=True` requires seeds >= 900000 (the two sets never mix). `tests/test_seed_guard.py` includes a static scan proving no code outside `backend/app/gate/` (and the forwarding parameters in the sim/runner/generator) passes the flag, including everything in `scripts/`.
+
+## Fixer search space (from P3 Part C)
+
+`Policy` still has all seven parameters, but `PolicyPatch` accepts only `grip_force`, `grasp_hold_steps`, `retry_count`, `lift_speed` and `lift_height`. A patch touching anything else fails validation, as does a patch with more than 5 fields or a non-finite value. Values outside bounds are clamped by `apply()` and the clamping is reported.
+
+`approach_speed` and `place_slow_factor` are excluded because the one-at-a-time sweep above (dev sweep seed 7, n=200, default 70.0%) measured no effect: `approach_speed` 0.1 gave 71.0% and 0.6 gave 70.0%; `place_slow_factor` 0.3 gave 70.0%. Letting the fixer propose changes to them would only add noise to its proposals. If the simulator is ever deliberately re-frozen with dynamics where they matter, this list should be revisited.
+
+## Scripted trap (P3 Part D): NOT FOUND at the stated bar
+
+**Bar:** a scripted patch that fixes >= 80% of the heavy-and-slippery failures (mass > 0.5 kg, friction < 0.4, failing under the default) while regressing a meaningful number (decided before running: >= 10) of scenarios that passed under the default. Dev set A (sweep seed 11, n=300): 34 targeted failures, 216 previously passing. Simulator untouched.
+
+**Search:** 346 candidates evaluated before the run was interrupted: 179 grid points (grip 15/40/80, hold 10/30/60, lift speed 0.3/0.6, lift height 0.065 to 0.15, retries 0/3) and 167 of 250 planned uniformly random patches over the five parameters. 83 random candidates were never evaluated. Regressions were computed for every candidate that fixed at least half of the targets (178 of them). Data: `docs/trap_search_results.json` (grid), `docs/trap_search_random_partial.json` (all 346 rows).
+
+**Result:** 53 candidates fixed >= 80% of the targets, but the most any of them regressed was **3 of 216** (1.4%). The patches that regressed a lot (45 to 62 of 216) fixed only about half of the targets. Fixing heavy, slippery cubes needs a stronger grip, a longer hold and retries, and those changes help almost everywhere. In this simulator there is no cheap overfit patch that fixes the targets and breaks a meaningful number of other scenarios. I did not change the simulator to create one.
+
+Closest candidates by the bar (set A, fix rate / regressions of 216):
+
+| Patch | Fix | Regressions | Overall pass A / B |
+|---|---|---|---|
+| grip 80, hold 60, retries 3 | 85% | 3 | 95.7% / 97.7% |
+| grip 74, hold 115, retries 2, lift speed 0.26, lift height 0.10 | 85% | 3 | not measured |
+| grip 40, hold 60, lift height 0.10, retries 3 | 82% | 2 | not measured |
+
+These are good patches, not traps: they raise the overall pass rate to about 96% to 98%.
+
+**Alternatives (measured on both dev sets; `scripts/trap_alternatives.py`, `docs/trap_alternatives.json`):**
+
+| Patch | Fix A / B | Regressions A / B | Overall pass A / B |
+|---|---|---|---|
+| default | 0% / 0% | 0 / 0 | 72.0% / 71.7% |
+| grip 80 only | 62% / 70% | 3 / 2 | 80.3% / 79.0% |
+| hold 60 only | 0% / 11% | 4 / 3 | 77.0% / 78.3% |
+| retries 3 only | 3% / 7% | 0 / 0 | 80.7% / 81.7% |
+| **grip 80 + hold 60** | 71% / 81% | 8 / 9 | 84.0% / 83.7% |
+| grip 80 + hold 60 + retries 3 | 85% / 96% | 3 / 1 | 95.7% / 97.7% |
+| best found (ceiling search) | 85% / 96% | 0 / 0 | 96.7% / 98.0% |
+
+- **Option 1 (provisional file saved):** "grip 80 + hold 60", the obvious fix for heavy and slippery cubes. It fixes 71% (A) and 81% (B) of the targets, regresses 8 and 9 scenarios, and stays at about 84% overall, below the 0.90 held-out target. G4 (budget 0) and G5 would both be red. It is a plausible partial fix rather than an overfit one, and it misses the 80% bar on set A (71%). Saved as `backend/app/gate/scripted_trap_candidate.json`, labelled "scripted example, not model output" and PROVISIONAL. `tests/test_trap_candidate.py` checks it against its recorded numbers. It is deliberately **not** named `scripted_trap.json`.
+- **Option 2:** use "grip 80 + hold 60 + retries 3" as the G4 demo. It is a very good patch (about 96% overall) that a zero-regression budget rejects because of 3 regressions out of 216. That shows the gate is strict, but not that it catches an overfit patch, and the rejection is arguably too harsh. A small regression budget (for example 2% of previously passing scenarios) would change the verdict.
+- **Option 3 (needs your decision, nothing implemented):** add a cycle-time deadline to the definition of success in the scoring layer (the simulator source and its freeze hash stay unchanged). Retries cost time, so deadlines create a real trade-off. Pass rate if success also required finishing within 5 s / 6 s / 8 s, set A: best found 89.0% / 94.0% / 96.3%; "grip 80 + hold 60 + retries 3" 86.0% / 90.7% / 94.0%; "retries 3 only" 75.7% / 78.7% / 80.3%; patches without retries are unaffected. This changes what "success" means relative to CLAUDE.md, so it needs approval.

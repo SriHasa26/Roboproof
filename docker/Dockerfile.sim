@@ -1,5 +1,23 @@
-FROM python:3.11
-RUN pip install --no-cache-dir pybullet
-RUN pip install --no-cache-dir numpy pydantic pillow pytest python-dotenv httpx openai fastapi uvicorn
+# RoboProof backend + simulator image (Python 3.11 + PyBullet).
+# Build from the repo root:  docker build -f docker/Dockerfile.sim -t roboproof-sim:dev .
+# The same image runs tests, the FastAPI backend and (P5, PENDING_KEY) Nebius Serverless Jobs shards.
+# No host paths and no secrets are baked in: configuration comes from environment variables
+# (NEBIUS_API_KEY, NEBIUS_BASE_URL, NEBIUS_MODEL_FAST, NEBIUS_MODEL_REASONING, ROBOPROOF_DB, ...).
+
+# --- stage 1: compile the PyBullet wheel (needs gcc/g++, not needed at runtime)
+FROM python:3.11 AS wheels
+RUN pip wheel --no-cache-dir --wheel-dir /wheels pybullet
+
+# --- stage 2: slim runtime
+FROM python:3.11-slim
+COPY --from=wheels /wheels /wheels
+RUN pip install --no-cache-dir --no-index --find-links /wheels pybullet && rm -rf /wheels
+COPY backend/requirements.txt /tmp/requirements.txt
+RUN grep -v '^#' /tmp/requirements.txt | pip install --no-cache-dir -r /dev/stdin && rm /tmp/requirements.txt
 WORKDIR /app
-ENV PYTHONPATH=/app/backend PYTHONHASHSEED=0
+COPY backend /app/backend
+COPY scripts /app/scripts
+COPY docs /app/docs
+ENV PYTHONPATH=/app/backend PYTHONHASHSEED=0 PYTHONUNBUFFERED=1 ROBOPROOF_DB=/app/backend/data/roboproof.sqlite
+EXPOSE 8000
+CMD ["uvicorn", "app.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
