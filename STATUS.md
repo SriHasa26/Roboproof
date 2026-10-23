@@ -37,4 +37,4 @@ Notes
 | 1. Plain-English interpret (backend + UI + tests; 2 real calls: 3.4 s and 0.9 s, about $0.0001 each) | DONE |
 | 2. CSV / pasted batch (backend 25 tests, UI, template, safe CSV export; 100 rows 10.9 s, 200 rows 27.9 s) | DONE |
 | 3. Live runs list on /results (GET /api/runs, panel, CTAs) | DONE |
-| 4. Demo flow, QA, docs | not started |
+| 4. Demo flow, QA, docs (SUBMISSION video script, README, 314 tests in the image) | DONE |

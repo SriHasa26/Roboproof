@@ -28,6 +28,8 @@ const bad = (p: ParamSpec, v: number) => !Number.isFinite(v) || v < p.min || v >
 const fmtN = (x: number, d = 3) => (Math.abs(x) >= 100 ? x.toFixed(0) : Number(x.toPrecision(d)).toString())
 const REASON: Record<string, string> = { MISSED_GRASP: 'missed grasp', SLIPPED_ON_LIFT: 'slipped on lift', DROPPED_IN_TRANSIT: 'dropped in transit', COLLISION: 'collision', PLACED_OUTSIDE_ZONE: 'placed outside zone', TIMEOUT: 'timeout' }
 
+const tinyUsd = (x: number | null | undefined) => (x == null ? 'n/a' : x < 0.001 ? `$${x.toFixed(5)}` : usd(x))
+
 function Notice({ tone, title, children }: { tone: 'warn' | 'err' | 'info'; title?: string; children: ReactNode }) {
   const c = tone === 'err' ? 'border-verm/40 bg-verm/[.07]' : tone === 'warn' ? 'border-amber/40 bg-amber/[.07]' : 'border-white/15 bg-white/[.03]'
   return <div role={tone === 'info' ? 'note' : 'alert'} className={`rounded-xl border p-3 text-sm leading-relaxed ${c}`}>{title && <b className={tone === 'err' ? 'text-verm' : 'text-amber'}>{title}. </b>}{children}</div>
@@ -288,13 +290,13 @@ export default function Playground() {
           <div className="mt-2 flex flex-wrap items-center gap-3">
             {spec.analyze_access_code_required && <input type="password" value={code} onChange={(e) => setCode(e.target.value)} placeholder="access code" aria-label="Access code" className="w-36 rounded-lg border border-white/15 bg-black/40 px-3 py-1.5 font-mono text-xs outline-none focus:border-amber" />}
             <button className="btn btn-ghost !py-2" disabled={interpBusy || !desc.trim()} onClick={doInterpret}>{interpBusy ? 'Interpreting...' : 'Interpret'}</button>
-            <span className="font-mono text-[11px] text-dim">{desc.length}/{spec.interpret_max_chars ?? 300} | about {usd(spec.interpret_est_usd)} per call (estimate)</span>
+            <span className="font-mono text-[11px] text-dim">{desc.length}/{spec.interpret_max_chars ?? 300} | about {tinyUsd(spec.interpret_est_usd)} per call (reserved; the real cost is far lower)</span>
           </div>
           {interpErr && <div className="mt-3"><Notice tone="err" title={errTitle[interpErr.kind]}>{interpErr.message}</Notice></div>}
           {interp?.unsupported && <div className="mt-3"><Notice tone="warn" title="Not something the simulator covers">The simulator covers only the cube pick-and-place task. {interp.reason}</Notice></div>}
           {interp && !interp.unsupported && interp.parameters && (
             <div className="mt-4">
-              <Notice tone="warn" title="Model interpretation, unverified">Edit before running. The sliders below have been filled in. {interp.model ? `Model: ${interp.model.split('/').pop()}, ${interp.latency_s}s, estimated cost ${usd(interp.estimated_cost_usd)}.` : ''}</Notice>
+              <Notice tone="warn" title="Model interpretation, unverified">Edit before running. The sliders below have been filled in. {interp.model ? `Model: ${interp.model.split('/').pop()}, ${interp.latency_s}s, estimated cost ${tinyUsd(interp.estimated_cost_usd)}.` : ''}</Notice>
               <ul className="mt-3 grid gap-x-6 gap-y-1.5 text-sm sm:grid-cols-2">
                 {spec.scenario.map((p) => { const g = interp.parameters![p.name]; return g ? (
                   <li key={p.name} className="flex gap-2"><span className="w-36 shrink-0 font-medium">{p.label}</span><span className="font-mono text-xs tick">{fmtN(g.value)} {p.unit}</span>
