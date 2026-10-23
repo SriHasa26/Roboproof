@@ -20,4 +20,4 @@ backend/data/
 .reliability*.log
 
 # live rehearsal runs (artifacts, events, quota ledger)
-live_runs/
+live_runs*/

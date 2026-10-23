@@ -1,0 +1,485 @@
+[
+ {
+  "seq": 0,
+  "time": "2026-10-23T07:29:29.794+00:00",
+  "stage": "run",
+  "status": "info",
+  "message": "Live REHEARSAL accepted (master seed 66665). Not an official result; verification uses the rehearsal seed block.",
+  "data": {
+   "mode": "rehearsal",
+   "master_seed": 66665
+  }
+ },
+ {
+  "seq": 1,
+  "time": "2026-10-23T07:29:29.817+00:00",
+  "stage": "run",
+  "status": "info",
+  "message": "Pipeline process started.",
+  "data": {
+   "command": "scripts/run_reliability.py (fixed arguments, one rehearsal seed)"
+  }
+ },
+ {
+  "seq": 2,
+  "time": "2026-10-23T07:29:31.396+00:00",
+  "stage": "log",
+  "status": "info",
+  "message": "pricing from API: {'nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B': {'prompt': 6e-08, 'completion': 2.4e-07}, 'nvidia/Nemotron-3-Ultra-550b-a55b': {'prompt': 1e-06, 'completion': 3e-06}, 'nvidia/nemotron-3-super-120b-a12b': {'prompt': 3e-07, 'completion': 9e-07}}",
+  "data": {}
+ },
+ {
+  "seq": 3,
+  "time": "2026-10-23T07:29:31.403+00:00",
+  "stage": "log",
+  "status": "info",
+  "message": "MODE: REHEARSAL (rehearsal seed block, held-out seeds are never touched; NOT an official result; LocalRunner, not Nebius)",
+  "data": {}
+ },
+ {
+  "seq": 4,
+  "time": "2026-10-23T07:29:31.426+00:00",
+  "stage": "generator",
+  "status": "start",
+  "message": "Scenario generator: asking the fast Nemotron model for risky regions.",
+  "data": {}
+ },
+ {
+  "seq": 5,
+  "time": "2026-10-23T07:29:34.136+00:00",
+  "stage": "generator",
+  "status": "done",
+  "message": "250 scenarios ready: 150 from the code-made coverage sweep, 100 from model-proposed regions (source: llm).",
+  "data": {
+   "source": "llm",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "n_coverage": 150,
+   "n_targeted": 100,
+   "dropped_regions": 0
+  }
+ },
+ {
+  "seq": 6,
+  "time": "2026-10-23T07:29:34.147+00:00",
+  "stage": "baseline",
+  "status": "start",
+  "message": "Simulating the unpatched policy on every scenario (PyBullet, local container).",
+  "data": {}
+ },
+ {
+  "seq": 7,
+  "time": "2026-10-23T07:29:34.206+00:00",
+  "stage": "generator",
+  "status": "info",
+  "message": "Model call (scenario_generation, try 1) on NVIDIA-Nemotron-3-Nano-30B-A3B: 2.6s, 835 + 280 tokens, ok",
+  "data": {
+   "purpose": "scenario_generation",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "attempt": 1,
+   "latency_s": 2.617417054999976,
+   "prompt_tokens": 835,
+   "completion_tokens": 280,
+   "ok": true
+  }
+ },
+ {
+  "seq": 8,
+  "time": "2026-10-23T07:29:49.232+00:00",
+  "stage": "baseline",
+  "status": "done",
+  "message": "Baseline finished: 84 of 250 scenarios fail on the unpatched policy.",
+  "data": {
+   "n": 250,
+   "n_fail": 84,
+   "runner": "local",
+   "wall_clock_s": 15.232
+  }
+ },
+ {
+  "seq": 9,
+  "time": "2026-10-23T07:29:49.247+00:00",
+  "stage": "evidence",
+  "status": "done",
+  "message": "Failure statistics computed in code (failure rate per axis bin, decision tree, reason codes).",
+  "data": {}
+ },
+ {
+  "seq": 10,
+  "time": "2026-10-23T07:29:49.253+00:00",
+  "stage": "analyst",
+  "status": "start",
+  "message": "Analyst: asking the reasoning Nemotron model for testable hypotheses.",
+  "data": {}
+ },
+ {
+  "seq": 11,
+  "time": "2026-10-23T07:30:02.334+00:00",
+  "stage": "analyst",
+  "status": "done",
+  "message": "3 hypotheses received (model wording is an unverified opinion; numbers come from code).",
+  "data": {
+   "n_hypotheses": 3
+  }
+ },
+ {
+  "seq": 12,
+  "time": "2026-10-23T07:30:02.340+00:00",
+  "stage": "fixer",
+  "status": "start",
+  "message": "Fixer: proposing candidate patches; code will measure every candidate.",
+  "data": {}
+ },
+ {
+  "seq": 13,
+  "time": "2026-10-23T07:30:02.361+00:00",
+  "stage": "analyst",
+  "status": "info",
+  "message": "Model call (analyst, try 1) on Nemotron-3-Ultra-550b-a55b: 12.7s, 6475 + 4298 tokens, ok",
+  "data": {
+   "purpose": "analyst",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "latency_s": 12.733864800999982,
+   "prompt_tokens": 6475,
+   "completion_tokens": 4298,
+   "ok": true
+  }
+ },
+ {
+  "seq": 14,
+  "time": "2026-10-23T07:30:12.742+00:00",
+  "stage": "fixer",
+  "status": "info",
+  "message": "Model call (fixer, try 1) on Nemotron-3-Ultra-550b-a55b: 8.8s, 1659 + 3315 tokens, ok",
+  "data": {
+   "purpose": "fixer",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "latency_s": 8.789858428000002,
+   "prompt_tokens": 1659,
+   "completion_tokens": 3315,
+   "ok": true
+  }
+ },
+ {
+  "seq": 15,
+  "time": "2026-10-23T07:32:02.778+00:00",
+  "stage": "log",
+  "status": "info",
+  "message": "[REHEARSAL] run_01_seed66665: verdict=VERIFIED attempts=1 gen=llm error=None cost=0.03109 wall=151.37s",
+  "data": {}
+ },
+ {
+  "seq": 16,
+  "time": "2026-10-23T07:32:02.788+00:00",
+  "stage": "log",
+  "status": "info",
+  "message": "summary written to /app/live_runs/live_20261023t072929_6bea/out",
+  "data": {}
+ },
+ {
+  "seq": 17,
+  "time": "2026-10-23T07:32:02.819+00:00",
+  "stage": "fixer",
+  "status": "done",
+  "message": "Attempt 1: 4 candidates measured by code; candidate 3 selected (regression budget 3).",
+  "data": {
+   "attempt": 1,
+   "selected_index": 3,
+   "regression_budget": 3,
+   "selection_rule": "highest targeted fix among candidates within the regression budget; ties: fewer changed params, lower grip; none within budget: fewest regressions",
+   "candidates": [
+    {
+     "index": 0,
+     "applied": {
+      "grip_force": 50.0
+     },
+     "fixed": 26,
+     "targeted": 53,
+     "regressions": 1,
+     "pass_rate": 0.776,
+     "selected": false,
+     "complete": true
+    },
+    {
+     "index": 1,
+     "applied": {
+      "retry_count": 1.0
+     },
+     "fixed": 3,
+     "targeted": 53,
+     "regressions": 0,
+     "pass_rate": 0.7,
+     "selected": false,
+     "complete": true
+    },
+    {
+     "index": 2,
+     "applied": {
+      "grip_force": 25.0,
+      "grasp_hold_steps": 30.0,
+      "lift_speed": 0.2
+     },
+     "fixed": 22,
+     "targeted": 53,
+     "regressions": 1,
+     "pass_rate": 0.808,
+     "selected": false,
+     "complete": true
+    },
+    {
+     "index": 3,
+     "applied": {
+      "grip_force": 40.0,
+      "retry_count": 2.0,
+      "lift_speed": 0.1
+     },
+     "fixed": 40,
+     "targeted": 53,
+     "regressions": 1,
+     "pass_rate": 0.92,
+     "selected": true,
+     "complete": true
+    }
+   ],
+   "dev_stage_passed": true,
+   "patched_policy": {
+    "grip_force": 40.0,
+    "approach_speed": 0.3,
+    "lift_height": 0.15,
+    "lift_speed": 0.1,
+    "grasp_hold_steps": 10,
+    "place_slow_factor": 1.0,
+    "retry_count": 2
+   }
+  }
+ },
+ {
+  "seq": 18,
+  "time": "2026-10-23T07:32:02.824+00:00",
+  "stage": "gate",
+  "status": "done",
+  "message": "G1 PASS: Determinism",
+  "data": {
+   "check": {
+    "id": "G1",
+    "name": "Determinism",
+    "status": "pass",
+    "observed": {
+     "sample": 30,
+     "mismatches": 0
+    },
+    "threshold": {
+     "mismatches": 0
+    },
+    "details": "all outcomes identical"
+   }
+  }
+ },
+ {
+  "seq": 19,
+  "time": "2026-10-23T07:32:02.831+00:00",
+  "stage": "gate",
+  "status": "done",
+  "message": "G2 PASS: Targeted failures reproduced",
+  "data": {
+   "check": {
+    "id": "G2",
+    "name": "Targeted failures reproduced",
+    "status": "pass",
+    "observed": {
+     "targeted": 53,
+     "not_reproduced": 0
+    },
+    "threshold": {
+     "not_reproduced": 0
+    },
+    "details": "all reproduced"
+   }
+  }
+ },
+ {
+  "seq": 20,
+  "time": "2026-10-23T07:32:02.838+00:00",
+  "stage": "gate",
+  "status": "done",
+  "message": "G3 PASS: Targeted failures fixed",
+  "data": {
+   "check": {
+    "id": "G3",
+    "name": "Targeted failures fixed",
+    "status": "pass",
+    "observed": {
+     "fixed": 40,
+     "targeted": 53,
+     "fix_rate": 0.7547
+    },
+    "threshold": {
+     "min_fix_rate": 0.7,
+     "comparison": "exact fraction, inclusive"
+    },
+    "details": ""
+   }
+  }
+ },
+ {
+  "seq": 21,
+  "time": "2026-10-23T07:32:02.844+00:00",
+  "stage": "gate",
+  "status": "done",
+  "message": "G4 PASS: No regressions",
+  "data": {
+   "check": {
+    "id": "G4",
+    "name": "No regressions",
+    "status": "pass",
+    "observed": {
+     "regressions": 1,
+     "previously_passing": 166,
+     "strict_zero_budget_pass": false
+    },
+    "threshold": {
+     "budget": 3,
+     "budget_frac": 0.02
+    },
+    "details": "regressed: ['cov-1148']"
+   }
+  }
+ },
+ {
+  "seq": 22,
+  "time": "2026-10-23T07:32:02.850+00:00",
+  "stage": "gate",
+  "status": "done",
+  "message": "G5 PASS: Held-out generalization",
+  "data": {
+   "check": {
+    "id": "G5",
+    "name": "Held-out generalization",
+    "status": "pass",
+    "observed": {
+     "patched_pass_rate": 0.9625,
+     "patched_wilson95_lower": 0.9391,
+     "unpatched_pass_rate": 0.71,
+     "improvement": 0.2525,
+     "n": 400,
+     "patched_passes": 385,
+     "unpatched_passes": 284,
+     "conditions": {
+      "target": true,
+      "improvement": true,
+      "wilson_lower_above_baseline": true
+     }
+    },
+    "threshold": {
+     "min_pass_rate": 0.9,
+     "min_improvement": 0.1,
+     "wilson_lower_must_exceed_unpatched_pass_rate": true,
+     "comparison": "target and improvement: exact fractions, inclusive; Wilson: strict, float"
+    },
+    "details": "all conditions met"
+   }
+  }
+ },
+ {
+  "seq": 23,
+  "time": "2026-10-23T07:32:02.856+00:00",
+  "stage": "gate",
+  "status": "done",
+  "message": "G6 PASS: Complete execution",
+  "data": {
+   "check": {
+    "id": "G6",
+    "name": "Complete execution",
+    "status": "pass",
+    "observed": {
+     "runs": 6,
+     "incomplete_runs": [],
+     "failed_shards": 0,
+     "missing_scenarios": 0
+    },
+    "threshold": {},
+    "details": "all shards finished"
+   }
+  }
+ },
+ {
+  "seq": 24,
+  "time": "2026-10-23T07:32:02.863+00:00",
+  "stage": "gate",
+  "status": "info",
+  "message": "Gate results are written together when the pipeline finishes, so G1 to G6 arrive here at the end.",
+  "data": {
+   "metrics": {
+    "analysis": {
+     "before": {
+      "n": 250,
+      "pass_rate": 0.664,
+      "pass_rate_ci95": [
+       0.6034,
+       0.7197
+      ],
+      "collision_rate": 0.004,
+      "mean_completion_time_s": 3.692
+     },
+     "after": {
+      "n": 250,
+      "pass_rate": 0.92,
+      "pass_rate_ci95": [
+       0.8797,
+       0.9476
+      ],
+      "collision_rate": 0.016,
+      "mean_completion_time_s": 4.914
+     }
+    },
+    "verification": {
+     "before": {
+      "n": 400,
+      "pass_rate": 0.71,
+      "pass_rate_ci95": [
+       0.6637,
+       0.7523
+      ],
+      "collision_rate": 0.0075,
+      "mean_completion_time_s": 3.661
+     },
+     "after": {
+      "n": 400,
+      "pass_rate": 0.9625,
+      "pass_rate_ci95": [
+       0.9391,
+       0.9771
+      ],
+      "collision_rate": 0.005,
+      "mean_completion_time_s": 4.828
+     }
+    }
+   },
+   "strict_zero_budget": {
+    "regressions": 1,
+    "pass": false
+   }
+  }
+ },
+ {
+  "seq": 25,
+  "time": "2026-10-23T07:32:03.311+00:00",
+  "stage": "verdict",
+  "status": "done",
+  "message": "Verdict: VERIFIED",
+  "data": {
+   "final_status": "finished",
+   "verdict": "VERIFIED",
+   "estimated_cost_usd": 0.03109
+  }
+ },
+ {
+  "seq": 26,
+  "time": "2026-10-23T07:32:03.317+00:00",
+  "stage": "end",
+  "status": "done",
+  "message": "end of stream",
+  "data": {}
+ }
+]

@@ -1,0 +1,11 @@
+{
+ "date": "2026-10-23",
+ "verdict": "VERIFIED",
+ "status": "finished",
+ "duration_s": 153.5,
+ "estimated_cost_usd": 0.03109,
+ "master_seed": 66665,
+ "n_events": 27,
+ "run_id": "live_20261023t072929_6bea",
+ "note": "Recorded from a real live rehearsal run through the API (not official). Cost is an estimate."
+}

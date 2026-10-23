@@ -13,8 +13,9 @@ services:
       LIVE_RUNS_DIR: /app/live_runs
       ROBOPROOF_DB: /app/backend/data/roboproof.sqlite
       LLM_DEV_CACHE: "0"
+      LIVE_ENABLED: "${LIVE_ENABLED:-0}"   # set LIVE_ENABLED=1 in .env (or the shell) to allow live runs
     ports:
-      - "8000:8000"
+      - "${API_PORT:-8000}:8000"   # set API_PORT if 8000 is already in use
     volumes:
       - ./live_runs:/app/live_runs          # run artifacts, events and the daily quota ledger
       - ./backend/data:/app/backend/data    # SQLite (seed ledger and LLM call log) persists across restarts

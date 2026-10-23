@@ -1,5 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import { CandTable, Evidence, Hyp, Replays, Run as RunT, dataUrl, pct, short, usd, useData } from '../lib'
+import { Skeleton, usePageTitle } from '../motion'
 import { BadgeRow, GateChecklist, Heatmap, Note, RatePair, Section, Stamp } from '../ui'
 
 const DEFAULT: Record<string, number> = { grip_force: 15, approach_speed: 0.3, lift_height: 0.15, lift_speed: 0.3, grasp_hold_steps: 10, place_slow_factor: 1, retry_count: 0 }
@@ -80,14 +81,21 @@ export default function RunPage() {
   const { id = '' } = useParams()
   const { data: r, error } = useData<RunT>(`runs/${id}.json`)
   const rp = useData<Replays>('replays.json')
+  usePageTitle(`Run ${id}`)
   if (error) return <p className="font-mono text-sm text-verm">No such run ({error}). <Link className="underline" to="/results">Back to the results</Link></p>
-  if (!r) return <p className="font-mono text-sm text-dim">loading...</p>
+  if (!r) return <Skeleton className="h-96 w-full" />
+  return <RunReport r={r} replays={rp.data} back={['/results', 'results']} />
+}
+
+/** The run detail view; fed by recorded JSON (static site) or by the live API's report endpoint. */
+export function RunReport({ r, replays, back }: { r: RunT; replays: Replays | null; back: [string, string] }) {
+  const rp = { data: replays }
   const t = r.timing, tot = Math.max(t.wall_clock_s, 1)
   const seg: [string, number, string][] = [['LLM calls', t.llm_s, '#f2b134'], ['candidate evaluation (simulator)', t.candidate_evals_s, '#5be39a'], ['other simulation and code', t.other_simulation_s, '#7f8da0']]
   const g = r.generator
   return (
     <div>
-      <Link to="/results" className="font-mono text-xs text-dim hover:text-amber">&larr; results</Link>
+      <Link to={back[0]} className="font-mono text-xs text-dim hover:text-amber">&larr; {back[1]}</Link>
       <header className="rise mb-10 mt-3 flex flex-wrap items-end justify-between gap-6">
         <div>
           <div className="mb-2 font-mono text-[11px] uppercase tracking-[.3em] text-amber">run report</div>

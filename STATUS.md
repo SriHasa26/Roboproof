@@ -19,4 +19,6 @@ Notes
 | B1. Procedural 3D hero (lazy chunk, fallback) | DONE |
 | B2. 3D failure map, B3 motion language | next |
 | C. Restyle old pages | next |
-| D. Live backend, E. Live console UI, F. QA/docs | not started |
+| D. Live backend (backend/app/live, docker-compose) | DONE: 20 tests with a fake pipeline |
+| E. Live console UI + recorded replay | DONE: one real live run recorded (VERIFIED, 153.5 s, est. $0.031) |
+| C. Restyle old pages, B2 3D failure map, B3 motion, F. QA/docs | next |
