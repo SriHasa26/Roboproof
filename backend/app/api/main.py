@@ -6,10 +6,12 @@ import os
 from fastapi import FastAPI
 
 from ..live.api import install as install_live
+from ..playground.api import install as install_playground
 from ..sim import freeze
 
 app = FastAPI(title="RoboProof API", version="0.4.0")
-install_live(app)  # live rehearsal service (off unless LIVE_ENABLED=1)
+_live = install_live(app)  # live rehearsal service (off unless LIVE_ENABLED=1)
+install_playground(app, _live)  # simulator playground (no LLM spend except the guarded analyze endpoint)
 
 
 @app.get("/health")

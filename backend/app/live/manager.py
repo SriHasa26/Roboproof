@@ -120,6 +120,17 @@ class RunManager:
         data = {day: {"runs": cur["runs"] + runs, "usd": round(cur["usd"] + usd, 6)}}  # older days are dropped
         self._ledger_path.write_text(json.dumps(data), encoding="utf-8")
 
+    def reserve_spend(self, usd: float) -> None:
+        """Count an estimated spend (e.g. a playground analyze call) against the daily spend cap, or refuse."""
+        with self.lock:
+            if self._ledger()["usd"] + usd > self.cfg.daily_usd_cap:
+                raise LiveError(429, "daily_usd_cap", "The daily estimated spend cap has been reached. Try again tomorrow.")
+            self._ledger_add(usd=usd)
+
+    def adjust_spend(self, delta_usd: float) -> None:
+        with self.lock:
+            self._ledger_add(usd=delta_usd)
+
     def status(self) -> dict:
         with self.lock:
             led = self._ledger()
