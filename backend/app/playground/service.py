@@ -19,6 +19,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from ..core.bounds import INT_POLICY_PARAMS, POLICY_BOUNDS, SCENARIO_BOUNDS
 from ..core.schemas import FailureReason, Policy, Result, Scenario
 from ..core.stats import wilson
+from .batch import BATCH_SEED_BASE, BatchError, parse_batch, results_csv
 from .spec import DEFAULT_SEED, PG_SEED_MAX, PG_SEED_MIN, default_policy_dict
 
 MAX_FRAMES = 300
@@ -35,9 +36,9 @@ EXPLAIN = {
 
 
 class PlaygroundError(Exception):
-    def __init__(self, status: int, code: str, message: str):
+    def __init__(self, status: int, code: str, message: str, errors: list | None = None):
         super().__init__(message)
-        self.status, self.code, self.message = status, code, message
+        self.status, self.code, self.message, self.errors = status, code, message, errors or []
 
 
 @dataclass
@@ -165,6 +166,12 @@ class SweepRequest(BaseModel):
     @classmethod
     def _seed(cls, v):
         return _check_seed(v)
+
+
+class BatchRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    policy: PolicyIn = PolicyIn()
+    csv: str = Field(min_length=1, max_length=160_000)  # the byte cap (100 KB) is enforced when parsing
 
 
 class InterpretRequest(BaseModel):
@@ -348,6 +355,50 @@ class PlaygroundService:
                 "policy": pol.model_dump(), "default_policy": default.model_dump(), "metrics": _metrics(res), "default_metrics": _metrics(dres),
                 "evidence_bins": bins, "rows": rows, "wall_clock_s": round(time.perf_counter() - t0, 2),
                 "sampler": "Latin-hypercube coverage sweep over the frozen parameter ranges (seeded)",
+                "frozen_note": "Frozen simulator and parameter ranges. Not part of the official evaluation."}
+
+    # --- batch of user-supplied scenarios (CSV or pasted rows)
+    def batch(self, req: BatchRequest, ip: str) -> dict:
+        from ..analysis.evidence import compute_evidence
+        self._enabled()
+        try:
+            recs = parse_batch(req.csv)  # every row validated first; nothing runs if any row is invalid
+        except BatchError as e:
+            raise PlaygroundError(e.status, e.code, e.message, e.errors)
+        self._rate(ip, "batch", self.cfg.rate_sweep_per_10min, 600)
+        scns = [Scenario(id=f"pgb-{i + 1}", seed=BATCH_SEED_BASE + i, tag="playground-batch", **r) for i, r in enumerate(recs)]
+        pol, default = req.policy.to_policy(), Policy()
+        per_phase = self.cfg.sweep_timeout_s * 0.45
+        key = tuple((s.seed, s.mass_kg, s.friction, s.size_m, s.pos_offset_x, s.pos_offset_y, s.sensor_noise_m, s.gripper_delay_steps) for s in scns)
+        t0 = time.perf_counter()
+        with self._Slot(self.slots):
+            res = self.sweep_fn(pol, scns, per_phase)
+            if pol == default:
+                dres = res
+            else:
+                with self.lock:
+                    dres = self.default_cache.get(key)  # type: ignore[arg-type]
+                if dres is None:
+                    dres = self.sweep_fn(default, scns, per_phase)
+                    with self.lock:
+                        self.default_cache[key] = dres  # type: ignore[index]
+                        while len(self.default_cache) > 32:
+                            self.default_cache.popitem(last=False)
+        try:
+            ev = compute_evidence(scns, res)
+            bins = [{"axis": i.data["axis"], "range": i.data["range"], "n": i.data["n"], "n_fail": i.data["n_fail"], "fail_rate": i.data["fail_rate"]} for i in ev.items if i.kind == "bin"]
+        except Exception:  # tiny tables can be too small for the evidence code's bins; the rest of the answer does not depend on it
+            bins = []
+        dmap = {r.scenario_id: r for r in dres}
+        rows = {"ids": [s.id for s in scns], "ok": [1 if r.success else 0 for r in res], "reason": [r.failure_reason.value if r.failure_reason else None for r in res],
+                "collision": [1 if r.collision else 0 for r in res], "time_s": [r.completion_time_s for r in res],
+                "default_ok": [1 if dmap[s.id].success else 0 for s in scns], "default_reason": [dmap[s.id].failure_reason.value if dmap[s.id].failure_reason else None for s in scns],
+                "seed": [s.seed for s in scns]}
+        for ax in SCENARIO_BOUNDS:
+            rows[ax] = [float(getattr(s, ax)) for s in scns]
+        return {"mode": "playground batch (exploration, not a gate verdict)", "runner": "local simulator (fallback, not Nebius)", "n": len(scns), "policy": pol.model_dump(),
+                "default_policy": default.model_dump(), "metrics": _metrics(res), "default_metrics": _metrics(dres), "evidence_bins": bins, "rows": rows,
+                "results_csv": results_csv(rows), "seeds": f"assigned by row: {BATCH_SEED_BASE} + row index (playground range)", "wall_clock_s": round(time.perf_counter() - t0, 2),
                 "frozen_note": "Frozen simulator and parameter ranges. Not part of the official evaluation."}
 
     def get_sweep(self, sid: str) -> dict:

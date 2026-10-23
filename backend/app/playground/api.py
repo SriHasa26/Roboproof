@@ -10,14 +10,18 @@ from fastapi.responses import JSONResponse
 from ..live.api import client_ip
 from ..live.manager import LiveError, RunManager
 from .interpret import InterpretError, interpret
-from .service import AnalyzeRequest, InterpretRequest, PlaygroundConfig, PlaygroundError, PlaygroundService, ScenarioRequest, SweepRequest
+from .batch import template_csv
+from .service import AnalyzeRequest, BatchRequest, InterpretRequest, PlaygroundConfig, PlaygroundError, PlaygroundService, ScenarioRequest, SweepRequest
 from .spec import build_spec
 
 MIN_FAILURES_TO_ANALYZE = 5
 
 
 def _err(e: PlaygroundError | LiveError) -> JSONResponse:
-    return JSONResponse({"error": e.code, "message": e.message}, status_code=e.status)
+    body = {"error": e.code, "message": e.message}
+    if getattr(e, "errors", None):
+        body["errors"] = e.errors  # row-level problems for a batch: {row, line, field, problem}
+    return JSONResponse(body, status_code=e.status)
 
 
 def make_router(svc: PlaygroundService, live: RunManager | None) -> APIRouter:
@@ -48,6 +52,19 @@ def make_router(svc: PlaygroundService, live: RunManager | None) -> APIRouter:
             return svc.sweep(body, client_ip(request, live.cfg if live else _NoProxy))
         except PlaygroundError as e:
             return _err(e)
+
+    @r.post("/api/sim/batch")
+    def batch(body: BatchRequest, request: Request):
+        try:
+            return svc.batch(body, client_ip(request, live.cfg if live else _NoProxy))
+        except PlaygroundError as e:
+            return _err(e)
+
+    @r.get("/api/sim/batch/template")
+    def batch_template():
+        from fastapi.responses import PlainTextResponse
+        return PlainTextResponse(template_csv(build_spec(svc.cfg.max_sweep_n)["presets"]), media_type="text/csv",
+                                 headers={"Content-Disposition": 'attachment; filename="roboproof_scenarios_template.csv"'})
 
     @r.post("/api/sim/interpret")
     def interpret_text(body: InterpretRequest, request: Request):

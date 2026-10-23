@@ -4,6 +4,7 @@ import { Skeleton, useMotionPrefs, usePageTitle } from '../motion'
 import { RatePair } from '../ui'
 import { HypCard } from './Run'
 import { Confirm } from '../live/parts'
+import { API_BASE } from '../live/api'
 import { PgError, ParamSpec, Spec, errTitle, fetchSpec, post } from '../play/api'
 import type { Traj } from '../play/Replay3D'
 import type { ScenData } from '../three/FailureMap3D'
@@ -16,7 +17,8 @@ type Result = { scenario_id: string; seed: number; success: boolean; collision: 
 type ScenResp = Traj & { result: Result; explanation: string; scenario: Vals; policy: Vals; seed: number; wall_clock_s?: number }
 type Metrics = Rate & { passes: number; failure_reasons: Record<string, number> }
 type Rows = { ids: string[]; ok: number[]; reason: (string | null)[]; default_ok: number[]; default_reason: (string | null)[]; seed: number[] } & Record<string, any>
-type SweepResp = { sweep_id: string; n: number; seed: number; policy: Vals; metrics: Metrics; default_metrics: Metrics; evidence_bins: { axis: string; range: number[]; n: number; n_fail: number; fail_rate: number }[]; rows: Rows; wall_clock_s: number }
+type SweepResp = { sweep_id?: string; n: number; seed?: number; policy: Vals; metrics: Metrics; default_metrics: Metrics; evidence_bins: { axis: string; range: number[]; n: number; n_fail: number; fail_rate: number }[]; rows: Rows; wall_clock_s: number }
+type BatchResp = SweepResp & { results_csv: string; seeds: string }
 type Example = ScenResp & { label: string; why: string }
 type Interp = { unsupported: boolean; reason: string | null; parameters: Record<string, { value: number; reason: string; clamped: boolean; rounded: boolean }> | null; model?: string; latency_s?: number; estimated_cost_usd?: number | null; label?: string }
 type Analysis = { hypotheses: Hyp[]; model: string; estimated_cost_usd: number | null; label: string; cost_note: string }
@@ -122,6 +124,37 @@ function Reasons({ m, d }: { m: Metrics; d: Metrics }) {
   )
 }
 
+function CsvPreview({ text }: { text: string }) {
+  const rows = useMemo(() => text.split(/\r?\n/).filter((l) => l.trim()).slice(0, 7).map((l) => l.split(l.includes('\t') && !l.includes(',') ? '\t' : ',')), [text])
+  if (rows.length < 1) return null
+  return (
+    <div className="overflow-x-auto rounded-lg border hair"><table className="w-full text-left font-mono text-[10px]"><tbody>
+      {rows.map((r, i) => <tr key={i} className={i === 0 ? 'bg-white/5 text-amber' : 'border-t hair'}>{r.map((c, j) => <td key={j} className="whitespace-nowrap px-2 py-1">{c.trim().slice(0, 14)}</td>)}</tr>)}
+    </tbody></table><p className="px-2 py-1 text-[10px] text-dim">preview: header and first rows (validated by the server when you run)</p></div>
+  )
+}
+
+function RowsTable({ b, onPick, onDownload }: { b: BatchResp; onPick: (i: number) => void; onDownload: () => void }) {
+  const r = b.rows
+  return (
+    <div className="glass p-4">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2"><h2 className="text-2xl">Results per row</h2><button className="btn btn-ghost !px-4 !py-1.5 text-sm" onClick={onDownload}>Download results as CSV</button></div>
+      <div className="max-h-96 overflow-auto"><table className="w-full min-w-[640px] text-left text-xs">
+        <thead className="sticky top-0 bg-[#0c1110] font-mono text-[10px] text-dim"><tr><th className="p-1.5">row</th><th>mass</th><th>friction</th><th>size</th><th>noise</th><th>delay</th><th>yours</th><th>reason</th><th>time</th><th>default</th><th /></tr></thead>
+        <tbody>
+          {r.ids.map((id, i) => (
+            <tr key={id} className="border-t hair hover:bg-white/[.04]">
+              <td className="p-1.5 font-mono">{i + 1}</td><td className="font-mono tick">{fmtN(r.mass_kg[i])}</td><td className="font-mono tick">{fmtN(r.friction[i])}</td><td className="font-mono tick">{fmtN(r.size_m[i])}</td>
+              <td className="font-mono tick">{fmtN(r.sensor_noise_m[i])}</td><td className="font-mono">{r.gripper_delay_steps[i]}</td>
+              <td className={r.ok[i] ? 'text-phos' : 'text-verm'}>{r.ok[i] ? 'pass' : 'fail'}</td><td className="text-dim">{r.reason[i] ? (REASON[r.reason[i]!] ?? r.reason[i]) : ''}</td>
+              <td className="font-mono tick">{r.time_s[i].toFixed(2)} s</td><td className={r.default_ok[i] ? 'text-phos' : 'text-verm'}>{r.default_ok[i] ? 'pass' : 'fail'}</td>
+              <td><button className="text-amber underline decoration-dotted underline-offset-2" onClick={() => onPick(i)} aria-label={`Replay row ${i + 1} in 3D`}>replay</button></td>
+            </tr>))}
+        </tbody></table></div>
+    </div>
+  )
+}
+
 export default function Playground() {
   usePageTitle('Playground')
   const { reduce } = useMotionPrefs()
@@ -137,6 +170,10 @@ export default function Playground() {
   const [single, setSingle] = useState<ScenResp | null>(null)
   const [sweep, setSweep] = useState<SweepResp | null>(null)
   const [analysis, setAnalysis] = useState<Analysis | null>(null)
+  const [sweepMode, setSweepMode] = useState<'sample' | 'csv'>('sample')
+  const [csvText, setCsvText] = useState('')
+  const [csvName, setCsvName] = useState('')
+  const [batch, setBatch] = useState<BatchResp | null>(null)
   const [confirm, setConfirm] = useState(false)
   const [code, setCode] = useState('')
   const [desc, setDesc] = useState('')
@@ -174,8 +211,25 @@ export default function Playground() {
     setBusy(false)
     if (r.ok) setSweep(r.data); else setErr(r.error)
   }
+  const runBatch = async () => {
+    setBusy(true); setErr(null)
+    const r = await post<BatchResp>('/api/sim/batch', { policy: pol, csv: csvText }, 90000)
+    setBusy(false)
+    if (r.ok) setBatch(r.data); else setErr(r.error)
+  }
+  const download = (name: string, text: string, type = 'text/csv') => {
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; a.click(); URL.revokeObjectURL(a.href)
+  }
+  const getTemplate = async () => {
+    try { download('roboproof_scenarios_template.csv', await (await fetch(`${API_BASE}/api/sim/batch/template`)).text()) } catch { setErr({ kind: 'network', message: 'Could not download the template.' }) }
+  }
+  const onFile = (f: File | undefined) => {
+    if (!f) return
+    if (f.size > 100 * 1024) { setErr({ kind: 'invalid', message: 'That file is larger than 100 KB.' }); return }
+    f.text().then((t) => { setCsvText(t); setCsvName(f.name); setBatch(null); setErr(null) })
+  }
   const doAnalyze = async () => {
-    if (!sweep) return
+    if (!sweep || !sweep.sweep_id) return
     setConfirm(false); setBusy(true); setErr(null)
     const r = await post<Analysis>('/api/sim/analyze', { sweep_id: sweep.sweep_id, ...(code ? { access_code: code } : {}) }, 180000)
     setBusy(false)
@@ -189,14 +243,15 @@ export default function Playground() {
     setInterp(r.data)
     if (!r.data.unsupported && r.data.parameters) setScn(Object.fromEntries(Object.entries(r.data.parameters).map(([k, g]) => [k, g.value])))
   }
+  const cur = sweepMode === 'csv' ? batch : sweep
   const pick = (i: number) => {
-    if (!sweep || !spec) return
-    const s: Vals = Object.fromEntries(AXIS_KEYS.map((k) => [k, sweep.rows[k][i]]))
-    setScn(s); setPol({ ...sweep.policy }); setSeed(String(sweep.rows.seed[i])); setTab('single'); setSingle(null)
-    runSingle(s, sweep.policy, sweep.rows.seed[i])
+    if (!cur || !spec) return
+    const s: Vals = Object.fromEntries(AXIS_KEYS.map((k) => [k, cur.rows[k][i]]))
+    setScn(s); setPol({ ...cur.policy }); setSeed(String(cur.rows.seed[i])); setTab('single'); setSingle(null)
+    runSingle(s, cur.policy, cur.rows.seed[i])
   }
-  const mapData: ScenData | null = useMemo(() => !sweep ? null : ({ set: `playground sweep (seed ${sweep.seed})`, policy: 'this policy', n: sweep.n, ids: sweep.rows.ids, tag: sweep.rows.ids.map(() => null), ok: sweep.rows.ok, reason: sweep.rows.reason,
-    mass_kg: sweep.rows.mass_kg, friction: sweep.rows.friction, size_m: sweep.rows.size_m, sensor_noise_m: sweep.rows.sensor_noise_m, gripper_delay_steps: sweep.rows.gripper_delay_steps, pos_offset_x: sweep.rows.pos_offset_x, pos_offset_y: sweep.rows.pos_offset_y }), [sweep])
+  const mapData: ScenData | null = useMemo(() => !cur ? null : ({ set: sweepMode === 'csv' ? 'your table' : `playground sweep (seed ${cur.seed})`, policy: 'this policy', n: cur.n, ids: cur.rows.ids, tag: cur.rows.ids.map(() => null), ok: cur.rows.ok, reason: cur.rows.reason,
+    mass_kg: cur.rows.mass_kg, friction: cur.rows.friction, size_m: cur.rows.size_m, sensor_noise_m: cur.rows.sensor_noise_m, gripper_delay_steps: cur.rows.gripper_delay_steps, pos_offset_x: cur.rows.pos_offset_x, pos_offset_y: cur.rows.pos_offset_y }), [cur, sweepMode])
 
   return (
     <div>
@@ -264,44 +319,67 @@ export default function Playground() {
                 <h3 className="mt-3 text-sm text-amber">Scenario conditions</h3>
                 {spec.scenario.map((p) => <ParamControl key={p.name} p={p} v={scn[p.name]} set={(x) => setScn((s) => ({ ...s, [p.name]: x }))} />)}
               </>
-            ) : <Notice tone="info">A sweep samples scenario conditions across the full frozen ranges (a seeded Latin-hypercube coverage sweep), then runs your policy and the default policy on the same scenarios.</Notice>}
+            ) : (
+              <div>
+                <div role="group" aria-label="Sweep input" className="mb-3 flex overflow-hidden rounded-full border border-white/15 text-xs">
+                  {([['sample', 'Sample scenarios'], ['csv', 'Upload CSV or paste rows']] as const).map(([m, l]) => <button key={m} aria-pressed={sweepMode === m} onClick={() => { setSweepMode(m); setErr(null) }} className={`flex-1 px-3 py-1.5 ${sweepMode === m ? 'bg-white/15' : 'text-dim hover:text-text'}`}>{l}</button>)}
+                </div>
+                {sweepMode === 'sample' ? <Notice tone="info">A sweep samples scenario conditions across the full frozen ranges (a seeded Latin-hypercube coverage sweep), then runs your policy and the default policy on the same scenarios.</Notice> : (
+                  <div className="space-y-2">
+                    <p className="text-xs text-dim">One row per scenario, with a header row. Columns (exactly): <span className="font-mono">{spec.scenario.map((p) => p.name).join(', ')}</span>. At most {spec.batch?.max_rows ?? 200} rows and {spec.batch?.max_kb ?? 100} KB. Seeds are assigned by row. Nothing runs if any row is invalid.</p>
+                    <div className="flex flex-wrap gap-2">
+                      <button className="chip hover:!border-amber/60 hover:!text-text" onClick={getTemplate}>Download template CSV</button>
+                      <label className="chip cursor-pointer hover:!border-amber/60 hover:!text-text">Choose file<input type="file" accept=".csv,.tsv,.txt,text/csv" className="sr-only" onChange={(e) => onFile(e.target.files?.[0])} /></label>
+                    </div>
+                    <textarea value={csvText} onChange={(e) => { setCsvText(e.target.value); setCsvName(''); setBatch(null) }} rows={6} spellCheck={false} aria-label="Scenario rows (CSV)" placeholder={spec.scenario.map((p) => p.name).join(',') + '\n0.2,0.8,0.05,0,0,0,0'}
+                      className="block w-full rounded-lg border border-white/15 bg-black/40 px-3 py-2 font-mono text-[11px] outline-none focus:border-amber" />
+                    {csvName && <p className="font-mono text-[11px] text-dim">loaded {csvName} ({csvText.length} characters)</p>}
+                    <CsvPreview text={csvText} />
+                  </div>
+                )}
+              </div>
+            )}
             <h3 className="mt-4 text-sm text-amber">Policy parameters</h3>
             {spec.policy.map((p) => <ParamControl key={p.name} p={p} v={pol[p.name]} off={!p.tunable} set={(x) => setPol((s) => ({ ...s, [p.name]: x }))} />)}
-            <label className="mt-2 block text-sm">Seed (optional)<input value={seed} onChange={(e) => setSeed(e.target.value)} placeholder={String(spec.seed.default)} inputMode="numeric"
+            <label className={`mt-2 block text-sm ${tab === 'sweep' && sweepMode === 'csv' ? 'hidden' : ''}`}>Seed (optional)<input value={seed} onChange={(e) => setSeed(e.target.value)} placeholder={String(spec.seed.default)} inputMode="numeric"
               className="mt-1 block w-full rounded-lg border border-white/15 bg-black/40 px-3 py-1.5 font-mono text-xs outline-none focus:border-amber" /></label>
             <p className="mt-1 text-[11px] text-dim">Playground seeds are {spec.seed.min} to {spec.seed.max}; held-out and rehearsal seeds are never accepted.</p>
-            {tab === 'sweep' && (
+            {tab === 'sweep' && sweepMode === 'sample' && (
               <div className="mt-3"><label className="flex items-baseline justify-between text-sm"><span className="font-medium">Scenarios in the sweep</span><span className="font-mono text-xs">{n}</span></label>
                 <input type="range" min={10} max={spec.max_sweep_n} step={10} value={n} onChange={(e) => setN(+e.target.value)} className="w-full accent-[#f2b134]" aria-label="Number of scenarios" /></div>
             )}
-            <button className="btn btn-primary mt-5 w-full justify-center disabled:opacity-50" disabled={busy || (tab === 'single' ? invalid : polInvalid)}
-              onClick={() => (tab === 'single' ? runSingle(scn, pol, seed !== '' ? +seed : undefined) : runSweep())}>
-              {busy ? 'Simulating...' : tab === 'single' ? 'Run simulation' : `Test this policy on ${n} scenarios`}
+            <button className="btn btn-primary mt-5 w-full justify-center disabled:opacity-50" disabled={busy || (tab === 'single' ? invalid : sweepMode === 'csv' ? polInvalid || !csvText.trim() : polInvalid)}
+              onClick={() => (tab === 'single' ? runSingle(scn, pol, seed !== '' ? +seed : undefined) : sweepMode === 'csv' ? runBatch() : runSweep())}>
+              {busy ? 'Simulating...' : tab === 'single' ? 'Run simulation' : sweepMode === 'csv' ? 'Run the table' : `Test this policy on ${n} scenarios`}
             </button>
           </div>
 
           <div className="min-w-0 space-y-6">
-            {err && <Notice tone="err" title={errTitle[err.kind]}>{err.message}{err.kind === 'busy' || err.kind === 'rate' ? ' Try again shortly.' : ''}</Notice>}
-            {busy && <div className="glass p-5" role="status"><div className="flex items-center gap-3"><span className="h-3 w-3 animate-pulse rounded-full bg-amber" /><span className="text-sm">{tab === 'sweep' ? `Running ${n} scenarios for your policy and for the default policy (about ${Math.max(3, Math.round(n / 8))} to ${Math.max(6, Math.round(n / 4))} s)...` : 'Running the simulation...'}</span></div>{!reduce && <div className="mt-3 h-1.5 overflow-hidden rounded bg-white/10"><div className="h-full w-1/3 animate-shimmer rounded bg-amber/70" /></div>}</div>}
+            {err && <Notice tone="err" title={errTitle[err.kind]}>{err.message}{err.kind === 'busy' || err.kind === 'rate' ? ' Try again shortly.' : ''}
+              {err.errors && err.errors.length > 0 && (
+                <div className="mt-2 max-h-64 overflow-auto rounded-lg bg-black/30 p-2"><table className="w-full text-left font-mono text-[11px]"><thead className="text-dim"><tr><th className="pr-3">row</th><th className="pr-3">line</th><th className="pr-3">field</th><th>problem</th></tr></thead>
+                  <tbody>{err.errors.map((e, i) => <tr key={i}><td className="pr-3">{e.row || 'header'}</td><td className="pr-3">{e.line}</td><td className="pr-3">{e.field}</td><td>{e.problem}</td></tr>)}</tbody></table></div>)}</Notice>}
+            {busy && <div className="glass p-5" role="status"><div className="flex items-center gap-3"><span className="h-3 w-3 animate-pulse rounded-full bg-amber" /><span className="text-sm">{tab === 'sweep' ? `Running ${sweepMode === 'csv' ? 'your table' : n + ' scenarios'} for your policy and for the default policy (up to about ${Math.max(6, Math.round((sweepMode === 'csv' ? 100 : n) / 4))} s)...` : 'Running the simulation...'}</span></div>{!reduce && <div className="mt-3 h-1.5 overflow-hidden rounded bg-white/10"><div className="h-full w-1/3 animate-shimmer rounded bg-amber/70" /></div>}</div>}
 
             {tab === 'single' && (single ? <div className="glass p-5"><SingleResult r={single} /></div> : !busy && <div className="glass p-8 text-center text-dim">Press <b className="text-text">Run simulation</b> to simulate one pick-and-place with these settings.</div>)}
 
-            {tab === 'sweep' && (sweep ? (
+            {tab === 'sweep' && (cur ? (
               <div className="space-y-5">
                 <div className="glass p-5">
                   <h2 className="mb-1 text-2xl">Your policy vs the default policy</h2>
-                  <p className="mb-4 text-sm text-dim">{sweep.n} scenarios (seed {sweep.seed}), same scenarios for both policies, simulated in {sweep.wall_clock_s} s. Exploration, not a gate verdict.</p>
-                  <RatePair title="Pass rate (Wilson 95% interval)" before={sweep.default_metrics} after={sweep.metrics} beforeLabel="default" afterLabel="yours" />
-                  <p className="mt-2 font-mono text-[11px] text-dim">{sweep.metrics.passes} of {sweep.metrics.n} pass with your policy; {sweep.default_metrics.passes} of {sweep.default_metrics.n} with the default.</p>
+                  <p className="mb-4 text-sm text-dim">{cur.n} {sweepMode === 'csv' ? 'rows from your table' : `scenarios (seed ${cur.seed})`}, same scenarios for both policies, simulated in {cur.wall_clock_s} s. Exploration, not a gate verdict.{sweepMode === 'csv' ? ` Seeds are assigned by row (${(cur as BatchResp).seeds}).` : ''}</p>
+                  <RatePair title="Pass rate (Wilson 95% interval)" before={cur.default_metrics} after={cur.metrics} beforeLabel="default" afterLabel="yours" />
+                  <p className="mt-2 font-mono text-[11px] text-dim">{cur.metrics.passes} of {cur.metrics.n} pass with your policy; {cur.default_metrics.passes} of {cur.default_metrics.n} with the default.</p>
                 </div>
-                <div className="grid gap-5 md:grid-cols-2"><Reasons m={sweep.metrics} d={sweep.default_metrics} /><AxisBins bins={sweep.evidence_bins} /></div>
+                <div className="grid gap-5 md:grid-cols-2"><Reasons m={cur.metrics} d={cur.default_metrics} />{cur.evidence_bins.length > 0 && <AxisBins bins={cur.evidence_bins} />}</div>
+                {sweepMode === 'csv' && <RowsTable b={cur as BatchResp} onPick={pick} onDownload={() => download('roboproof_results.csv', (cur as BatchResp).results_csv)} />}
                 {mapData && !reduce && (
-                  <div className="glass p-5"><h2 className="mb-3 text-2xl">Failure map of this sweep</h2>
+                  <div className="glass p-5"><h2 className="mb-3 text-2xl">Failure map of {sweepMode === 'csv' ? 'your table' : 'this sweep'}</h2>
                     <Suspense fallback={<Skeleton className="h-[440px]" />}>
-                      <Map3D d={mapData} reduce={reduce} alt={{ ok: sweep.rows.default_ok, reason: sweep.rows.default_reason, label: 'default policy', main: 'your policy' }} onPick={pick} pickHint="click a point to replay that scenario" />
+                      <Map3D d={mapData} reduce={reduce} alt={{ ok: cur.rows.default_ok, reason: cur.rows.default_reason, label: 'default policy', main: 'your policy' }} onPick={pick} pickHint="click a point to replay that scenario" />
                     </Suspense></div>
                 )}
-                {spec.analyze_available && (
+                {sweepMode === 'sample' && spec.analyze_available && sweep && (
                   <div className="glass p-5">
                     <h2 className="mb-2 text-2xl">Analyze with Nemotron</h2>
                     <p className="mb-3 text-sm text-dim">Asks a Nemotron reasoning model for testable hypotheses about the failures. This spends Nebius credits (about {usd(spec.analyze_est_usd)} estimated) and is never run automatically.</p>
@@ -314,7 +392,7 @@ export default function Playground() {
                   </div>
                 )}
               </div>
-            ) : !busy && <div className="glass p-8 text-center text-dim">Press <b className="text-text">Test this policy</b> to run your parameters and the default policy on the same scenarios.</div>)}
+            ) : !busy && <div className="glass p-8 text-center text-dim">{sweepMode === 'csv' ? <>Paste or upload rows, then press <b className="text-text">Run the table</b>. Your policy and the default policy run on the same rows.</> : <>Press <b className="text-text">Test this policy</b> to run your parameters and the default policy on the same scenarios.</>}</div>)}
           </div>
         </div>
       )}

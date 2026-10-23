@@ -52,6 +52,7 @@ def build_spec(max_sweep_n: int) -> dict:
     return {
         "scenario": scenario, "policy": policy, "presets": PRESETS, "max_sweep_n": max_sweep_n, "seed": {"min": PG_SEED_MIN, "max": PG_SEED_MAX - 1, "default": DEFAULT_SEED},
         "task": "One task only: a gripper picks up a cube, carries it over a low wall and places it in a green target zone.",
+        "batch": {"max_rows": 200, "max_kb": 100, "columns": list(SCENARIO_BOUNDS), "template_url": "/api/sim/batch/template"},
         "label": "Exploration, not a gate verdict. Uses the frozen simulator and parameter ranges. Not part of the official evaluation.",
         "limits": "Other robots would need a new simulator and a recalibrated gate; that is future work.",
     }

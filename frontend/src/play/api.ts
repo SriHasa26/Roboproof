@@ -5,9 +5,11 @@ export type Preset = { id: string; label: string; scenario: Record<string, numbe
 export type Spec = {
   scenario: ParamSpec[]; policy: ParamSpec[]; presets: Preset[]; max_sweep_n: number; seed: { min: number; max: number; default: number }
   task: string; label: string; limits: string; enabled: boolean; analyze_available: boolean; analyze_access_code_required: boolean; analyze_est_usd: number
+  batch?: { max_rows: number; max_kb: number; columns: string[]; template_url: string }
   interpret_available?: boolean; interpret_max_chars?: number; interpret_est_usd?: number
 }
-export type PgError = { kind: 'invalid' | 'busy' | 'rate' | 'disabled' | 'timeout' | 'auth' | 'network' | 'other'; message: string }
+export type RowError = { row: number; line: number; field: string; problem: string }
+export type PgError = { kind: 'invalid' | 'busy' | 'rate' | 'disabled' | 'timeout' | 'auth' | 'network' | 'other'; message: string; errors?: RowError[] }
 
 export async function fetchSpec(): Promise<Spec | null> {
   const ctl = new AbortController()
@@ -27,8 +29,8 @@ export async function post<T>(path: string, body: unknown, timeoutMs: number): P
     const b = await r.json().catch(() => null)
     if (r.ok) return { ok: true, data: b as T }
     const m: string = b?.message ?? `The server answered ${r.status}.`
-    const kind: PgError['kind'] = r.status === 422 ? 'invalid' : r.status === 429 ? 'rate' : r.status === 401 ? 'auth' : r.status === 504 ? 'timeout' : b?.error === 'busy' ? 'busy' : b?.error === 'disabled' ? 'disabled' : 'other'
-    return { ok: false, error: { kind, message: m } }
+    const kind: PgError['kind'] = r.status === 422 || r.status === 413 ? 'invalid' : r.status === 429 ? 'rate' : r.status === 401 ? 'auth' : r.status === 504 ? 'timeout' : b?.error === 'busy' ? 'busy' : b?.error === 'disabled' ? 'disabled' : 'other'
+    return { ok: false, error: { kind, message: m, ...(Array.isArray(b?.errors) ? { errors: b.errors } : {}) } }
   } catch { return { ok: false, error: { kind: 'network', message: 'Could not reach the simulator backend.' } } } finally { clearTimeout(t) }
 }
 
