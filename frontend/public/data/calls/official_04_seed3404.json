@@ -1,0 +1,101 @@
+{
+ "calls": [
+  {
+   "n": 1,
+   "stage": "Generate",
+   "purpose": "scenario_generation",
+   "role": "fast",
+   "model_requested": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "model_returned": null,
+   "response_id": null,
+   "started": null,
+   "ended": null,
+   "latency_s": 5.1533483319981315,
+   "prompt_tokens": 835,
+   "completion_tokens": 561,
+   "finish_reason": null,
+   "reply_channel": null,
+   "cached": false,
+   "retry": 1,
+   "ok": true,
+   "error": null
+  },
+  {
+   "n": 2,
+   "stage": "Analyze",
+   "purpose": "analyst",
+   "role": "reasoning",
+   "model_requested": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "model_returned": null,
+   "response_id": null,
+   "started": null,
+   "ended": null,
+   "latency_s": 11.624711173000833,
+   "prompt_tokens": 6252,
+   "completion_tokens": 3690,
+   "finish_reason": null,
+   "reply_channel": null,
+   "cached": false,
+   "retry": 1,
+   "ok": true,
+   "error": null
+  },
+  {
+   "n": 3,
+   "stage": "Fix",
+   "purpose": "fixer",
+   "role": "reasoning",
+   "model_requested": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "model_returned": null,
+   "response_id": null,
+   "started": null,
+   "ended": null,
+   "latency_s": 8.82020662099967,
+   "prompt_tokens": 1480,
+   "completion_tokens": 2361,
+   "finish_reason": null,
+   "reply_channel": null,
+   "cached": false,
+   "retry": 1,
+   "ok": true,
+   "error": null
+  }
+ ],
+ "replies": [
+  {
+   "index": 1,
+   "purpose": "scenario_generation",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "attempt": 1,
+   "cached": false,
+   "reply": "{\n  \"regions\": [\n    {\n      \"name\": \"TransitionalMass\",\n      \"rationale\": \"Light cubes may behave differently when slipping when moving across the wall.\",\n      \"ranges\": {\n        \"mass_kg\": [0.05, 0.15]\n      }\n    },\n    {\n      \"name\": \"HighFrictionWallTraverse\",\n      \"rationale\": \"High friction could generate pitching moment that tips the cube when crossing the wall.\",\n      \"ranges\": {\n        \"friction\": [0.80, 1.20],\n        \"pos_offset_y\": [-0.02, 0.02],\n        \"size_m\": [0.05, 0.08]\n      }\n    },\n    {\n      \"name\": \"LargeDelayedGripper\",\n      \"rationale\": \"Long actuation latency can cause gripper close after the wall is passed.\",\n      \"ranges\": {\n        \"gripper_delay_steps\": [12, 20],\n        \"mass_kg\": [0.30, 1.0],\n        \"sensor_noise_m\": [0.010, 0.030]\n      }\n    },\n    {\n      \"name\": \"NoisyMisplacedOffset\",\n      \"rationale\": \"High sensor noise combined with offset can misestimate position needed to clear the wall.\",\n      \"ranges\": {\n        \"sensor_noise_m\": [0.020, 0.030],\n        \"pos_offset_x\": [-0.08, -0.02],\n        \"pos_offset_y\": [-0.08, 0.08]\n      }\n    },\n    {\n      \"name\": \"LargeSmallishCube\",\n      \"rationale\": \"Large but not too large cubes may slip at the wall when friction is medium.\",\n      \"ranges\": {\n        \"size_m\": [0.04, 0.07],\n        \"friction\": [0.60, 0.95],\n        \"gripper_delay_steps\": [6, 12]\n      }\n    },\n    {\n      \"name\": \"NarrowMisplacedLowNoise\",\n      \"rationale\": \"Small positional errors with low noise might slip when the cube is offset toward the wall edge.\",\n      \"ranges\": {\n        \"pos_offset_x\": [-0.03, 0.03],\n        \"size_m\": [0.035, 0.06],\n        \"sensor_noise_m\": [0.0, 0.005]\n      }\n    }\n  ]\n}"
+  },
+  {
+   "index": 2,
+   "purpose": "analyst",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "cached": false,
+   "reply": "{\n  \"hypotheses\": [\n    {\n      \"id\": \"H1\",\n      \"statement\": \"Insufficient grip force causes MISSED_GRASP for heavy cubes with low friction.\",\n      \"region\": {\n        \"mass_kg\": [0.68, 1.0],\n        \"friction\": [0.1, 0.47]\n      },\n      \"mechanism\": \"The current grip force (15 N) cannot generate enough friction to hold the cube against gravity during lift, so the cube never leaves the table (MISSED_GRASP).\",\n      \"levers\": [\n        {\n          \"param\": \"grip_force\",\n          \"direction\": \"increase\"\n        }\n      ],\n      \"prediction\": \"Increasing grip_force should eliminate MISSED_GRASP failures in the high-mass, low-friction region.\",\n      \"evidence_refs\": [\n        \"E3\",\n        \"E4\",\n        \"E5\",\n        \"E6\",\n        \"E7\",\n        \"E8\",\n        \"E38\"\n      ]\n    },\n    {\n      \"id\": \"H2\",\n      \"statement\": \"Insufficient grasp hold time when gripper delay is high and object is small leads to MISSED_GRASP.\",\n      \"region\": {\n        \"size_m\": [0.03, 0.04],\n        \"gripper_delay_steps\": [15, 20]\n      },\n      \"mechanism\": \"The gripper delay consumes the fixed grasp_hold_steps (10 steps), leaving insufficient time for fingers to close fully before lift starts, causing the cube to be missed.\",\n      \"levers\": [\n        {\n          \"param\": \"grasp_hold_steps\",\n          \"direction\": \"increase\"\n        }\n      ],\n      \"prediction\": \"Increasing grasp_hold_steps should eliminate failures in the small-size, high-delay region.\",\n      \"evidence_refs\": [\n        \"E13\",\n        \"E37\",\n        \"E40\",\n        \"E46\"\n      ]\n    },\n    {\n      \"id\": \"H3\",\n      \"statement\": \"Sensor noise causes misalignment for small objects, leading to MISSED_GRASP; retries could recover.\",\n      \"region\": {\n        \"size_m\": [0.03, 0.047],\n        \"sensor_noise_m\": [0.02, 0.03]\n      },\n      \"mechanism\": \"Sensor noise displaces the perceived cube position; with small cubes, the fingers miss the cube entirely. Retries allow re-perception with fresh noise.\",\n      \"levers\": [\n        {\n          \"param\": \"retry_count\",\n          \"direction\": \"increase\"\n        }\n      ],\n      \"prediction\": \"Adding retries (retry_count > 0) should reduce MISSED_GRASP in the small-size, high-noise region.\",\n      \"evidence_refs\": [\n        \"E13\",\n        \"E31\",\n        \"E32\",\n        \"E42\"\n      ]\n    }\n  ]\n}"
+  },
+  {
+   "index": 3,
+   "purpose": "fixer",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "cached": false,
+   "reply": "{\"candidates\": [{\"changes\": {\"retry_count\": 3}, \"rationale\": \"Hypothesis H3 identifies sensor noise as a cause of MISSED_GRASP for small objects; retries allow re-perception with fresh noise. Measured one-at-a-time effect shows retry_count 0->3 improves overall pass rate from 70% to 81%.\", \"expected_effect\": \"Reduce MISSED_GRASP failures in the small-size, high-noise region (H3) without altering other parameters, though each retry adds time cost.\"}, {\"changes\": {\"grip_force\": 40, \"grasp_hold_steps\": 60, \"retry_count\": 3, \"lift_speed\": 0.1}, \"rationale\": \"Simultaneously address all three hypotheses: increase grip_force for heavy low-friction cubes (H1), increase grasp_hold_steps for small objects with high gripper delay (H2), add retries for sensor noise (H3), and reduce lift_speed to lower inertial load (measured effect shows 0.3->0.1 improves pass rate).\", \"expected_effect\": \"Eliminate failures in H1, H2, and H3 regions and improve overall pass rate by reducing inertial load during lift.\"}, {\"changes\": {\"grip_force\": 80, \"grasp_hold_steps\": 120}, \"rationale\": \"Test maximal values for the two parameters directly targeted by H1 and H2 to see if larger steps can completely eliminate MISSED_GRASP in those regions, accepting higher motor stress and longer cycle time.\", \"expected_effect\": \"Fully resolve H1 and H2 failure regions; may not help H3 (sensor noise) and could introduce excessive force or time penalties.\"}, {\"changes\": {\"grip_force\": 25, \"grasp_hold_steps\": 20, \"retry_count\": 1, \"lift_speed\": 0.25}, \"rationale\": \"Apply conservative incremental changes across all relevant parameters to nudge performance without risking instability from large changes. Small increases in grip force and hold time partially address H1 and H2; one retry partially addresses H3; slight lift_speed reduction reduces inertial load slightly.\", \"expected_effect\": \"Modest improvement in all three hypothesis regions with minimal risk of breaking currently passing scenarios.\"}]}"
+  }
+ ],
+ "in_progress": false,
+ "response_metadata_captured": false,
+ "source": "summary.json (the pipeline's own call records) and llm_transcript.json; recorded before response-metadata capture existed",
+ "totals": {
+  "calls": 3,
+  "prompt_tokens": 8567,
+  "completion_tokens": 6612,
+  "estimated_cost_usd": 0.02607,
+  "cost_note": "ESTIMATE = tokens x per-token prices from GET /models?verbose=true; hidden reasoning tokens are included in completion tokens; actual billing UNCONFIRMED"
+ },
+ "note": "Not recorded for this run: the provider response id, the model id as returned by the API, the finish reason and per-call timestamps. They are shown as 'not recorded', never filled in. Live runs record them from now on."
+}

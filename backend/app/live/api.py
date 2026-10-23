@@ -122,13 +122,35 @@ def make_router(mgr: RunManager) -> APIRouter:
         st = mgr.get(rid)
         if st is None or name not in SERVED_FILES:  # whitelist: no path from the client is ever joined to a directory
             return JSONResponse({"error": "not_found", "message": "No such file."}, status_code=404)
-        p = st.dir / name if name in ("events.jsonl", "meta.json") else st.rid_dir / name
+        p = st.dir / name if name in ("events.jsonl", "meta.json", "model_calls.jsonl") else st.rid_dir / name
         try:
             p = p.resolve(strict=True)
             p.relative_to(cfg.runs_dir.resolve())
         except (OSError, ValueError):
             return JSONResponse({"error": "not_found", "message": "No such file."}, status_code=404)
         return FileResponse(p, media_type="application/json" if name.endswith(".json") else "text/plain")
+
+    @r.get("/api/runs/{rid}/model_calls")
+    def model_calls(rid: str):
+        """The model calls of a run: the pipeline's own records joined with the API's response metadata captured at call time (ids, returned model, finish reason)."""
+        st = mgr.get(rid)
+        if st is None:
+            return JSONResponse({"error": "not_found", "message": "No such run."}, status_code=404)
+        return mgr.model_calls(st)
+
+    @r.get("/api/runs/{rid}/replies")
+    def replies(rid: str):
+        """Raw model replies (no prompts), scrubbed. Model output, unverified."""
+        st = mgr.get(rid)
+        p = st.rid_dir / "llm_transcript.json" if st else None
+        if st is None or not p.exists():
+            return JSONResponse({"error": "not_found", "message": "No replies are available for this run yet."}, status_code=404)
+        from .scrub import scrub_obj
+        try:
+            raw = json.loads(p.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return JSONResponse({"error": "not_found", "message": "No replies are available for this run."}, status_code=404)
+        return {"label": "Model output, unverified.", "replies": [scrub_obj({"index": i + 1, "purpose": x.get("purpose"), "model": x.get("model"), "attempt": x.get("attempt"), "reply": x.get("reply", "")}) for i, x in enumerate(raw)]}
 
     @r.get("/api/runs/{rid}/scenarios")
     def scenarios(rid: str):

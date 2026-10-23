@@ -164,6 +164,25 @@ def make_replays(run_dir: Path, run: dict, n_try: int = 25) -> dict | None:
     return None
 
 
+def calls_bundle(d: Path) -> dict:
+    """The run's model calls and raw replies for the dashboard's "Model calls" panel. Built from the stored artifacts only; fields the pipeline did not
+    record (the API's response ids, finish reasons, timestamps) stay null and are shown as 'not recorded'. Prompts are not exported; replies are scrubbed."""
+    from app.live.capture import merge_calls
+    from app.live.scrub import scrub_obj
+    summ = jl(d / "summary.json")
+    calls = merge_calls(summ.get("llm_calls", []), [])
+    tpath = d / "llm_transcript.json"
+    replies = [{"index": i + 1, "purpose": t.get("purpose"), "model": t.get("model"), "attempt": t.get("attempt"), "cached": t.get("cached"), "reply": t.get("reply", "")}
+               for i, t in enumerate(jl(tpath))] if tpath.exists() else []
+    return scrub_obj({
+        "calls": calls, "replies": replies, "in_progress": False, "response_metadata_captured": False,
+        "source": "summary.json (the pipeline's own call records) and llm_transcript.json; recorded before response-metadata capture existed",
+        "totals": {"calls": len(calls), "prompt_tokens": sum(c["prompt_tokens"] or 0 for c in calls), "completion_tokens": sum(c["completion_tokens"] or 0 for c in calls),
+                   "estimated_cost_usd": summ.get("estimated_cost_usd"), "cost_note": summ.get("cost_note") or "ESTIMATE: tokens x the per-token prices the API reports; billing is not checked"},
+        "note": "Not recorded for this run: the provider response id, the model id as returned by the API, the finish reason and per-call timestamps. They are shown as 'not recorded', never filled in. "
+                "Live runs record them from now on."})
+
+
 def scenario_points(d: Path) -> dict:
     """Per-scenario outcomes of the UNPATCHED default policy on the run's analysis set, as column arrays (for the 3D failure map).
     Patched per-scenario outcomes were not stored by the pipeline, so none are exported."""
@@ -227,6 +246,7 @@ def main():
     for r, d in runs:
         put(OUT / "runs" / f"{r['id']}.json", r)
         put(OUT / "scenarios" / f"{r['id']}.json", scenario_points(d))
+        put(OUT / "calls" / f"{r['id']}.json", calls_bundle(d))
     index = [{"id": r["id"], "badges": r["badges"], "verdict": r["verdict"], "master_seed": r["master_seed"], "attempts_used": r["attempts_used"],
               "generator_source": r["generator"]["source"], "analysis": r["metrics"].get("analysis"), "verification": r["metrics"].get("verification")} for r, _ in runs]
     put(OUT / "index.json", index)

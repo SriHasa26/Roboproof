@@ -238,3 +238,20 @@ def test_runs_list_is_newest_first_and_only_lists_live_runs(tmp_path, monkeypatc
     app2 = FastAPI()
     install(app2, cfg)
     assert [x["id"] for x in TestClient(app2).get("/api/runs").json()["runs"]] == ids[::-1]
+
+
+def test_model_calls_and_replies_endpoints_join_and_scrub(tmp_path, monkeypatch):
+    c, mgr, cfg = make(tmp_path, monkeypatch)
+    rid = c.post("/api/runs", json={}).json()["id"]
+    wait(c, rid)
+    b = c.get(f"/api/runs/{rid}/model_calls").json()
+    assert b["totals"]["calls"] == 2 and b["totals"]["prompt_tokens"] == 30 and b["response_metadata_captured"] is True and b["in_progress"] is False
+    first = b["calls"][0]
+    assert first["stage"] == "Generate" and first["response_id"] == "chatcmpl-fake-1" and first["model_returned"] == "fake/returned-model" and first["finish_reason"] == "stop"
+    assert b["calls"][1]["stage"] == "Analyze" and b["totals"]["estimated_cost_usd"] == 0.03
+    assert c.get(f"/api/runs/{rid}/files/model_calls.jsonl").status_code == 200
+    r = c.get(f"/api/runs/{rid}/replies").json()
+    assert [x["purpose"] for x in r["replies"]] == ["scenario_generation", "analyst"] and "unverified" in r["label"]
+    blob = json.dumps(r) + json.dumps(b)
+    assert SECRET not in blob and "SECRET-PROMPT" not in blob and "[redacted]" in blob  # the key is scrubbed; prompts are not served
+    assert c.get("/api/runs/live_20250101t000000_abcd/model_calls").status_code == 404

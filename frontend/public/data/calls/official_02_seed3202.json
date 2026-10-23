@@ -1,0 +1,129 @@
+{
+ "calls": [
+  {
+   "n": 1,
+   "stage": "Generate",
+   "purpose": "scenario_generation",
+   "role": "fast",
+   "model_requested": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "model_returned": null,
+   "response_id": null,
+   "started": null,
+   "ended": null,
+   "latency_s": 2.5552020039976924,
+   "prompt_tokens": 835,
+   "completion_tokens": 187,
+   "finish_reason": null,
+   "reply_channel": null,
+   "cached": false,
+   "retry": 1,
+   "ok": true,
+   "error": null
+  },
+  {
+   "n": 2,
+   "stage": "Analyze",
+   "purpose": "analyst",
+   "role": "reasoning",
+   "model_requested": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "model_returned": null,
+   "response_id": null,
+   "started": null,
+   "ended": null,
+   "latency_s": 36.1949812769999,
+   "prompt_tokens": 6213,
+   "completion_tokens": 4395,
+   "finish_reason": null,
+   "reply_channel": null,
+   "cached": false,
+   "retry": 1,
+   "ok": true,
+   "error": null
+  },
+  {
+   "n": 3,
+   "stage": "Fix",
+   "purpose": "fixer",
+   "role": "reasoning",
+   "model_requested": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "model_returned": null,
+   "response_id": null,
+   "started": null,
+   "ended": null,
+   "latency_s": 14.65299793399754,
+   "prompt_tokens": 1886,
+   "completion_tokens": 5370,
+   "finish_reason": null,
+   "reply_channel": null,
+   "cached": false,
+   "retry": 1,
+   "ok": true,
+   "error": null
+  },
+  {
+   "n": 4,
+   "stage": "Fix",
+   "purpose": "fixer",
+   "role": "reasoning",
+   "model_requested": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "model_returned": null,
+   "response_id": null,
+   "started": null,
+   "ended": null,
+   "latency_s": 15.167235609998897,
+   "prompt_tokens": 2505,
+   "completion_tokens": 4962,
+   "finish_reason": null,
+   "reply_channel": null,
+   "cached": false,
+   "retry": 1,
+   "ok": true,
+   "error": null
+  }
+ ],
+ "replies": [
+  {
+   "index": 1,
+   "purpose": "scenario_generation",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "attempt": 1,
+   "cached": false,
+   "reply": "{\n  \"regions\": [\n    {\n      \"name\": \"edge\",\n      \"rationale\": \"Low friction and a narrow size make the cube slip off or miss contact a cause failure\",\n      \"ranges\": {\n        \"friction\": [\n          0.1,\n          0.2\n        ],\n        \"size_m\": [\n          0.03,\n          0.035\n        ]\n      }\n    },\n    {\n      \"name\": \"jitter\",\n      \"rationale\": \"Sensor noise and position offsets can misalign the cube relative to target and wall\",\n      \"ranges\": {\n        \"sensor_noise_m\": [\n          0.025,\n          0.03\n        ],\n        \"pos_offset_y\": [\n          0.06,\n          0.08\n        ]\n      }\n    }\n  ]\n}"
+  },
+  {
+   "index": 2,
+   "purpose": "analyst",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "cached": false,
+   "reply": "{\n  \"hypotheses\": [\n    {\n      \"id\": \"H1\",\n      \"statement\": \"Low friction causes missed grasps because the current grip force is insufficient to generate the friction force needed to hold the cube during lift.\",\n      \"region\": {\n        \"friction\": [0.1, 0.32]\n      },\n      \"mechanism\": \"In low friction scenarios, the normal force from the fingers produces too little tangential friction force to counteract gravity and inertial loads, leading to MISSED_GRASP (E2). The failure rate in this friction band is the highest marginal rate (E8). The interaction with high sensor noise (E46) shows an extreme fail rate of 0.8846, indicating that perception noise exacerbates the weak grasp.\",\n      \"levers\": [\n        {\n          \"param\": \"grip_force\",\n          \"direction\": \"increase\"\n        }\n      ],\n      \"prediction\": \"Increasing grip_force should reduce MISSED_GRASP failures in the low friction region (E8) and in the low-friction/high-sensor-noise interaction (E46).\",\n      \"evidence_refs\": [\"E2\", \"E8\", \"E46\"]\n    },\n    {\n      \"id\": \"H2\",\n      \"statement\": \"Small cube size leads to missed grasps due to reduced contact area and higher sensitivity to position offsets, and the current grasp hold time is too short for the fingers to settle securely.\",\n      \"region\": {\n        \"size_m\": [0.03, 0.04]\n      },\n      \"mechanism\": \"Cubes at the smallest size have the highest marginal fail rate (E13). Interactions with pos_offset_y near zero (E28) and pos_offset_x near zero (E40) show excess failure rates over marginals, indicating that small size amplifies misalignment effects. A short grasp_hold_steps (current 10) may not allow enough time for the fingers to conform and stabilize on the small contact patch before lifting.\",\n      \"levers\": [\n        {\n          \"param\": \"grasp_hold_steps\",\n          \"direction\": \"increase\"\n        }\n      ],\n      \"prediction\": \"Increasing grasp_hold_steps should reduce MISSED_GRASP failures in the small size region (E13) and in the interacting regions with pos_offset_x (E40) and pos_offset_y (E28).\",\n      \"evidence_refs\": [\"E13\", \"E28\", \"E40\"]\n    },\n    {\n      \"id\": \"H3\",\n      \"statement\": \"High sensor noise causes missed grasps by degrading pose estimation, and the controller has no retry mechanism to re-perceive after a failed grasp attempt.\",\n      \"region\": {\n        \"sensor_noise_m\": [0.024, 0.03]\n      },\n      \"mechanism\": \"The highest sensor noise band has a fail rate of 0.4231 (E32). The interaction with low friction (E46) yields a fail rate of 0.8846, far above the marginal maximum. With retry_count currently 0, a single noisy perception leads to a failed grasp with no second chance.\",\n      \"levers\": [\n        {\n          \"param\": \"retry_count\",\n          \"direction\": \"increase\"\n        }\n      ],\n      \"prediction\": \"Increasing retry_count to at least 1 should reduce MISSED_GRASP failures in the high sensor noise region (E32) and in the low-friction/high-sensor-noise interaction (E46).\",\n      \"evidence_refs\": [\"E32\", \"E46\"]\n    },\n    {\n      \"id\": \"H4\",\n      \"statement\": \"Gripper delay steps exceeding the controller's grasp hold steps cause the lift to begin before the fingers have closed, resulting in missed grasps.\",\n      \"region\": {\n        \"gripper_delay_steps\": [12.0, 20.0]\n      },\n      \"mechanism\": \"The controller waits grasp_hold_steps (current 10) after commanding close before lifting. The scenario delays the actual close command by gripper_delay_steps. When delay > 10 (E36, E37), the lift starts while fingers are still open, causing MISSED_GRASP. Fail rates in these delay bands are 0.3846 and 0.4074 respectively.\",\n      \"levers\": [\n        {\n          \"param\": \"grasp_hold_steps\",\n          \"direction\": \"increase\"\n        }\n      ],\n      \"prediction\": \"Increasing grasp_hold_steps to exceed the maximum gripper_delay_steps (20) should eliminate MISSED_GRASP failures in the high delay region (E36, E37).\",\n      \"evidence_refs\": [\"E36\", \"E37\"]\n    }\n  ]\n}"
+  },
+  {
+   "index": 3,
+   "purpose": "fixer",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "cached": false,
+   "reply": "{\"candidates\": [{\"changes\": {\"retry_count\": 3}, \"rationale\": \"High sensor noise (H3) causes missed grasps due to poor pose estimation; with retry_count=0 there is no second chance. Increasing to max retries (3) allows re-perception after failed grasp, directly targeting the high sensor noise region and its interaction with low friction (H1 interaction).\", \"expected_effect\": \"Significant reduction in MISSED_GRASP in high sensor noise band (E32) and low-friction/high-sensor-noise interaction (E46), boosting overall pass rate by ~11% (based on measured one-at-a-time effect).\"}, {\"changes\": {\"grip_force\": 25, \"grasp_hold_steps\": 21, \"lift_speed\": 0.2}, \"rationale\": \"Moderate increases in grip force (H1) and grasp hold steps (H2, H4) address low friction and small cube/delay regions, while slightly reducing lift speed lowers inertial load during lift. All changes are smaller steps than the measured one-at-a-time maxima to avoid overshooting and potentially introducing new instabilities.\", \"expected_effect\": \"Improve grasp stability in low friction (E8), small size (E13), and high gripper delay (E36,E37) regions, with a modest overall pass rate increase (estimated 5-8%) without harming passing scenarios.\"}, {\"changes\": {\"grip_force\": 40, \"grasp_hold_steps\": 60, \"retry_count\": 1}, \"rationale\": \"Aggressive increases in grip force and grasp hold steps (matching measured one-at-a-time values that gave +8.5% and +7.5%) combined with a single retry (small step) to cover sensor noise. This explores whether strong grasp fundamentals plus minimal retry can match the performance of max retry alone.\", \"expected_effect\": \"Large reduction in MISSED_GRASP across low friction (E8), small size (E13), high delay (E36,E37), and some improvement in high sensor noise (E32) via the single retry, potentially achieving overall pass rate >80%.\"}, {\"changes\": {\"grasp_hold_steps\": 60}, \"rationale\": \"Focus solely on extending grasp hold time to well above the maximum gripper delay (20 steps) and allowing fingers to settle on small cubes (H2, H4). The measured one-at-a-time effect of 10->60 gave +7.5% overall, suggesting this single change can address both small size and delay-related failures.\", \"expected_effect\": \"Eliminate MISSED_GRASP due to gripper delay exceeding hold steps (E36,E37) and reduce failures in small cube region (E13) and its interactions with position offsets (E28,E40), with overall pass rate improvement ~7.5%.\"}]}"
+  },
+  {
+   "index": 4,
+   "purpose": "fixer",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "cached": false,
+   "reply": "{\"candidates\": [{\"changes\": {\"retry_count\": 3}, \"rationale\": \"High sensor noise region (H3) still has 34/55 failures. Increasing retry_count to maximum (3) gives more re-perception chances, which should significantly reduce MISSED_GRASP in high noise and low-friction/high-noise interaction (E46). Measured effect of retry_count 0->3 boosted overall pass rate to 81%; from current retry_count=1, going to 3 should further improve.\", \"expected_effect\": \"Reduce failures in H3 (high sensor noise) and H1 (low friction interaction), potentially improving overall pass rate above 0.85.\"}, {\"changes\": {\"grip_force\": 50, \"grasp_hold_steps\": 80, \"lift_speed\": 0.2}, \"rationale\": \"Moderate increases on grip_force and grasp_hold_steps to further address remaining H1 (low friction) and H2 (small size) failures, while reducing lift_speed to lower inertial load during lift, which helps both H1 and H2. All steps are smaller increments from current values (grip_force 40->50, grasp_hold_steps 60->80, lift_speed 0.3->0.2).\", \"expected_effect\": \"Incremental improvement on H1 and H2, with reduced inertial load possibly helping H4 as well; maintain low collision rate.\"}, {\"changes\": {\"grip_force\": 80, \"grasp_hold_steps\": 120, \"retry_count\": 2}, \"rationale\": \"Aggressive increases on grip_force and grasp_hold_steps to maximize friction force and settling time for the toughest low-friction and small-size cases, combined with retry_count=2 for sensor noise. This explores the upper bounds of the key levers for H1, H2, H3.\", \"expected_effect\": \"Large reduction in H1 and H2 failures, moderate help for H3; risk of diminishing returns or increased cycle time but within parameter limits.\"}, {\"changes\": {\"lift_speed\": 0.1}, \"rationale\": \"Measured one-at-a-time effect shows lift_speed 0.3->0.1 increases pass rate to 79% (from 70%). Current lift_speed is 0.3; reducing to 0.1 minimizes inertial load during lift, which should help MISSED_GRASP across all hypotheses, especially H1 and H2 where inertial forces cause slip.\", \"expected_effect\": \"Significant reduction in MISSED_GRASP due to lower inertial load, potentially improving overall pass rate without affecting collisions.\"}]}"
+  }
+ ],
+ "in_progress": false,
+ "response_metadata_captured": false,
+ "source": "summary.json (the pipeline's own call records) and llm_transcript.json; recorded before response-metadata capture existed",
+ "totals": {
+  "calls": 4,
+  "prompt_tokens": 11439,
+  "completion_tokens": 14914,
+  "estimated_cost_usd": 0.05488,
+  "cost_note": "ESTIMATE = tokens x per-token prices from GET /models?verbose=true; hidden reasoning tokens are included in completion tokens; actual billing UNCONFIRMED"
+ },
+ "note": "Not recorded for this run: the provider response id, the model id as returned by the API, the finish reason and per-call timestamps. They are shown as 'not recorded', never filled in. Live runs record them from now on."
+}

@@ -31,7 +31,7 @@ SEED_LO, SEED_HI = 5000, 75000  # master seeds: always far below the held-out ra
 MAX_LOG_LINES = 300
 NOISE = ("argv[0]=", "pybullet build time")
 # the only files a client may download from a run folder (by this short name)
-SERVED_FILES = {"summary.json", "gate_report.json", "hypotheses.json", "targeted_failures.json", "LABEL.json", "events.jsonl", "meta.json"}
+SERVED_FILES = {"summary.json", "gate_report.json", "hypotheses.json", "targeted_failures.json", "LABEL.json", "events.jsonl", "meta.json", "model_calls.jsonl"}
 
 
 class LiveError(Exception):
@@ -215,6 +215,43 @@ class RunManager:
             return [{"id": m["id"], "created": m.get("created"), "started": m.get("started"), "ended": m.get("ended"), "status": m.get("status"), "verdict": m.get("verdict"),
                      "estimated_cost_usd": m.get("estimated_cost_usd"), "master_seed": m.get("master_seed"), "mode": "rehearsal"} for m in rows]
 
+    def model_calls(self, st: "RunState") -> dict:
+        """Join summary.json's llm_calls (or, while the run is going, the pipeline's own llm_calls table rows) with the capture sidecar."""
+        from .capture import merge_calls
+        side: list[dict] = []
+        try:
+            for ln in (st.dir / "model_calls.jsonl").read_text(encoding="utf-8").splitlines():
+                try:
+                    side.append(json.loads(ln))
+                except ValueError:
+                    pass
+        except OSError:
+            pass
+        side.sort(key=lambda x: x.get("index", 0))
+        summ = _jload(st.rid_dir / "summary.json")
+        if summ and summ.get("llm_calls"):
+            calls, src = merge_calls(summ["llm_calls"], side), "summary.json joined with the capture sidecar"
+        else:
+            calls, src = merge_calls(self._db_calls(st), side), "pipeline call log (run in progress) joined with the capture sidecar"
+        done = bool(summ)
+        return {"calls": [scrub_obj(c, self.env) for c in calls], "source": src, "response_metadata_captured": bool(side), "in_progress": not done,
+                "totals": {"calls": len(calls), "prompt_tokens": sum(c["prompt_tokens"] or 0 for c in calls), "completion_tokens": sum(c["completion_tokens"] or 0 for c in calls),
+                           "estimated_cost_usd": (summ or {}).get("estimated_cost_usd"), "cost_note": "ESTIMATE: tokens x the per-token prices the API reports; billing is not checked"},
+                "note": "Fields the pipeline or the API did not record are null and shown as 'not recorded'; nothing is filled in."}
+
+    def _db_calls(self, st: "RunState") -> list[dict]:
+        p = self.cfg.db_path
+        if not p or not Path(p).exists():
+            return []
+        try:
+            con = sqlite3.connect(f"file:{Path(p).as_posix()}?mode=ro", uri=True, timeout=1)
+            rows = con.execute("SELECT purpose, model_kind, model, attempt, latency_s, prompt_tokens, completion_tokens, ok, error FROM llm_calls WHERE run_id=? ORDER BY id",
+                               (f"run_01_seed{st.seed}",)).fetchall()
+            con.close()
+        except sqlite3.Error:
+            return []
+        return [{"purpose": a, "model_kind": b, "model": c, "attempt": d, "latency_s": e, "prompt_tokens": f, "completion_tokens": g, "ok": bool(h), "error": i, "cached": False} for a, b, c, d, e, f, g, h, i in rows]
+
     def cancel(self, rid: str, token: str) -> RunState:
         st = self.get(rid)
         if st is None:
@@ -254,6 +291,7 @@ class RunManager:
         env = dict(self.env if self.env is not None else os.environ)
         env["PYTHONUNBUFFERED"] = "1"
         env.pop("LIVE_ACCESS_CODE", None)  # the pipeline needs no live-service secrets
+        env["LIVE_CALL_LOG"] = str(st.dir / "model_calls.jsonl")  # metadata sidecar written by scripts/run_live_pipeline.py
         t0 = time.time()
         st.started, st.status = _now(), "running"
         self._save_meta(st)

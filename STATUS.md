@@ -43,7 +43,7 @@ Notes
 | Part | State |
 |---|---|
 | 1. Verify this result (scripts/verify_official.py, POST /api/verify/{run_id}, UI button; 217 checks match, 0 mismatch) | DONE |
-| 2. Model-call log | next |
+| 2. Model-call log (capture wrapper for live runs, endpoints, panel, raw replies, scrub tests; fresh real live run recorded: FAILED at G5, 158.6 s) | DONE |
 | 3. LIVE / RECORDED / REPLAY signals and navbar badge | not started |
 | 4. Evidence docs, dev log, About box | not started |
 | 5. QA | not started |

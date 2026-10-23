@@ -32,7 +32,7 @@ class LiveConfig:
     trust_proxy: bool = False                  # LIVE_TRUST_PROXY: take the client IP from X-Forwarded-For
     timeout_s: float = 600.0                   # LIVE_TIMEOUT_S: kill a run after this long
     runs_dir: Path = ROOT / "live_runs"        # LIVE_RUNS_DIR (gitignored)
-    pipeline_script: Path = ROOT / "scripts" / "run_reliability.py"  # LIVE_PIPELINE_SCRIPT: server-side only (tests use a fake)
+    pipeline_script: Path = ROOT / "scripts" / "run_live_pipeline.py"  # LIVE_PIPELINE_SCRIPT: server-side only (tests use a fake); wraps run_reliability.py with call-metadata capture
     python_exe: str = sys.executable
     db_path: str = ""                          # ROBOPROOF_DB, read-only, to show LLM calls as they finish
     poll_s: float = 0.5

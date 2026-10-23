@@ -1,0 +1,98 @@
+{
+ "calls": [
+  {
+   "n": 1,
+   "stage": "Generate",
+   "purpose": "scenario_generation",
+   "role": "fast",
+   "model_requested": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "model_returned": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "response_id": "chatcmpl-b38652b2-b1e3-41f6-bd35-2897a78543b2",
+   "started": "2026-10-23T13:00:55.103+00:00",
+   "ended": "2026-10-23T13:01:46.664+00:00",
+   "latency_s": 51.62200243299958,
+   "prompt_tokens": 835,
+   "completion_tokens": 287,
+   "finish_reason": "stop",
+   "reply_channel": "content",
+   "cached": false,
+   "retry": 1,
+   "ok": true,
+   "error": null
+  },
+  {
+   "n": 2,
+   "stage": "Analyze",
+   "purpose": "analyst",
+   "role": "reasoning",
+   "model_requested": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "model_returned": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "response_id": "chatcmpl-8f05a3a3166fa25652fd5a433ce51325",
+   "started": "2026-10-23T13:01:53.973+00:00",
+   "ended": "2026-10-23T13:02:10.133+00:00",
+   "latency_s": 16.298267199999827,
+   "prompt_tokens": 6303,
+   "completion_tokens": 6352,
+   "finish_reason": "stop",
+   "reply_channel": "content",
+   "cached": false,
+   "retry": 1,
+   "ok": true,
+   "error": null
+  },
+  {
+   "n": 3,
+   "stage": "Fix",
+   "purpose": "fixer",
+   "role": "reasoning",
+   "model_requested": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "model_returned": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "response_id": "chatcmpl-c82d4380168154276b3f4653131db60f",
+   "started": "2026-10-23T13:02:12.336+00:00",
+   "ended": "2026-10-23T13:02:19.013+00:00",
+   "latency_s": 6.693075811001108,
+   "prompt_tokens": 1619,
+   "completion_tokens": 2191,
+   "finish_reason": "stop",
+   "reply_channel": "content",
+   "cached": false,
+   "retry": 1,
+   "ok": true,
+   "error": null
+  }
+ ],
+ "source": "summary.json joined with the capture sidecar",
+ "response_metadata_captured": true,
+ "in_progress": false,
+ "totals": {
+  "calls": 3,
+  "prompt_tokens": 8757,
+  "completion_tokens": 8830,
+  "estimated_cost_usd": 0.03367,
+  "cost_note": "ESTIMATE: tokens x the per-token prices the API reports; billing is not checked"
+ },
+ "note": "Fields the pipeline or the API did not record are null and shown as 'not recorded'; nothing is filled in.",
+ "replies": [
+  {
+   "index": 1,
+   "purpose": "scenario_generation",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "attempt": 1,
+   "reply": "{\n  \"regions\": [\n    {\n      \"name\": \"HazardHighMassSmallSize\",\n      \"rationale\": \"Higher mass increases downward momentum while smaller size raises the likelihood of slippage before the wall.\",\n      \"ranges\": {\n        \"mass_kg\": [0.51, 0.65],\n        \"size_m\": [0.03, 0.04]\n      }\n    },\n    {\n      \"name\": \"HazardHighFrictionSmallSize\",\n      \"rationale\": \"Greater friction promotes wall adhesion, making the gripper overshoot or lose grip, especially with a small cube.\",\n      \"ranges\": {\n        \"friction\": [0.96, 1.2],\n        \"size_m\": [0.03, 0.04]\n      }\n    },\n    {\n      \"name\": \"HazardHugeCubePosOffsetGripperDelay\",\n      \"rationale\": \"Large positional offset combined with actuation latency can delay grip response, causing collisions with the wall.\",\n      \"ranges\": {\n        \"pos_offset_x\": [0.05, 0.08],\n        \"pos_offset_y\": [-0.08, -0.05],\n        \"gripper_delay_steps\": [15, 20]\n      }\n    }\n  ]\n}"
+  },
+  {
+   "index": 2,
+   "purpose": "analyst",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "reply": "{\n  \"hypotheses\": [\n    {\n      \"id\": \"H1\",\n      \"statement\": \"High mass and low friction cause missed grasps because the current grip force is insufficient to generate the required friction force to hold the cube during grasp initiation.\",\n      \"region\": {\n        \"mass_kg\": [0.6833, 1.0],\n        \"friction\": [0.1, 0.4667]\n      },\n      \"mechanism\": \"The required holding force is proportional to mass*gravity. With low friction coefficient, the normal force from the current grip_force (15 N) may be too low to prevent the cube from slipping during the grasp phase, leading to MISSED_GRASP.\",\n      \"levers\": [\n        {\n          \"param\": \"grip_force\",\n          \"direction\": \"increase\"\n        }\n      ],\n      \"prediction\": \"Increasing grip_force should reduce MISSED_GRASP failures in the high-mass, low-friction region.\",\n      \"evidence_refs\": [\"E38\", \"E5\", \"E6\", \"E8\"]\n    },\n    {\n      \"id\": \"H2\",\n      \"statement\": \"Small object size combined with high gripper delay steps causes missed grasps because the gripper closes too late relative to the object's position uncertainty, and the current grasp hold steps are insufficient to stabilize the grasp before lifting.\",\n      \"region\": {\n        \"size_m\": [0.03, 0.0467],\n        \"gripper_delay_steps\": [13.3333, 20.0]\n      },\n      \"mechanism\": \"Small objects have less geometric tolerance for positional error. High gripper delay means the gripper closes after a longer delay, during which the object may shift or the perception becomes stale. The current grasp_hold_steps (10) may not allow enough time for the fingers to securely engage before lift-off.\",\n      \"levers\": [\n        {\n          \"param\": \"grasp_hold_steps\",\n          \"direction\": \"increase\"\n        }\n      ],\n      \"prediction\": \"Increasing grasp_hold_steps should reduce MISSED_GRASP failures for small objects with high gripper delay.\",\n      \"evidence_refs\": [\"E39\", \"E46\", \"E13\", \"E37\"]\n    },\n    {\n      \"id\": \"H3\",\n      \"statement\": \"High sensor noise combined with near-zero pos_offset_x causes missed grasps due to perception errors in the grasp position, and the current retry_count of zero prevents re-perception after a failed grasp.\",\n      \"region\": {\n        \"pos_offset_x\": [-0.0267, 0.0267],\n        \"sensor_noise_m\": [0.01, 0.02]\n      },\n      \"mechanism\": \"High sensor noise degrades position estimation accuracy. When the object is near the center (pos_offset_x near zero), the gripper may misjudge the grasp point, leading to finger placement on the cube or missing it entirely. With retry_count=0, the controller cannot re-perceive and retry.\",\n      \"levers\": [\n        {\n          \"param\": \"retry_count\",\n          \"direction\": \"increase\"\n        }\n      ],\n      \"prediction\": \"Increasing retry_count should reduce MISSED_GRASP failures in high sensor noise regions, especially when pos_offset_x is near zero.\",\n      \"evidence_refs\": [\"E45\", \"E31\", \"E32\", \"E44\"]\n    }\n  ]\n}"
+  },
+  {
+   "index": 3,
+   "purpose": "fixer",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "reply": "{\"candidates\": [{\"changes\": {\"grip_force\": 60.0}, \"rationale\": \"Test a larger increase in grip force to address H1 (high mass, low friction) more aggressively, since a moderate increase to 40 N improved pass rate from 70% to 78.5%.\", \"expected_effect\": \"Further reduce MISSED_GRASP failures in the high-mass, low-friction region; overall pass rate should increase if no adverse effects appear elsewhere.\"}, {\"changes\": {\"retry_count\": 1}, \"rationale\": \"Test a minimal retry allowance to address H3 (high sensor noise, near-zero pos_offset_x) with minimal time cost, since retry_count 0->3 gave a large jump to 81% overall.\", \"expected_effect\": \"Reduce MISSED_GRASP in high sensor noise region by allowing one re-perception; slight overall improvement with negligible time penalty.\"}, {\"changes\": {\"grip_force\": 30.0, \"grasp_hold_steps\": 30, \"retry_count\": 1}, \"rationale\": \"Combine moderate increases for all three hypotheses (H1, H2, H3) to capture potential synergy: grip force for heavy slippery cubes, hold steps for small objects with delay, retry for noisy perception.\", \"expected_effect\": \"Simultaneous improvement across all three failing regions; overall pass rate should rise more than any single change if hypotheses are independent.\"}, {\"changes\": {\"grip_force\": 25.0, \"grasp_hold_steps\": 20, \"retry_count\": 1, \"lift_speed\": 0.2}, \"rationale\": \"Conservative across-the-board adjustments: small grip force increase, small hold steps increase, one retry, and slightly slower lift to reduce inertial load (lift_speed reduction helped in isolation).\", \"expected_effect\": \"Broad but gentle improvement across all hypotheses while lowering lift speed to avoid new failures; minimal risk of regressions in currently passing scenarios.\"}]}"
+  }
+ ]
+}

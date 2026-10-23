@@ -1,0 +1,101 @@
+{
+ "calls": [
+  {
+   "n": 1,
+   "stage": "Generate",
+   "purpose": "scenario_generation",
+   "role": "fast",
+   "model_requested": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "model_returned": null,
+   "response_id": null,
+   "started": null,
+   "ended": null,
+   "latency_s": 3.159207892997074,
+   "prompt_tokens": 835,
+   "completion_tokens": 305,
+   "finish_reason": null,
+   "reply_channel": null,
+   "cached": false,
+   "retry": 1,
+   "ok": true,
+   "error": null
+  },
+  {
+   "n": 2,
+   "stage": "Analyze",
+   "purpose": "analyst",
+   "role": "reasoning",
+   "model_requested": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "model_returned": null,
+   "response_id": null,
+   "started": null,
+   "ended": null,
+   "latency_s": 16.043105729997478,
+   "prompt_tokens": 6399,
+   "completion_tokens": 4302,
+   "finish_reason": null,
+   "reply_channel": null,
+   "cached": false,
+   "retry": 1,
+   "ok": true,
+   "error": null
+  },
+  {
+   "n": 3,
+   "stage": "Fix",
+   "purpose": "fixer",
+   "role": "reasoning",
+   "model_requested": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "model_returned": null,
+   "response_id": null,
+   "started": null,
+   "ended": null,
+   "latency_s": 12.788215084998228,
+   "prompt_tokens": 1691,
+   "completion_tokens": 2964,
+   "finish_reason": null,
+   "reply_channel": null,
+   "cached": false,
+   "retry": 1,
+   "ok": true,
+   "error": null
+  }
+ ],
+ "replies": [
+  {
+   "index": 1,
+   "purpose": "scenario_generation",
+   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "attempt": 1,
+   "cached": false,
+   "reply": "{\n  \"regions\": [\n    {\n      \"name\": \"heavy_friction_precise\",\n      \"rationale\": \"Heavy cube with high friction demands precise y-offset positioning within packed parameter widths\",\n      \"ranges\": {\n        \"mass_kg\": [0.54, 0.86],\n        \"friction\": [1.08, 1.2],\n        \"pos_offset_y\": [0.0336, 0.08]\n      }\n    },\n    {\n      \"name\": \"light_small_noisy_conv\",\n      \"rationale\": \"Light small cube suffers convolutional noise making target attainment nearly zero\",\n      \"ranges\": {\n        \"mass_kg\": [0.05, 0.17],\n        \"size_m\": [0.03, 0.08],\n        \"sensor_noise_m\": [0.02, 0.03]\n      }\n    },\n    {\n      \"name\": \"massive_vertical_offset_conv\",\n      \"rationale\": \"Heavy tall cube needs vertical offset above grid height to avoid wall collision\",\n      \"ranges\": {\n        \"mass_kg\": [0.55, 1.0],\n        \"pos_offset_y\": [0.05, 0.08],\n        \"sensor_noise_m\": [0.01, 0.03]\n      }\n    }\n  ]\n}"
+  },
+  {
+   "index": 2,
+   "purpose": "analyst",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "cached": false,
+   "reply": "{\n  \"hypotheses\": [\n    {\n      \"id\": \"H1\",\n      \"statement\": \"Low friction causes insufficient grip force leading to MISSED_GRASP and SLIPPED_ON_LIFT failures.\",\n      \"region\": {\n        \"friction\": [0.1, 0.4667]\n      },\n      \"mechanism\": \"At low friction, the current grip_force (15 N) generates insufficient normal force to prevent slip during lift and to overcome initial stiction, causing the cube to remain on the table or slide during lift.\",\n      \"levers\": [\n        {\n          \"param\": \"grip_force\",\n          \"direction\": \"increase\"\n        }\n      ],\n      \"prediction\": \"Increasing grip_force will reduce MISSED_GRASP and SLIPPED_ON_LIFT failures in low friction regions.\",\n      \"evidence_refs\": [\"E8\", \"E38\", \"E40\", \"E2\"]\n    },\n    {\n      \"id\": \"H2\",\n      \"statement\": \"Small cube size combined with high gripper delay causes MISSED_GRASP because fingers lack time to stabilize on the small cube before lift.\",\n      \"region\": {\n        \"size_m\": [0.03, 0.0364],\n        \"gripper_delay_steps\": [10.5, 20]\n      },\n      \"mechanism\": \"High gripper_delay_steps delays the close command; with very small cubes (size_m <= 0.0364), the fingers need more hold time after the delayed command to achieve stable contact. Current grasp_hold_steps=10 is insufficient when delay is high.\",\n      \"levers\": [\n        {\n          \"param\": \"grasp_hold_steps\",\n          \"direction\": \"increase\"\n        }\n      ],\n      \"prediction\": \"Increasing grasp_hold_steps will reduce MISSED_GRASP failures in the region where size_m <= 0.0364 and gripper_delay_steps > 10.5.\",\n      \"evidence_refs\": [\"E46\", \"E42\", \"E13\"]\n    },\n    {\n      \"id\": \"H3\",\n      \"statement\": \"High sensor noise combined with high mass causes MISSED_GRASP due to misperception, and with retry_count=0 there is no recovery.\",\n      \"region\": {\n        \"mass_kg\": [0.6833, 1.0],\n        \"sensor_noise_m\": [0.02, 0.03]\n      },\n      \"mechanism\": \"Sensor noise causes position estimation error; heavy cubes require more precise grasp placement. Without retries (retry_count=0), a single misperception leads to a missed grasp.\",\n      \"levers\": [\n        {\n          \"param\": \"retry_count\",\n          \"direction\": \"increase\"\n        }\n      ],\n      \"prediction\": \"Increasing retry_count from 0 to 1 or more will reduce MISSED_GRASP failures in the high mass, high sensor noise region.\",\n      \"evidence_refs\": [\"E39\", \"E32\", \"E7\", \"E2\"]\n    },\n    {\n      \"id\": \"H4\",\n      \"statement\": \"High lift_speed causes SLIPPED_ON_LIFT for heavy cubes because inertial forces exceed the friction hold.\",\n      \"region\": {\n        \"mass_kg\": [0.62, 1.0]\n      },\n      \"mechanism\": \"During rapid lift, the cube's inertia creates a force that can overcome the friction hold, especially for heavier cubes (mass > 0.62 kg). Current lift_speed=0.3 m/s may be too high for these masses.\",\n      \"levers\": [\n        {\n          \"param\": \"lift_speed\",\n          \"direction\": \"decrease\"\n        }\n      ],\n      \"prediction\": \"Decreasing lift_speed will reduce SLIPPED_ON_LIFT failures in high mass regions.\",\n      \"evidence_refs\": [\"E6\", \"E7\", \"E38\", \"E2\"]\n    }\n  ]\n}"
+  },
+  {
+   "index": 3,
+   "purpose": "fixer",
+   "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "attempt": 1,
+   "cached": false,
+   "reply": "{\"candidates\": [{\"changes\": {\"grip_force\": 25}, \"rationale\": \"Moderately increase grip force to address low-friction MISSED_GRASP and SLIPPED_ON_LIFT (H1) without risking excessive force that might cause other issues.\", \"expected_effect\": \"Reduced failures in low friction region; overall pass rate improvement similar to measured 15->40 but with less aggressive change.\"}, {\"changes\": {\"grip_force\": 55, \"grasp_hold_steps\": 90, \"retry_count\": 3, \"lift_speed\": 0.1}, \"rationale\": \"Aggressively tackle all four hypotheses: high grip force for low friction (H1), long hold for small cubes with high delay (H2), max retries for high mass/noise (H3), low lift speed for heavy cubes (H4).\", \"expected_effect\": \"Large reductions in MISSED_GRASP and SLIPPED_ON_LIFT across multiple regions; potential time cost from retries and slower lift.\"}, {\"changes\": {\"grip_force\": 20, \"grasp_hold_steps\": 20, \"retry_count\": 1, \"lift_speed\": 0.25, \"lift_height\": 0.18}, \"rationale\": \"Test a conservative combination of small adjustments across all parameters to see if synergistic minor improvements yield gains without negative side effects.\", \"expected_effect\": \"Slight improvements across all failure modes; minimal risk of regressions.\"}, {\"changes\": {\"lift_height\": 0.25}, \"rationale\": \"Increase lift height to ensure clearance over the 6 cm wall, as the current 0.15 m may be marginal in some scenarios; measured effect shows 0.30 had no change but 0.08 caused collisions, so a moderate increase may help.\", \"expected_effect\": \"Reduce WALL_COLLISION failures (if any) without affecting other metrics.\"}]}"
+  }
+ ],
+ "in_progress": false,
+ "response_metadata_captured": false,
+ "source": "summary.json (the pipeline's own call records) and llm_transcript.json; recorded before response-metadata capture existed",
+ "totals": {
+  "calls": 3,
+  "prompt_tokens": 8925,
+  "completion_tokens": 7571,
+  "estimated_cost_usd": 0.030011,
+  "cost_note": "ESTIMATE = tokens x per-token prices from GET /models?verbose=true; hidden reasoning tokens are included in completion tokens; actual billing UNCONFIRMED"
+ },
+ "note": "Not recorded for this run: the provider response id, the model id as returned by the API, the finish reason and per-call timestamps. They are shown as 'not recorded', never filled in. Live runs record them from now on."
+}

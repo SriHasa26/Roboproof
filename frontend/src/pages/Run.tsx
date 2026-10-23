@@ -3,6 +3,7 @@ import { CandTable, Evidence, Hyp, Replays, Run as RunT, dataUrl, pct, short, us
 import { Skeleton, usePageTitle } from '../motion'
 import FailureMapPanel from '../three/FailureMapPanel'
 import VerifyPanel from '../play/Verify'
+import ModelCalls, { CallsSrc } from '../play/ModelCalls'
 import { BadgeRow, GateChecklist, Heatmap, Note, RatePair, Section, Stamp } from '../ui'
 
 const DEFAULT: Record<string, number> = { grip_force: 15, approach_speed: 0.3, lift_height: 0.15, lift_speed: 0.3, grasp_hold_steps: 10, place_slow_factor: 1, retry_count: 0 }
@@ -90,7 +91,7 @@ export default function RunPage() {
 }
 
 /** The run detail view; fed by recorded JSON (static site) or by the live API's report endpoint. */
-export function RunReport({ r, replays, back, map }: { r: RunT; replays: Replays | null; back: [string, string]; map?: { file?: string; url?: string } | null }) {
+export function RunReport({ r, replays, back, map, calls }: { r: RunT; replays: Replays | null; back: [string, string]; map?: { file?: string; url?: string } | null; calls?: CallsSrc | null }) {
   const rp = { data: replays }
   const t = r.timing, tot = Math.max(t.wall_clock_s, 1)
   const seg: [string, number, string][] = [['LLM calls', t.llm_s, '#f2b134'], ['candidate evaluation (simulator)', t.candidate_evals_s, '#5be39a'], ['other simulation and code', t.other_simulation_s, '#7f8da0']]
@@ -169,6 +170,8 @@ export function RunReport({ r, replays, back, map }: { r: RunT; replays: Replays
           <p className="mt-1 font-mono text-[11px] text-dim">commit {String(r.provenance.commit ?? '').slice(0, 10)} | tag {r.provenance.tag ?? 'n/a'} | image {String(r.provenance.image_build_id ?? '').slice(7, 19)} | runner {r.provenance.runner_name ?? 'n/a'}</p>
         </div>
       </Section>
+
+      {calls !== null && <ModelCalls src={calls ?? { file: `calls/${r.id}.json`, origin: 'recorded', label: r.id }} />}
 
       {rp.data && rp.data.run === r.id && (
         <Section kicker="see it" title="Replay: the same scenario, before and after" delay={320}>
