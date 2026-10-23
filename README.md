@@ -94,23 +94,37 @@ scripts/dock.sh python scripts/run_reliability.py --seeds 701 --out recorded_run
 
 It prints `MODE: REHEARSAL` and takes about 3.5 minutes (one measured run: 3m45s, $0.031 estimated). Artifacts land in `recorded_runs/my_run/run_01_seed701/` (including `gate_report.json`) with a `summary.md`. Official runs (`scripts/run_official.py`) refuse to start unless the tree is clean and the frozen pipeline hash matches tag `pipeline-frozen-v2`; they spend single-use held-out seeds and are not meant to be re-run.
 
-## Dashboard (static, no backend)
+## Dashboard and design
 
-It reads only exported JSON from recorded real runs. Nothing is computed live and no model is called.
+The site (`frontend/`: React, TypeScript, Vite, Tailwind, framer-motion, three.js via react-three-fiber) works on its own as a static site: it reads exported JSON from recorded real runs, and nothing on it is computed live unless the optional live backend is running.
 
 ```bash
-scripts/dock.sh python scripts/export_demo_data.py   # optional: regenerate frontend/public/data from recorded_runs (the committed copy is already current)
+scripts/dock.sh python scripts/export_demo_data.py   # optional: regenerate frontend/public/data from recorded_runs (keeps live_replay/)
 cd frontend
 npm install
 npm run dev                          # http://localhost:5173
 npm run build && npm run preview     # production build from frontend/dist
 ```
 
-Pages: Overview (official batch), Run detail (gate checklist, candidates, hypotheses, heatmaps, same-seed replay), Scripted trap, Limits. `DEMO_MODE` is simply this: the site is the recorded real runs.
+Routes: `/` landing, `/results` official batch, studies and the 3D failure map, `/runs` and `/runs/:id` run detail, `/live` live console, `/live/report/:id`, `/trap` (scripted example), `/about` (limits). Fonts are self-hosted (`@fontsource`). The hero scene is a procedural, purely illustrative animation (captioned as such); the failure map plots real scenarios from the recorded runs (the unpatched policy on each run's analysis set; per-scenario patched results were not stored, so none are shown). The 3D code is in lazy chunks, and a footer toggle ("Reduce motion and 3D", also set by `prefers-reduced-motion`) replaces it with static content. Nothing on the site is invented: counters come from the data, and the honesty labels (local runner, rehearsal vs official, unverified model opinion, scripted example) are kept on every page.
+
+## Running live
+
+A live run executes the real pipeline (`scripts/run_reliability.py` with one server-chosen rehearsal seed) as a subprocess of a small FastAPI service in the sim image. It is always a **rehearsal**: it can never be official, never uses held-out seeds (900000 and up), and the browser can send nothing but an access code. It makes real Nebius Token Factory calls, so it spends credits (about $0.03 estimated per run; billing is not checked).
+
+```bash
+cp .env.example .env          # fill the NEBIUS_* values, then set LIVE_ENABLED=1 (live runs are OFF by default)
+docker compose up --build     # API on http://localhost:8000 (API_PORT=8010 docker compose up if 8000 is taken)
+cd frontend && VITE_API_BASE=http://localhost:8000 npm run build   # point the site at the API (also set ALLOWED_ORIGINS in .env to the site's origin)
+```
+
+Endpoints: `GET /api/health`, `GET /api/live/status`, `POST /api/runs`, `GET /api/runs/{id}`, `GET /api/runs/{id}/events` (server-sent events, replayable from the start), `POST /api/runs/{id}/cancel`, plus `/report`, `/scenarios` and whitelisted `/files/{name}`. Protections: one run at a time, per-IP rate limit, daily run cap (`LIVE_DAILY_RUN_CAP`) and daily estimated-spend cap (`LIVE_DAILY_USD_CAP`), optional `LIVE_ACCESS_CODE`, kill switch `LIVE_ENABLED`, CORS allowlist `ALLOWED_ORIGINS` (never `*`), a 10-minute timeout, cancel, secret scrubbing of every event and log. Progress events come from the subprocess output, artifact files as the pipeline writes them, and the pipeline's own LLM-call log; the pipeline writes candidate tables and gate results together at the end, so those appear together. Tests (`backend/tests/test_live.py`) use a fake pipeline and make no real calls.
+
+**Static hosting:** a static host has no backend, so `/live` shows "Live runs are offline in this deployment" and offers **Replay a recorded live run**: the event stream and report of one real live run through the API (2026-10-23: VERIFIED, 153.5 s, about $0.031 estimated), clearly labelled as a recorded replay. The live backend needs a host that can run a container (the sim image) with the `.env` secrets.
 
 ## Tests
 
-`scripts/dock.sh test` (full suite incl. simulator). On the host, `cd backend && python -m pytest -q` runs the non-simulator tests and skips the rest.
+`scripts/dock.sh test` (full suite incl. simulator and the live-service tests). On the host, `cd backend && python -m pytest -q` runs the non-simulator tests and skips the rest.
 
 ## Layout and further docs
 

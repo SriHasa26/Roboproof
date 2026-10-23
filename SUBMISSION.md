@@ -23,6 +23,8 @@ NVIDIA Nemotron models run on Nebius Token Factory (OpenAI-compatible API): Nemo
 | 1:40-2:30 | Dashboard: Overview official table, open official_01: gate checklist, candidates table, hypotheses, heatmaps, same-seed replay GIFs | "Official batch: 4 of 5 verified, one honestly failed. Here is attempt 1 failing G3, attempt 2 passing. Same scenario, same seed, before and after." |
 | 2:30-3:00 | Scripted trap page, then Limits page | "A deliberately overfit patch, hand-written, is rejected by G4 and G5. And what we do not show: simplified robot, small sample, simulations ran locally, not on Nebius Serverless Jobs." |
 
+**Alternative or addition (live console):** with the backend running (README, "Running live"), open `/live`, press Start, and screen-record the stage timeline, the log, the candidate table and the gate checks resolving (about 2.5 to 3.5 minutes; speed up the waiting). If the backend is not available, use the recorded replay on `/live` and say so on camera: it is a recording of a real run (2026-10-23, VERIFIED, 153.5 s).
+
 Record a live run beforehand as a fallback in case Token Factory is slow (the Nano endpoint hung once during development, see FEEDBACK.md).
 
 ## Hackathon checklist
