@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { CandTable, Evidence, Hyp, Replays, Run as RunT, dataUrl, pct, short, usd, useData } from '../lib'
 import { Skeleton, usePageTitle } from '../motion'
+import FailureMapPanel from '../three/FailureMapPanel'
 import { BadgeRow, GateChecklist, Heatmap, Note, RatePair, Section, Stamp } from '../ui'
 
 const DEFAULT: Record<string, number> = { grip_force: 15, approach_speed: 0.3, lift_height: 0.15, lift_speed: 0.3, grasp_hold_steps: 10, place_slow_factor: 1, retry_count: 0 }
@@ -88,7 +89,7 @@ export default function RunPage() {
 }
 
 /** The run detail view; fed by recorded JSON (static site) or by the live API's report endpoint. */
-export function RunReport({ r, replays, back }: { r: RunT; replays: Replays | null; back: [string, string] }) {
+export function RunReport({ r, replays, back, map }: { r: RunT; replays: Replays | null; back: [string, string]; map?: { file?: string; url?: string } | null }) {
   const rp = { data: replays }
   const t = r.timing, tot = Math.max(t.wall_clock_s, 1)
   const seg: [string, number, string][] = [['LLM calls', t.llm_s, '#f2b134'], ['candidate evaluation (simulator)', t.candidate_evals_s, '#5be39a'], ['other simulation and code', t.other_simulation_s, '#7f8da0']]
@@ -99,7 +100,7 @@ export function RunReport({ r, replays, back }: { r: RunT; replays: Replays | nu
       <header className="rise mb-10 mt-3 flex flex-wrap items-end justify-between gap-6">
         <div>
           <div className="mb-2 font-mono text-[11px] uppercase tracking-[.3em] text-amber">run report</div>
-          <h1 className="font-display text-5xl font-black uppercase tracking-tight md:text-6xl">{r.id}</h1>
+          <h1 className="font-display text-3xl font-extrabold [overflow-wrap:anywhere] sm:text-5xl md:text-6xl">{r.id}</h1>
           <div className="mt-3"><BadgeRow b={r.badges} /></div>
           <p className="mt-3 font-mono text-xs text-dim">master seed {r.master_seed ?? 'not recorded'} | {r.attempts_used} attempt(s) | G5 {r.g5_executed ? 'executed' : 'not executed'} | {r.analysis_set.n} analysis scenarios ({r.analysis_set.n_coverage} coverage, {r.analysis_set.n_targeted} from model-proposed regions)</p>
         </div>
@@ -137,6 +138,8 @@ export function RunReport({ r, replays, back }: { r: RunT; replays: Replays | nu
         <Note tone="warn">Numbers below are looked up in the evidence by id. The model's wording is shown only on request and is an unverified opinion.</Note>
         <div className="mt-4 grid gap-4 lg:grid-cols-2">{r.hypotheses.map((h) => <HypCard key={h.id} h={h} />)}</div>
       </Section>
+
+      {map !== null && <FailureMapPanel {...(map ?? { file: `scenarios/${r.id}.json` })} />}
 
       <Section kicker="where it fails" title="Failure heatmaps" delay={200}>
         <div className="grid gap-4 md:grid-cols-2">{r.heatmaps.map((h) => <Heatmap key={h.x + h.y} h={h} />)}</div>

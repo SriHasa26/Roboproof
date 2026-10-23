@@ -164,21 +164,43 @@ def make_replays(run_dir: Path, run: dict, n_try: int = 25) -> dict | None:
     return None
 
 
+def scenario_points(d: Path) -> dict:
+    """Per-scenario outcomes of the UNPATCHED default policy on the run's analysis set, as column arrays (for the 3D failure map).
+    Patched per-scenario outcomes were not stored by the pipeline, so none are exported."""
+    aset, base = jl(d / "analysis_set.json"), jl(d / "baseline_results.json")
+    res = {r["scenario_id"]: r for r in base["results"]}
+    sc = [x for x in aset["scenarios"] if x["id"] in res]
+    cols = ["mass_kg", "friction", "size_m", "sensor_noise_m", "gripper_delay_steps", "pos_offset_x", "pos_offset_y"]
+    out = {"set": "analysis set", "policy": "unpatched default policy", "n": len(sc), "ids": [x["id"] for x in sc], "tag": [x.get("tag") for x in sc],
+           "ok": [1 if res[x["id"]]["success"] else 0 for x in sc], "reason": [res[x["id"]].get("failure_reason") for x in sc]}
+    for c in cols:
+        out[c] = [round(float(x[c]), 5) for x in sc]
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-replays", action="store_true")
     a = ap.parse_args()
+    keep = {}  # live_replay/ is recorded by a separate step (a real live run) and must survive a re-export
+    if (OUT / "live_replay").exists():
+        keep = {f.name: f.read_bytes() for f in (OUT / "live_replay").iterdir() if f.is_file()}
     if OUT.exists():
         shutil.rmtree(OUT)
     OUT.mkdir(parents=True)
+    if keep:
+        (OUT / "live_replay").mkdir()
+        for name, data in keep.items():
+            (OUT / "live_replay" / name).write_bytes(data)
     runs = []
     off_root = REC / "official_001"
     for d in sorted(off_root.glob("official_*")):
         if d.is_dir() and (d / "summary.json").exists():
             runs.append((build_run(d, "official", "v2"), d))
     runs.append((build_run(REC / "rehearsal_001", "rehearsal", "v1"), REC / "rehearsal_001"))
-    for r, _ in runs:
+    for r, d in runs:
         put(OUT / "runs" / f"{r['id']}.json", r)
+        put(OUT / "scenarios" / f"{r['id']}.json", scenario_points(d))
     index = [{"id": r["id"], "badges": r["badges"], "verdict": r["verdict"], "master_seed": r["master_seed"], "attempts_used": r["attempts_used"],
               "generator_source": r["generator"]["source"], "analysis": r["metrics"].get("analysis"), "verification": r["metrics"].get("verification")} for r, _ in runs]
     put(OUT / "index.json", index)

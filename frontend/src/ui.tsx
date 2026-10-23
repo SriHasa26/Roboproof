@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
 import { Badges, Check, Heat, Rate, Status, ci, pct } from './lib'
+import { Reveal } from './motion'
 
 export const verdictColor = (v: string | null) => (v === 'VERIFIED' ? '#5be39a' : v === 'FAILED' ? '#ff6a47' : v === 'UNVERIFIED' ? '#f2b134' : '#7f8da0')
 
@@ -10,7 +11,7 @@ export function Stamp({ verdict, size = 'lg' }: { verdict: string | null; size?:
   return (
     <span className="stamp-in inline-block select-none font-display font-black uppercase leading-none tracking-wider"
       style={{ color: c, border: `${big ? 4 : 2}px solid ${c}`, padding: big ? '.3rem .9rem' : '.1rem .5rem', fontSize: big ? '2.6rem' : '1rem',
-        borderRadius: 6, boxShadow: `inset 0 0 0 2px rgba(0,0,0,.35), 0 0 22px ${c}22`, background: `${c}0d`, transform: 'rotate(-4deg)' }}>
+        borderRadius: 6, boxShadow: `inset 0 0 0 2px rgba(0,0,0,.35), 0 0 34px ${c}33`, background: `${c}0d`, transform: 'rotate(-4deg)' }}>
       {verdict ?? 'NO VERDICT'}
     </span>
   )
@@ -49,11 +50,13 @@ export function BadgeRow({ b }: { b: Badges }) {
 
 export function Section({ id, kicker, title, children, delay = 0 }: { id?: string; kicker?: string; title: string; children: ReactNode; delay?: number }) {
   return (
-    <section id={id} className="rise mb-12 scroll-mt-24" style={{ animationDelay: `${delay}ms` }}>
-      {kicker && <div className="mb-1 font-mono text-[11px] uppercase tracking-[.25em] text-amber">{kicker}</div>}
-      <h2 className="mb-4 font-display text-3xl font-extrabold uppercase tracking-wide text-text md:text-4xl">{title}</h2>
-      {children}
-    </section>
+    <Reveal className="mb-14 scroll-mt-24" delay={delay / 1000}>
+      <section id={id}>
+        {kicker && <div className="eyebrow mb-1.5">{kicker}</div>}
+        <h2 className="mb-5 font-display text-3xl font-extrabold text-text md:text-4xl">{title}</h2>
+        {children}
+      </section>
+    </Reveal>
   )
 }
 
@@ -70,20 +73,20 @@ export function IntervalPlot({ items }: { items: { label: string; sub: string; k
       {[0, 0.25, 0.5, 0.75, 1].map((t) => (
         <g key={t}>
           <line x1={x(t)} x2={x(t)} y1={6} y2={items.length * 54 + 6} stroke="#1f2924" />
-          <text x={x(t)} y={items.length * 54 + 24} textAnchor="middle" fill="#8b998f" fontSize="11" fontFamily="IBM Plex Mono">{Math.round(t * 100)}%</text>
+          <text x={x(t)} y={items.length * 54 + 24} textAnchor="middle" fill="#8b998f" fontSize="11" fontFamily="JetBrains Mono">{Math.round(t * 100)}%</text>
         </g>
       ))}
       {items.map((it, i) => {
         const y = 30 + i * 54, r = it.k / it.n
         return (
           <g key={it.label}>
-            <text x={0} y={y - 4} fill="#d8dfd4" fontSize="13" fontFamily="IBM Plex Sans" fontWeight="600">{it.label}</text>
-            <text x={0} y={y + 12} fill="#8b998f" fontSize="11" fontFamily="IBM Plex Mono">{it.sub}</text>
+            <text x={0} y={y - 4} fill="#d8dfd4" fontSize="13" fontFamily="Instrument Sans" fontWeight="600">{it.label}</text>
+            <text x={0} y={y + 12} fill="#8b998f" fontSize="11" fontFamily="JetBrains Mono">{it.sub}</text>
             <line x1={x(it.lo)} x2={x(it.hi)} y1={y} y2={y} stroke="#f2b134" strokeWidth="3" strokeLinecap="round" className="grow" />
             <line x1={x(it.lo)} x2={x(it.lo)} y1={y - 7} y2={y + 7} stroke="#f2b134" strokeWidth="2" />
             <line x1={x(it.hi)} x2={x(it.hi)} y1={y - 7} y2={y + 7} stroke="#f2b134" strokeWidth="2" />
             <circle cx={x(r)} cy={y} r="6" fill="#090b0a" stroke="#5be39a" strokeWidth="3" />
-            <text x={x(r)} y={y - 12} textAnchor="middle" fill="#5be39a" fontSize="11" fontFamily="IBM Plex Mono" fontWeight="600">{it.k}/{it.n}</text>
+            <text x={x(r)} y={y - 12} textAnchor="middle" fill="#5be39a" fontSize="11" fontFamily="JetBrains Mono" fontWeight="600">{it.k}/{it.n}</text>
           </g>
         )
       })}
@@ -96,12 +99,12 @@ export function RatePair({ title, before, after, target }: { title: string; befo
   const row = (label: string, r: Rate | null | undefined, color: string, y: number) =>
     r ? (
       <g>
-        <text x={0} y={y + 4} fill="#8b998f" fontSize="11" fontFamily="IBM Plex Mono">{label}</text>
+        <text x={0} y={y + 4} fill="#8b998f" fontSize="11" fontFamily="JetBrains Mono">{label}</text>
         <rect x={60} y={y - 9} width={440 * r.pass_rate} height={18} fill={color} opacity=".85" className="grow" />
         <line x1={60 + 440 * r.pass_rate_ci95[0]} x2={60 + 440 * r.pass_rate_ci95[1]} y1={y} y2={y} stroke="#090b0a" strokeWidth="2" />
         <line x1={60 + 440 * r.pass_rate_ci95[0]} x2={60 + 440 * r.pass_rate_ci95[0]} y1={y - 6} y2={y + 6} stroke="#090b0a" strokeWidth="2" />
         <line x1={60 + 440 * r.pass_rate_ci95[1]} x2={60 + 440 * r.pass_rate_ci95[1]} y1={y - 6} y2={y + 6} stroke="#090b0a" strokeWidth="2" />
-        <text x={508} y={y + 4} fill="#d8dfd4" fontSize="12" fontFamily="IBM Plex Mono" fontWeight="600">{pct(r.pass_rate)}</text>
+        <text x={508} y={y + 4} fill="#d8dfd4" fontSize="12" fontFamily="JetBrains Mono" fontWeight="600">{pct(r.pass_rate)}</text>
       </g>
     ) : null
   return (
@@ -110,7 +113,7 @@ export function RatePair({ title, before, after, target }: { title: string; befo
         <span className="font-mono text-[11px] text-dim">n = {after?.n ?? before?.n ?? '-'}</span></div>
       <svg viewBox="0 0 560 78" className="w-full">
         {[0, 0.25, 0.5, 0.75, 1].map((t) => <line key={t} x1={60 + 440 * t} x2={60 + 440 * t} y1={0} y2={64} stroke="#1f2924" />)}
-        {target != null && <g><line x1={60 + 440 * target} x2={60 + 440 * target} y1={0} y2={64} stroke="#f2b134" strokeDasharray="4 3" /><text x={60 + 440 * target} y={76} fill="#f2b134" fontSize="10" textAnchor="middle" fontFamily="IBM Plex Mono">target {pct(target, 0)}</text></g>}
+        {target != null && <g><line x1={60 + 440 * target} x2={60 + 440 * target} y1={0} y2={64} stroke="#f2b134" strokeDasharray="4 3" /><text x={60 + 440 * target} y={76} fill="#f2b134" fontSize="10" textAnchor="middle" fontFamily="JetBrains Mono">target {pct(target, 0)}</text></g>}
         {row('before', before, '#7f8da0', 20)}
         {row('after', after, '#5be39a', 48)}
       </svg>
@@ -138,15 +141,15 @@ export function Heatmap({ h }: { h: Heat }) {
             <g key={`${xi}-${yi}`}>
               <title>{`${c.n_fail} of ${c.n} baseline scenarios fail`}</title>
               <rect x={ox + xi * S} y={Y} width={S - 2} height={S - 2} fill={c.n ? `rgba(255,106,71,${0.08 + 0.85 * r})` : '#10151300'} stroke="#1f2924" />
-              {c.n > 0 && <text x={ox + xi * S + S / 2 - 1} y={Y + S / 2 - 3} textAnchor="middle" fill="#fff" fontSize="12" fontFamily="IBM Plex Mono" fontWeight="600">{Math.round(r * 100)}%</text>}
-              {c.n > 0 && <text x={ox + xi * S + S / 2 - 1} y={Y + S / 2 + 10} textAnchor="middle" fill="#d8dfd4" opacity=".65" fontSize="9" fontFamily="IBM Plex Mono">{c.n_fail}/{c.n}</text>}
+              {c.n > 0 && <text x={ox + xi * S + S / 2 - 1} y={Y + S / 2 - 3} textAnchor="middle" fill="#fff" fontSize="12" fontFamily="JetBrains Mono" fontWeight="600">{Math.round(r * 100)}%</text>}
+              {c.n > 0 && <text x={ox + xi * S + S / 2 - 1} y={Y + S / 2 + 10} textAnchor="middle" fill="#d8dfd4" opacity=".65" fontSize="9" fontFamily="JetBrains Mono">{c.n_fail}/{c.n}</text>}
             </g>
           )
         }))}
-        {h.x_edges.map((e, i) => <text key={i} x={ox + i * S - 1} y={oy + nb * S + 12} textAnchor="middle" fill="#8b998f" fontSize="9" fontFamily="IBM Plex Mono">{f(e)}</text>)}
-        {h.y_edges.map((e, i) => <text key={i} x={ox - 6} y={oy + (nb - i) * S + 3} textAnchor="end" fill="#8b998f" fontSize="9" fontFamily="IBM Plex Mono">{f(e)}</text>)}
-        <text x={ox + (nb * S) / 2} y={oy + nb * S + 32} textAnchor="middle" fill="#d8dfd4" fontSize="11" fontFamily="IBM Plex Sans">{AX[h.x] ?? h.x}</text>
-        <text transform={`translate(12 ${oy + (nb * S) / 2}) rotate(-90)`} textAnchor="middle" fill="#d8dfd4" fontSize="11" fontFamily="IBM Plex Sans">{AX[h.y] ?? h.y}</text>
+        {h.x_edges.map((e, i) => <text key={i} x={ox + i * S - 1} y={oy + nb * S + 12} textAnchor="middle" fill="#8b998f" fontSize="9" fontFamily="JetBrains Mono">{f(e)}</text>)}
+        {h.y_edges.map((e, i) => <text key={i} x={ox - 6} y={oy + (nb - i) * S + 3} textAnchor="end" fill="#8b998f" fontSize="9" fontFamily="JetBrains Mono">{f(e)}</text>)}
+        <text x={ox + (nb * S) / 2} y={oy + nb * S + 32} textAnchor="middle" fill="#d8dfd4" fontSize="11" fontFamily="Instrument Sans">{AX[h.x] ?? h.x}</text>
+        <text transform={`translate(12 ${oy + (nb * S) / 2}) rotate(-90)`} textAnchor="middle" fill="#d8dfd4" fontSize="11" fontFamily="Instrument Sans">{AX[h.y] ?? h.y}</text>
       </svg>
       <p className="font-mono text-[10.5px] text-dim">cell = share of baseline (default policy) scenarios that fail; hover for counts</p>
     </div>

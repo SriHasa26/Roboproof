@@ -39,6 +39,13 @@ def _err(e: LiveError) -> JSONResponse:
     return JSONResponse({"error": e.code, "message": e.message, **e.extra}, status_code=e.status)
 
 
+def _export_module():
+    spec = importlib.util.spec_from_file_location("export_demo_data", ROOT / "scripts" / "export_demo_data.py")
+    mod = importlib.util.module_from_spec(spec)  # type: ignore[arg-type]
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    return mod
+
+
 def make_router(mgr: RunManager) -> APIRouter:
     r = APIRouter()
     cfg = mgr.cfg
@@ -119,15 +126,24 @@ def make_router(mgr: RunManager) -> APIRouter:
             return JSONResponse({"error": "not_found", "message": "No such file."}, status_code=404)
         return FileResponse(p, media_type="application/json" if name.endswith(".json") else "text/plain")
 
+    @r.get("/api/runs/{rid}/scenarios")
+    def scenarios(rid: str):
+        """Per-scenario outcomes of the unpatched policy on the run's analysis set (for the 3D failure map)."""
+        st = mgr.get(rid)
+        if st is None or not st.done or not (st.rid_dir / "baseline_results.json").exists():
+            return JSONResponse({"error": "not_found", "message": "No scenario results for this run."}, status_code=404)
+        try:
+            return _export_module().scenario_points(st.rid_dir)
+        except Exception as e:
+            return JSONResponse({"error": "failed", "message": f"Could not read scenario results: {type(e).__name__}"}, status_code=500)
+
     @r.get("/api/runs/{rid}/report")
     def report(rid: str):
         """The same JSON shape the static dashboard's run page reads, built from this run's artifacts by the export script's own code."""
         st = mgr.get(rid)
         if st is None or not st.done or not (st.rid_dir / "summary.json").exists():
             return JSONResponse({"error": "not_found", "message": "No finished report for this run."}, status_code=404)
-        spec = importlib.util.spec_from_file_location("export_demo_data", ROOT / "scripts" / "export_demo_data.py")
-        mod = importlib.util.module_from_spec(spec)  # type: ignore[arg-type]
-        spec.loader.exec_module(mod)  # type: ignore[union-attr]
+        mod = _export_module()
         try:
             run = mod.build_run(st.rid_dir, "rehearsal", "v2")
         except Exception as e:  # a half-written run must not crash the service
