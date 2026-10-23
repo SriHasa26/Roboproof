@@ -190,5 +190,7 @@ def install(app: FastAPI, live: RunManager | None = None, cfg: PlaygroundConfig 
     app.add_exception_handler(RequestValidationError, _validation_error)
     svc = PlaygroundService(cfg or PlaygroundConfig.from_env())
     app.include_router(make_router(svc, live))
+    from ..verify.api import install as install_verify  # recorded-run verification shares the playground's limits
+    install_verify(app, svc, live)
     app.state.playground = svc
     return svc

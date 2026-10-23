@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom'
 import { CandTable, Evidence, Hyp, Replays, Run as RunT, dataUrl, pct, short, usd, useData } from '../lib'
 import { Skeleton, usePageTitle } from '../motion'
 import FailureMapPanel from '../three/FailureMapPanel'
+import VerifyPanel from '../play/Verify'
 import { BadgeRow, GateChecklist, Heatmap, Note, RatePair, Section, Stamp } from '../ui'
 
 const DEFAULT: Record<string, number> = { grip_force: 15, approach_speed: 0.3, lift_height: 0.15, lift_speed: 0.3, grasp_hold_steps: 10, place_slow_factor: 1, retry_count: 0 }
@@ -138,6 +139,8 @@ export function RunReport({ r, replays, back, map }: { r: RunT; replays: Replays
         <Note tone="warn">Numbers below are looked up in the evidence by id. The model's wording is shown only on request and is an unverified opinion.</Note>
         <div className="mt-4 grid gap-4 lg:grid-cols-2">{r.hypotheses.map((h) => <HypCard key={h.id} h={h} />)}</div>
       </Section>
+
+      {r.badges.mode === 'official' && r.badges.recorded && <VerifyPanel runId={r.id} />}
 
       {map !== null && <FailureMapPanel {...(map ?? { file: `scenarios/${r.id}.json` })} />}
 

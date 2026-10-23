@@ -7,5 +7,6 @@
 node_modules
 frontend
 recorded_runs
+!recorded_runs/official_001
 backend/data
 *.sqlite

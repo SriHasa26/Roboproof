@@ -38,3 +38,12 @@ Notes
 | 2. CSV / pasted batch (backend 25 tests, UI, template, safe CSV export; 100 rows 10.9 s, 200 rows 27.9 s) | DONE |
 | 3. Live runs list on /results (GET /api/runs, panel, CTAs) | DONE |
 | 4. Demo flow, QA, docs (SUBMISSION video script, README, 314 tests in the image) | DONE |
+
+## Verifiability (fifth master prompt)
+| Part | State |
+|---|---|
+| 1. Verify this result (scripts/verify_official.py, POST /api/verify/{run_id}, UI button; 217 checks match, 0 mismatch) | DONE |
+| 2. Model-call log | next |
+| 3. LIVE / RECORDED / REPLAY signals and navbar badge | not started |
+| 4. Evidence docs, dev log, About box | not started |
+| 5. QA | not started |

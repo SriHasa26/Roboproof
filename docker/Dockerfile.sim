@@ -20,6 +20,8 @@ WORKDIR /app
 COPY backend /app/backend
 COPY scripts /app/scripts
 COPY docs /app/docs
+# the five recorded official runs (about 1.5 MB), so the verification endpoint works in a deployed container
+COPY recorded_runs/official_001 /app/recorded_runs/official_001
 ENV PYTHONPATH=/app/backend PYTHONHASHSEED=0 PYTHONUNBUFFERED=1 ROBOPROOF_DB=/app/backend/data/roboproof.sqlite
 EXPOSE 8000
 CMD ["uvicorn", "app.api.main:app", "--host", "0.0.0.0", "--port", "8000"]

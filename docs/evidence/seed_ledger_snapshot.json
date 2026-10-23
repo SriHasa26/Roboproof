@@ -1,0 +1,248 @@
+{
+ "note": "Snapshot of the seed_ledger table (the database itself is gitignored). created_at is SQLite CURRENT_TIMESTAMP (UTC). A snapshot is evidence of what the ledger said when exported, not tamper-proof; the verifier prefers the live database when present.",
+ "exported_utc": "2026-10-23 12:29:57",
+ "rows": [
+  {
+   "run_id": "rehearsal_001:best_found_patch",
+   "block_name": "rehearsal",
+   "start": 800000,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 1,
+   "created_at": "2026-10-22 10:33:21",
+   "status": "allocated",
+   "note": null
+  },
+  {
+   "run_id": "rehearsal_001:scripted_trap",
+   "block_name": "rehearsal",
+   "start": 800400,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 1,
+   "created_at": "2026-10-22 10:34:03",
+   "status": "allocated",
+   "note": null
+  },
+  {
+   "run_id": "rehearsal_001:noop_patch",
+   "block_name": "rehearsal",
+   "start": 800800,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 1,
+   "created_at": "2026-10-22 10:34:46",
+   "status": "allocated",
+   "note": null
+  },
+  {
+   "run_id": "rehearsal_001:full",
+   "block_name": "rehearsal",
+   "start": 801200,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 1,
+   "created_at": "2026-10-22 10:36:20",
+   "status": "allocated",
+   "note": null
+  },
+  {
+   "run_id": "run_02_seed202",
+   "block_name": "rehearsal",
+   "start": 801600,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 1,
+   "created_at": "2026-10-22 12:41:13",
+   "status": "allocated",
+   "note": null
+  },
+  {
+   "run_id": "run_03_seed303",
+   "block_name": "rehearsal",
+   "start": 802000,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 1,
+   "created_at": "2026-10-22 12:43:13",
+   "status": "allocated",
+   "note": null
+  },
+  {
+   "run_id": "run_01_seed611",
+   "block_name": "rehearsal",
+   "start": 802400,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 1,
+   "created_at": "2026-10-22 13:49:42",
+   "status": "used",
+   "note": null
+  },
+  {
+   "run_id": "run_02_seed622",
+   "block_name": "rehearsal",
+   "start": 802800,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 1,
+   "created_at": "2026-10-22 13:52:13",
+   "status": "used",
+   "note": null
+  },
+  {
+   "run_id": "run_03_seed633",
+   "block_name": "rehearsal",
+   "start": 803200,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 1,
+   "created_at": "2026-10-22 13:54:46",
+   "status": "used",
+   "note": null
+  },
+  {
+   "run_id": "run_04_seed644",
+   "block_name": "rehearsal",
+   "start": 803600,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 1,
+   "created_at": "2026-10-22 13:57:04",
+   "status": "used",
+   "note": null
+  },
+  {
+   "run_id": "run_07_seed677",
+   "block_name": "rehearsal",
+   "start": 804000,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 1,
+   "created_at": "2026-10-22 14:04:17",
+   "status": "used",
+   "note": null
+  },
+  {
+   "run_id": "run_08_seed688",
+   "block_name": "rehearsal",
+   "start": 804400,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 1,
+   "created_at": "2026-10-22 14:06:34",
+   "status": "used",
+   "note": null
+  },
+  {
+   "run_id": "official_01_seed3101",
+   "block_name": "held_out",
+   "start": 900000,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 0,
+   "created_at": "2026-10-22 15:45:01",
+   "status": "used",
+   "note": null
+  },
+  {
+   "run_id": "official_02_seed3202",
+   "block_name": "held_out",
+   "start": 900400,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 0,
+   "created_at": "2026-10-22 15:48:29",
+   "status": "used",
+   "note": null
+  },
+  {
+   "run_id": "official_03_seed3303",
+   "block_name": "held_out",
+   "start": 900800,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 0,
+   "created_at": "2026-10-22 15:50:32",
+   "status": "used",
+   "note": null
+  },
+  {
+   "run_id": "official_04_seed3404",
+   "block_name": "held_out",
+   "start": 901200,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 0,
+   "created_at": "2026-10-22 15:52:29",
+   "status": "used",
+   "note": null
+  },
+  {
+   "run_id": "official_05_seed3505",
+   "block_name": "held_out",
+   "start": 901600,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 0,
+   "created_at": "2026-10-22 15:54:30",
+   "status": "used",
+   "note": null
+  },
+  {
+   "run_id": "demo_live:best_found_patch",
+   "block_name": "rehearsal",
+   "start": 804800,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 1,
+   "created_at": "2026-10-22 16:28:08",
+   "status": "allocated",
+   "note": null
+  },
+  {
+   "run_id": "demo_live:scripted_trap",
+   "block_name": "rehearsal",
+   "start": 805200,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 1,
+   "created_at": "2026-10-22 16:29:05",
+   "status": "allocated",
+   "note": null
+  },
+  {
+   "run_id": "demo_live:noop_patch",
+   "block_name": "rehearsal",
+   "start": 805600,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 1,
+   "created_at": "2026-10-22 16:30:04",
+   "status": "allocated",
+   "note": null
+  },
+  {
+   "run_id": "run_01_seed701",
+   "block_name": "rehearsal",
+   "start": 806000,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 1,
+   "created_at": "2026-10-22 16:36:01",
+   "status": "used",
+   "note": null
+  },
+  {
+   "run_id": "run_01_seed66665",
+   "block_name": "rehearsal",
+   "start": 806400,
+   "count": 400,
+   "purpose": "G5 verification set",
+   "rehearsal": 1,
+   "created_at": "2026-10-23 07:31:11",
+   "status": "used",
+   "note": null
+  }
+ ]
+}
