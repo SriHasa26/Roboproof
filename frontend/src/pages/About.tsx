@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 import { useData } from '../lib'
 
 function inline(s: string): ReactNode[] {
@@ -30,6 +31,19 @@ export default function About() {
   return (
     <div className="rise max-w-3xl">
       {error ? <p className="font-mono text-sm text-verm">Could not load the limitations text: {error}</p> : data ? <Markdown text={data} /> : <p className="font-mono text-sm text-dim">loading...</p>}
+      <div className="glass mt-10 p-5">
+        <div className="eyebrow mb-2">don't trust it, check it</div>
+        <h2 className="text-2xl">How to verify in 2 minutes</h2>
+        <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-dim">
+          <li>Open an official run (<Link className="text-amber underline decoration-dotted underline-offset-4" to="/runs/official_03_seed3303">official_03</Link>, the one that FAILED) and press <b className="text-text">Verify this result</b>. The backend recomputes the gate numbers and re-simulates that run's analysis set now; every row shows stored versus recomputed.</li>
+          <li>Press <b className="text-text">Re-run in Playground</b> on a run page to watch a recorded scenario reproduce with its stored seed, then change a slider and see the result change.</li>
+          <li>Open the <b className="text-text">Model calls</b> panel: real Nebius calls with latency, tokens and the raw replies; live runs also show the provider's response ids.</li>
+          <li>Look for the chip on each panel: <b className="text-text">LIVE</b> (computed now), <b className="text-text">RECORDED</b> (stored artifact) or <b className="text-text">REPLAY</b>. The navbar badge says whether a backend is online.</li>
+          <li>In a terminal: <span className="font-mono text-xs text-text">scripts/dock.sh python scripts/verify_official.py</span> re-checks all five runs, the seed ledger, the protocol date and the frozen-pipeline hash; <span className="font-mono text-xs text-text">scripts/dock.sh test</span> runs the test suite. The README section "Evidence and reproducibility" and <span className="font-mono text-xs text-text">docs/DEVELOPMENT_LOG.md</span> list every claim and how to check it.</li>
+        </ol>
+        <p className="mt-3 text-xs text-dim">If the backend is offline, Verify and Re-run say so and show the terminal command; they never show a result that was not computed.</p>
+      </div>
+
       <div className="panel mt-10 rounded p-5">
         <h2 className="font-display">How to read this site</h2>
         <ul className="mt-2 space-y-1 text-sm text-dim">

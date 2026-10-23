@@ -23,7 +23,7 @@ function Table({ title, rows }: { title: string; rows: Row[] }) {
   return (
     <div className="glass overflow-x-auto">
       <h3 className="px-4 pt-4 font-display">{title}</h3>
-      <table className="mt-2 w-full min-w-[720px] text-left text-xs">
+      <table className="mt-2 w-full text-left text-xs sm:min-w-[720px] [&_td]:break-words">
         <thead className="font-mono text-[10px] uppercase tracking-wider text-dim"><tr><th className="px-4 py-2">Check</th><th>Stored</th><th>Recomputed now</th><th /></tr></thead>
         <tbody>
           {rows.map((r, i) => (
