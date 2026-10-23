@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { API_BASE } from '../live/api'
 import { Skeleton, useToast } from '../motion'
+import { SourceChip } from '../ui'
 
 type Row = { group: string; id: string; name: string; stored: string; recomputed: string; status: 'match' | 'mismatch' | 'unverifiable' | 'info'; note: string }
 type Resp = { run_id: string; rows: Row[]; integrity: Row[]; limits: Row[]; tally: Record<string, number>; elapsed_s: number; commands: string[]; mode: string }
@@ -80,7 +81,7 @@ export default function VerifyPanel({ runId }: { runId: string }) {
       </p>
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <button className="btn btn-primary disabled:opacity-60" onClick={run} disabled={state === 'running'}>{state === 'running' ? `Verifying... ${secs}s` : state === 'done' ? 'Verify again' : 'Verify this result'}</button>
-        <span className="chip">LIVE compute on this server, no model calls, no credits</span>
+        <SourceChip kind="live" detail="computed on this server when you press the button | no model calls, no credits" />
       </div>
       {state === 'running' && <div className="mt-4"><Skeleton className="h-24" /><p className="mt-2 font-mono text-[11px] text-dim" role="status">re-simulating about 500 scenarios and checking the ledger... {secs}s elapsed</p></div>}
       {state === 'offline' && (

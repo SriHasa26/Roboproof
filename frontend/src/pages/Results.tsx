@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom'
 import { API_BASE } from '../live/api'
 import { Row, Study, Summary, ci, pct, short, usd, useData } from '../lib'
 import { CountUp, Reveal, Skeleton, usePageTitle } from '../motion'
-import { IntervalPlot, Note, Section, Stamp } from '../ui'
+import { IntervalPlot, Note, Section, SourceChip, Stamp } from '../ui'
+import { useBackend } from '../backend'
 import FailureMapPanel from '../three/FailureMapPanel'
 
 type LiveRow = { id: string; created: string | null; started: string | null; status: string; verdict: string | null; estimated_cost_usd: number | null; master_seed: number | null }
 
 function LiveRuns() {
+  const be = useBackend()
   const [st, setSt] = useState<{ kind: 'loading' } | { kind: 'offline' } | { kind: 'ok'; runs: LiveRow[] }>({ kind: 'loading' })
   const load = useCallback(async () => {
     const ctl = new AbortController()
@@ -23,6 +25,7 @@ function LiveRuns() {
   const color = (v: string | null) => (v === 'VERIFIED' ? 'text-phos' : v === 'FAILED' ? 'text-verm' : 'text-amber')
   return (
     <Section kicker="created on this server" title="Live runs on this server" delay={0}>
+      <div className="mb-3">{st.kind === 'ok' ? <SourceChip kind="live" detail="listed by this server just now" /> : <span className="chip">{be.state === 'checking' ? 'checking the backend...' : 'no live backend'}</span>}</div>
       <Note>Rehearsal runs started from the live console on this server, newest first. They are exploration, never official results, and are separate from the recorded studies below.</Note>
       <div className="glass mt-4 overflow-x-auto">
         {st.kind === 'loading' && <Skeleton className="m-4 h-24" />}
@@ -90,6 +93,7 @@ export default function Results() {
       <LiveRuns />
 
       <Section kicker="the official batch" title="Five runs, nothing re-rolled">
+        <div className="mb-3"><SourceChip kind="recorded" detail="official batch, stored artifacts of five real runs" /></div>
         <Note>
           Pre-registered before any official run: seeds, thresholds and reporting rules are fixed in the protocol. Nothing was re-rolled or discarded. <b className="text-text">Run 1 is the headline run by rule.</b>
         </Note>
@@ -118,6 +122,7 @@ export default function Results() {
       </Section>
 
       <Section kicker="how reliable is the pipeline" title="Three studies, side by side" delay={60}>
+        <div className="mb-3"><SourceChip kind="recorded" detail="stored summaries of three real studies" /></div>
         <Note>
           Fraction of full runs that ended VERIFIED, with the Wilson 95% interval. The two rehearsal studies used rehearsal seeds, not held-out ones. Intervals overlap heavily: do not read
           these as a proven improvement from v1 to v2.
@@ -136,7 +141,7 @@ export default function Results() {
 
       <Reveal>
         <p className="mb-3 text-sm text-dim">The map below shows the headline run (run 1): every scenario of its analysis set under the unpatched default policy. The same map is on each run page.</p>
-        <FailureMapPanel file="scenarios/official_01_seed3101.json" />
+        <FailureMapPanel file="scenarios/official_01_seed3101.json" chip={{ kind: 'recorded', detail: 'analysis set of official_01_seed3101' }} />
       </Reveal>
 
       {off.data?.runs[0] && (

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { load, usd } from '../lib'
 import { Skeleton } from '../motion'
+import { SourceChip } from '../ui'
 
 type Call = {
   n: number; stage: string | null; purpose: string | null; role: string | null; model_requested: string | null; model_returned: string | null; response_id: string | null
@@ -33,12 +34,11 @@ export default function ModelCalls({ src }: { src: CallsSrc }) {
     if (!b) return
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify({ label: src.label, ...b, replies: undefined }, null, 1)], { type: 'application/json' })); a.download = `model_calls_${src.label.replace(/\W+/g, '_')}.json`; a.click(); URL.revokeObjectURL(a.href)
   }
-  const chip = src.origin === 'live' ? 'LIVE: captured at call time' : src.origin === 'replay' ? 'REPLAY of a recorded live run' : 'RECORDED: stored artifact'
   return (
     <section className="mb-14" aria-label="Model calls">
       <div className="eyebrow mb-1.5">the real Nebius calls</div>
       <h2 className="mb-3 text-3xl">Model calls</h2>
-      <div className="mb-3 flex flex-wrap items-center gap-2"><span className="chip">{chip}</span><span className="chip">{src.label}</span>{b && <button className="chip hover:!border-amber/60 hover:!text-text" onClick={download}>Download JSON</button>}</div>
+      <div className="mb-3 flex flex-wrap items-center gap-2"><SourceChip kind={src.origin} detail={src.origin === 'live' ? `captured at call time | ${src.label}` : src.origin === 'replay' ? `recorded live run | ${src.label}` : `stored artifact | ${src.label}`} />{b && <button className="chip hover:!border-amber/60 hover:!text-text" onClick={download}>Download JSON</button>}</div>
       {b === undefined ? <Skeleton className="h-40" /> : (
         <>
           <p className="mb-3 font-mono text-xs text-dim tick">

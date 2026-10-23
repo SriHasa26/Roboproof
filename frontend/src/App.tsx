@@ -2,6 +2,7 @@ import { Component, ReactNode, Suspense, lazy, useEffect } from 'react'
 import { HashRouter, Link, Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useData, IndexItem } from './lib'
+import { BackendProvider } from './backend'
 import { MotionPrefs, Skeleton, ToastProvider, usePageTitle } from './motion'
 import { Banner, Footer, Nav, NotFound } from './layout/Chrome'
 import About from './pages/About'
@@ -80,6 +81,7 @@ function ScrollTop() { const { pathname } = useLocation(); useEffect(() => { win
 export default function App() {
   return (
     <MotionPrefs>
+      <BackendProvider>
       <ToastProvider>
         <HashRouter>
           <div className="atmos" aria-hidden><div className="grid" /><div className="noise" /></div>
@@ -93,6 +95,7 @@ export default function App() {
           <Footer />
         </HashRouter>
       </ToastProvider>
+      </BackendProvider>
     </MotionPrefs>
   )
 }

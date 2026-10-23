@@ -6,6 +6,7 @@
   "runner": "LOCAL FALLBACK, not Nebius",
   "recorded": true
  },
+ "recorded_at": "2026-10-22 10:32:28",
  "label": "REHEARSAL, NOT AN OFFICIAL RESULT. Verification used the rehearsal seed block; held-out seeds (>= 900000) were not generated or run. Scripted patches are labelled 'scripted example, not model output'.",
  "master_seed": null,
  "verdict": "VERIFIED",

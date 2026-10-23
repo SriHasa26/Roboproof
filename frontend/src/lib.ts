@@ -20,7 +20,7 @@ export type Hyp = {
 export type Heat = { x: string; y: string; x_edges: number[]; y_edges: number[]; cells: { n: number; n_fail: number }[][] }
 export type Badges = { pipeline_version: string; mode: 'official' | 'rehearsal'; runner: string; recorded: boolean }
 export type Run = {
-  id: string; badges: Badges; label: string | null; master_seed: number; verdict: 'VERIFIED' | 'FAILED' | 'UNVERIFIED'; error: string | null
+  id: string; recorded_at?: string | null; badges: Badges; label: string | null; master_seed: number; verdict: 'VERIFIED' | 'FAILED' | 'UNVERIFIED'; error: string | null
   attempts_used: number; g5_executed: boolean
   gate: { checks: Check[]; regressed_scenario_ids: string[]; strict_zero_budget: { regressions: number | null; pass: boolean | null }; config: Record<string, any>; verification_set: Record<string, any> }
   metrics: { analysis?: { before: Rate; after?: Rate }; verification?: { before: Rate; after: Rate } }

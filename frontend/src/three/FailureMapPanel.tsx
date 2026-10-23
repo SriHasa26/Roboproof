@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect, useState } from 'react'
 import { load } from '../lib'
 import { Skeleton, useMotionPrefs } from '../motion'
+import { SourceChip } from '../ui'
 import type { ScenData } from './FailureMap3D'
 
 const Map3D = lazy(() => import('./FailureMap3D'))
@@ -10,7 +11,7 @@ function webgl(): boolean {
 }
 
 /** Interactive 3D failure map of the run's real scenarios. Hidden (renders nothing) when the run has no per-scenario results. */
-export default function FailureMapPanel({ file, url }: { file?: string; url?: string }) {
+export default function FailureMapPanel({ file, url, chip }: { file?: string; url?: string; chip?: { kind: 'live' | 'recorded' | 'replay'; detail?: string } }) {
   const { reduce } = useMotionPrefs()
   const [d, setD] = useState<ScenData | null | undefined>(undefined)
   useEffect(() => {
@@ -22,7 +23,8 @@ export default function FailureMapPanel({ file, url }: { file?: string; url?: st
   return (
     <section className="mb-12">
       <div className="eyebrow mb-1">where it fails, in 3D</div>
-      <h2 className="mb-4 font-display">Failure map</h2>
+      <h2 className="mb-2 font-display">Failure map</h2>
+      {chip && <div className="mb-4"><SourceChip kind={chip.kind} detail={chip.detail} /></div>}
       {d === undefined ? <Skeleton className="h-[420px]" />
         : reduce || !webgl() ? <p className="glass p-4 text-sm text-dim">The 3D map is off ({reduce ? 'reduced motion and 3D is on' : 'WebGL is not available'}). The 2D heatmaps below show the same baseline results.</p>
           : <div className="glass p-4"><Suspense fallback={<Skeleton className="h-[420px]" />}><Map3D d={d} reduce={reduce} /></Suspense></div>}

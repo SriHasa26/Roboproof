@@ -103,6 +103,7 @@ def build_run(d: Path, mode: str, pv: str) -> dict:
     rid = d.name
     return {
         "id": rid, "badges": {"pipeline_version": pv, "mode": mode, "runner": RUNNER_BADGE, "recorded": True},
+        "recorded_at": (jl(d / "LABEL.json").get("started") if (d / "LABEL.json").exists() else None),  # container clock, UTC
         "label": summ.get("label"), "master_seed": summ.get("master_seed"), "verdict": rep["verdict"], "error": summ.get("error"),
         "attempts_used": len(attempts), "g5_executed": summ.get("g5_executed", rep["verdict"] != "UNVERIFIED"),
         "gate": {"checks": [norm_check(c) for c in rep["checks"]], "regressed_scenario_ids": rep.get("regressed_scenario_ids", []),

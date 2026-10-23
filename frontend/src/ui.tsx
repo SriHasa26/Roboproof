@@ -31,13 +31,26 @@ export function Chip({ status }: { status: Status }) {
   )
 }
 
+/** One consistent marker for where a number came from: LIVE (computed just now by this server), RECORDED (a stored artifact) or REPLAY (a recording played back). */
+export function SourceChip({ kind, detail }: { kind: 'live' | 'recorded' | 'replay'; detail?: string }) {
+  const m = {
+    live: { c: '#5be39a', label: 'LIVE', d: 'computed just now by this server', tip: 'Computed by the backend when you asked, not stored.' },
+    recorded: { c: '#9fb0c4', label: 'RECORDED', d: 'stored artifact', tip: 'Read from a stored artifact of a real run; nothing is computed in this page.' },
+    replay: { c: '#f2b134', label: 'REPLAY', d: 'recording of a real run', tip: 'A recording of a real run, played back. It is not happening now.' },
+  }[kind]
+  return (
+    <span title={m.tip} className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[10.5px] font-semibold tracking-wider" style={{ color: m.c, border: `1px solid ${m.c}66`, background: `${m.c}12` }}>
+      <span className={`h-1.5 w-1.5 rounded-full ${kind === 'live' ? 'animate-pulse' : ''}`} style={{ background: m.c }} aria-hidden />{m.label}<span className="font-normal opacity-80">{detail ?? m.d}</span>
+    </span>
+  )
+}
+
 export function BadgeRow({ b }: { b: Badges }) {
   const items: [string, string, string][] = [
     [`PIPELINE ${b.pipeline_version.toUpperCase()}`, '#7f8da0', b.pipeline_version === 'v2' ? 'Frozen as git tag pipeline-frozen-v2' : 'Superseded pipeline v1 (tag pipeline-frozen)'],
     [b.mode === 'official' ? 'OFFICIAL' : 'REHEARSAL', b.mode === 'official' ? '#f2b134' : '#7f8da0',
       b.mode === 'official' ? 'Pre-registered batch on single-use held-out seeds' : 'Verification used the rehearsal seed block: not an official result'],
     [`RUNNER: ${b.runner.toUpperCase()}`, '#ff6a47', 'Simulations ran in a local container, not on Nebius Serverless Jobs'],
-    [b.recorded ? 'RECORDED REAL RUN' : 'LIVE', '#5be39a', 'Replayed from stored artifacts of a real run; nothing is computed in this page'],
   ]
   return (
     <div className="flex flex-wrap gap-2">

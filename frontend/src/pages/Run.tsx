@@ -4,7 +4,7 @@ import { Skeleton, usePageTitle } from '../motion'
 import FailureMapPanel from '../three/FailureMapPanel'
 import VerifyPanel from '../play/Verify'
 import ModelCalls, { CallsSrc } from '../play/ModelCalls'
-import { BadgeRow, GateChecklist, Heatmap, Note, RatePair, Section, Stamp } from '../ui'
+import { BadgeRow, GateChecklist, Heatmap, Note, RatePair, Section, SourceChip, Stamp } from '../ui'
 
 const DEFAULT: Record<string, number> = { grip_force: 15, approach_speed: 0.3, lift_height: 0.15, lift_speed: 0.3, grasp_hold_steps: 10, place_slow_factor: 1, retry_count: 0 }
 
@@ -91,7 +91,7 @@ export default function RunPage() {
 }
 
 /** The run detail view; fed by recorded JSON (static site) or by the live API's report endpoint. */
-export function RunReport({ r, replays, back, map, calls }: { r: RunT; replays: Replays | null; back: [string, string]; map?: { file?: string; url?: string } | null; calls?: CallsSrc | null }) {
+export function RunReport({ r, replays, back, map, calls, origin = 'recorded' }: { r: RunT; replays: Replays | null; back: [string, string]; map?: { file?: string; url?: string } | null; calls?: CallsSrc | null; origin?: 'recorded' | 'live' | 'replay' }) {
   const rp = { data: replays }
   const t = r.timing, tot = Math.max(t.wall_clock_s, 1)
   const seg: [string, number, string][] = [['LLM calls', t.llm_s, '#f2b134'], ['candidate evaluation (simulator)', t.candidate_evals_s, '#5be39a'], ['other simulation and code', t.other_simulation_s, '#7f8da0']]
@@ -104,6 +104,10 @@ export function RunReport({ r, replays, back, map, calls }: { r: RunT; replays: 
           <div className="mb-2 font-mono text-[11px] uppercase tracking-[.3em] text-amber">run report</div>
           <h1 className="font-display [overflow-wrap:anywhere]">{r.id}</h1>
           <div className="mt-3"><BadgeRow b={r.badges} /></div>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <SourceChip kind={origin} detail={origin === 'recorded' ? `${r.id}${r.recorded_at ? ` | recorded ${r.recorded_at.slice(0, 10)} UTC` : ''}` : origin === 'live' ? 'this server, run just now' : 'recording of a real live run'} />
+            {r.badges.mode === 'official' && origin === 'recorded' && <Link to={`/playground?rerun=${encodeURIComponent(r.id)}`} className="chip hover:!border-amber/60 hover:!text-text">Re-run in Playground</Link>}
+          </div>
           <p className="mt-3 font-mono text-xs text-dim">master seed {r.master_seed ?? 'not recorded'} | {r.attempts_used} attempt(s) | G5 {r.g5_executed ? 'executed' : 'not executed'} | {r.analysis_set.n} analysis scenarios ({r.analysis_set.n_coverage} coverage, {r.analysis_set.n_targeted} from model-proposed regions)</p>
         </div>
         <Stamp verdict={r.verdict} />
@@ -143,7 +147,7 @@ export function RunReport({ r, replays, back, map, calls }: { r: RunT; replays: 
 
       {r.badges.mode === 'official' && r.badges.recorded && <VerifyPanel runId={r.id} />}
 
-      {map !== null && <FailureMapPanel {...(map ?? { file: `scenarios/${r.id}.json` })} />}
+      {map !== null && <FailureMapPanel {...(map ?? { file: `scenarios/${r.id}.json` })} chip={{ kind: origin, detail: origin === 'recorded' ? `analysis set of ${r.id}` : origin === 'live' ? 'this run, analysis set' : 'recorded live run, analysis set' }} />}
 
       <Section kicker="where it fails" title="Failure heatmaps" delay={200}>
         <div className="grid gap-4 md:grid-cols-2">{r.heatmaps.map((h) => <Heatmap key={h.x + h.y} h={h} />)}</div>

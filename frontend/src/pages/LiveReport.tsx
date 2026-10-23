@@ -24,7 +24,7 @@ export default function LiveReport() {
         <div role="note" className={`mb-6 rounded-xl border p-3 text-sm ${replay ? 'border-amber bg-amber/10 text-amber' : 'border-verm/40 bg-verm/[.07]'}`}>
           {replay ? 'Recorded replay: this report was built from a real live rehearsal run that was recorded earlier.' : 'Live rehearsal report. A rehearsal is never an official result.'}
         </div>
-        <RunReport r={run} replays={null} back={['/live', 'live console']} map={replay ? { file: 'live_replay/scenarios.json' } : { url: `${API_BASE}/api/runs/${id}/scenarios` }}
+        <RunReport r={run} replays={null} back={['/live', 'live console']} origin={replay ? 'replay' : 'live'} map={replay ? { file: 'live_replay/scenarios.json' } : { url: `${API_BASE}/api/runs/${id}/scenarios` }}
           calls={replay ? { file: 'live_replay/calls.json', origin: 'replay', label: 'recorded live run' } : { url: `${API_BASE}/api/runs/${id}/model_calls`, repliesUrl: `${API_BASE}/api/runs/${id}/replies`, origin: 'live', label: id }} />
       </div>
     )

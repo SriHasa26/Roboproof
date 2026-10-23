@@ -242,3 +242,80 @@ def test_real_resimulation_matches_stored_numbers_and_is_deterministic():
     assert strip(a["runs"][RUN]) == strip(b["runs"][RUN])
     assert not [r for r in a["runs"][RUN] if r["status"] == MISMATCH], [r for r in a["runs"][RUN] if r["status"] == MISMATCH]
     assert any(r["group"] == "resimulate" and r["id"] == "base_same" and r["status"] == "match" for r in a["runs"][RUN])
+
+
+# ------------------------------------------------------------------ "Re-run in Playground": one stored scenario, its stored (dev) seed
+def make_rerun_client(tmp_path, scenario_fn):
+    c, calls, svc = make_client(tmp_path, rate_sweep_per_10min=100)
+    svc.scenario_fn = scenario_fn
+    return c, svc
+
+
+def stored_default(scn_id):
+    return next(r for r in jl(OFFICIAL / RUN / "baseline_results.json")["results"] if r["scenario_id"] == scn_id)
+
+
+def replaying_fn(seen):
+    from app.core.schemas import Policy
+
+    def fn(policy, scenario, timeout):
+        seen.append((policy == Policy(), scenario.seed))
+        res = dict(stored_default(scenario.id)) if policy == Policy() else {**stored_default(scenario.id), "success": True, "failure_reason": None}
+        return {"result": res, "trajectory": {"dt": 0.025, "frames": []}, "world": {}}
+    return fn
+
+
+def test_rerun_lists_failing_scenarios_and_the_final_patch(tmp_path):
+    c, _ = make_rerun_client(tmp_path, replaying_fn([]))
+    b = c.get(f"/api/verify/{RUN}/scenarios").json()
+    assert b["failing"] and b["n_failing"] >= len(b["failing"]) and set(b["final_patch"]) >= {"grip_force", "lift_speed"}
+    assert b["failing"][0]["targeted"] is True  # targeted failures first
+    assert c.get("/api/verify/official_99_seed1/scenarios").status_code == 404
+
+
+def test_rerun_uses_the_stored_dev_seed_and_compares_with_the_stored_result(tmp_path):
+    seen = []
+    c, _ = make_rerun_client(tmp_path, replaying_fn(seen))
+    sid = c.get(f"/api/verify/{RUN}/scenarios").json()["failing"][0]["id"]
+    r = c.post(f"/api/verify/{RUN}/rerun", json={"scenario_id": sid})
+    assert r.status_code == 200
+    b = r.json()
+    assert b["matches_stored"] is True and b["default"]["result"]["success"] is False and b["patched"]["result"]["success"] is True
+    stored_seed = next(s["seed"] for s in jl(OFFICIAL / RUN / "analysis_set.json")["scenarios"] if s["id"] == sid)
+    assert b["seed"] == stored_seed < 100_000 and seen == [(True, stored_seed), (False, stored_seed)]  # a dev seed, taken from the stored data
+
+
+def test_rerun_flags_a_result_that_differs_from_the_stored_one(tmp_path):
+    def liar(policy, scenario, timeout):
+        res = dict(stored_default(scenario.id))
+        res["completion_time_s"] = 99.0
+        return {"result": res, "trajectory": {"dt": 0.025, "frames": []}, "world": {}}
+    c, _ = make_rerun_client(tmp_path, liar)
+    sid = c.get(f"/api/verify/{RUN}/scenarios").json()["failing"][0]["id"]
+    assert c.post(f"/api/verify/{RUN}/rerun", json={"scenario_id": sid}).json()["matches_stored"] is False
+
+
+def test_rerun_refuses_unknown_scenarios_runs_and_client_seeds(tmp_path):
+    seen = []
+    c, _ = make_rerun_client(tmp_path, replaying_fn(seen))
+    assert c.post(f"/api/verify/{RUN}/rerun", json={"scenario_id": "cov-99999"}).status_code == 404
+    assert c.post(f"/api/verify/official_99_seed1/rerun", json={"scenario_id": "cov-1000"}).status_code == 404
+    for body in ({"scenario_id": "cov-1000", "seed": 900000}, {"scenario_id": "cov-1000", "policy": {"grip_force": 80}}, {"scenario_id": "../x"}, {"scenario_id": "a" * 41}, {}):
+        assert c.post(f"/api/verify/{RUN}/rerun", json=body).status_code == 422, body
+    assert seen == []  # nothing ran
+
+
+def test_rerun_refuses_a_tampered_held_out_seed(tmp_path, monkeypatch):
+    root = tmp_path / "root"
+    d = root / "recorded_runs" / "official_001" / RUN
+    shutil.copytree(OFFICIAL / RUN, d)
+    edit(d / "analysis_set.json", lambda a: a["scenarios"][0].__setitem__("seed", 900_005))
+    sid = jl(d / "analysis_set.json")["scenarios"][0]["id"]
+    live = RunManager(LiveConfig(enabled=False, runs_dir=tmp_path / "lr"))
+    svc = PlaygroundService(PlaygroundConfig())
+    seen = []
+    svc.scenario_fn = replaying_fn(seen)
+    app = FastAPI()
+    vapi.install(app, svc, live, root=root)
+    r = TestClient(app).post(f"/api/verify/{RUN}/rerun", json={"scenario_id": sid})
+    assert r.status_code == 403 and seen == []

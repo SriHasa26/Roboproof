@@ -6,6 +6,7 @@
   "runner": "LOCAL FALLBACK, not Nebius",
   "recorded": true
  },
+ "recorded_at": "2026-10-22 15:51:13",
  "label": "OFFICIAL RUN. Verification used a fresh single-use held-out seed block.",
  "master_seed": 3404,
  "verdict": "VERIFIED",

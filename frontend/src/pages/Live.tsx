@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Summary, load, pct, usd, useData } from '../lib'
 import { Skeleton, useToast, usePageTitle } from '../motion'
-import { RatePair, Stamp } from '../ui'
+import { RatePair, SourceChip, Stamp } from '../ui'
 import { ApiError, LiveEvent, LiveStatus, cancelRun, fetchStatus, openStream, startRun } from '../live/api'
 import { derive } from '../live/derive'
 import { Candidates, Confirm, GateLights, Terminal, Timeline } from '../live/parts'
@@ -200,6 +200,7 @@ export default function Live() {
         <div className="mt-8 space-y-6">
           {source.kind === 'replay' ? (
             <div role="note" className="rounded-xl border-2 border-amber bg-amber/10 p-4">
+              <div className="mb-2"><SourceChip kind="replay" detail={meta ? `recording of a real live run, ${meta.date}` : 'recording of a real live run'} /></div>
               <div className="font-display text-lg font-bold text-amber">Recorded replay of a real live rehearsal run{meta ? ` (${meta.date})` : ''}</div>
               <p className="mt-1 text-sm text-text/90">This is not live. These events were recorded from a real run and are played back{speed > 1 ? ` at ${speed}x, with waits over 2.5 s shortened` : ' in real time'}. Nothing is being computed now.</p>
               <div className="mt-3 flex flex-wrap items-center gap-2 font-mono text-xs">speed
@@ -210,7 +211,7 @@ export default function Live() {
           ) : (
             <div className="flex flex-wrap items-center gap-3">
               <span className="chip !border-verm/50 !text-verm"><span className={`h-2 w-2 rounded-full bg-verm ${running ? 'animate-pulse' : ''}`} />{running ? 'LIVE' : view.ended ? 'ENDED' : 'CONNECTING'}</span>
-              <span className="font-mono text-xs text-dim">{source.id}{view.masterSeed != null ? ` | master seed ${view.masterSeed}` : ''} | rehearsal</span>
+              <SourceChip kind="live" detail="events from this server as they happen" /><span className="font-mono text-xs text-dim">{source.id}{view.masterSeed != null ? ` | master seed ${view.masterSeed}` : ''} | rehearsal</span>
               {running && source.token && <button className="btn btn-ghost !py-1.5 text-sm" onClick={cancel}>Cancel run</button>}
               {running && !source.token && <span className="text-xs text-dim">watching only: you cannot cancel a run you did not start</span>}
             </div>

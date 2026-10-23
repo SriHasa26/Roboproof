@@ -52,7 +52,10 @@ def make_router(mgr: RunManager) -> APIRouter:
 
     @r.get("/api/health")
     def health() -> dict:
-        return {"status": "ok", "live_enabled": cfg.enabled}
+        from datetime import datetime, timezone
+        from ..core.provenance import PIPELINE_VERSION, TAG  # read-only: the frozen pipeline's version and tag names
+        return {"status": "ok", "live_enabled": cfg.enabled, "pipeline_version": PIPELINE_VERSION, "pipeline_tag": TAG,
+                "server_time_utc": datetime.now(timezone.utc).isoformat(timespec="seconds")}
 
     @r.get("/api/live/status")
     def live_status() -> dict:

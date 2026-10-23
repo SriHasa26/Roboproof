@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { motion, useInView } from 'framer-motion'
 import { Row, Study, Summary, pct, useData } from '../lib'
 import { CountUp, Reveal, Skeleton, useMotionPrefs, usePageTitle } from '../motion'
-import { IntervalPlot, Stamp } from '../ui'
+import { IntervalPlot, SourceChip, Stamp } from '../ui'
 import HeroVisual from '../three/HeroVisual'
 
 function Head({ kicker, title, sub }: { kicker: string; title: ReactNode; sub?: string }) {
@@ -172,6 +172,7 @@ function Results({ off, studies }: { off: Summary | null; studies: Study[] | nul
   return (
     <section className="py-16">
       <Head kicker="results" title="The official batch, as it came out." sub="Five pre-registered runs on single-use held-out seeds. Nothing was re-rolled or discarded." />
+      <div className="-mt-6 mb-6"><SourceChip kind="recorded" detail="stored artifacts of five real runs | open any run and press Verify to recompute it" /></div>
       {off && a ? (
         <>
           <div className="grid gap-6 lg:grid-cols-[1fr_1.4fr]">

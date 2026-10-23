@@ -1,7 +1,8 @@
 import { ReactNode, Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react'
 import { Hyp, Rate, pct, useData, usd } from '../lib'
 import { Skeleton, useMotionPrefs, usePageTitle } from '../motion'
-import { RatePair } from '../ui'
+import { RatePair, SourceChip } from '../ui'
+import { Link, useSearchParams } from 'react-router-dom'
 import { HypCard } from './Run'
 import { Confirm } from '../live/parts'
 import { API_BASE } from '../live/api'
@@ -14,15 +15,17 @@ const Map3D = lazy(() => import('../three/FailureMap3D'))
 
 type Vals = Record<string, number>
 type Result = { scenario_id: string; seed: number; success: boolean; collision: boolean; completion_time_s: number; final_place_error_m: number; max_slip_m: number; failure_reason: string | null }
-type ScenResp = Traj & { result: Result; explanation: string; scenario: Vals; policy: Vals; seed: number; wall_clock_s?: number }
+type ScenResp = Traj & { _at?: string; result: Result; explanation: string; scenario: Vals; policy: Vals; seed: number; wall_clock_s?: number }
 type Metrics = Rate & { passes: number; failure_reasons: Record<string, number> }
 type Rows = { ids: string[]; ok: number[]; reason: (string | null)[]; default_ok: number[]; default_reason: (string | null)[]; seed: number[] } & Record<string, any>
-type SweepResp = { sweep_id?: string; n: number; seed?: number; policy: Vals; metrics: Metrics; default_metrics: Metrics; evidence_bins: { axis: string; range: number[]; n: number; n_fail: number; fail_rate: number }[]; rows: Rows; wall_clock_s: number }
+type SweepResp = { _at?: string; sweep_id?: string; n: number; seed?: number; policy: Vals; metrics: Metrics; default_metrics: Metrics; evidence_bins: { axis: string; range: number[]; n: number; n_fail: number; fail_rate: number }[]; rows: Rows; wall_clock_s: number }
 type BatchResp = SweepResp & { results_csv: string; seeds: string }
+type RerunResp = { run_id: string; scenario_id: string; seed: number; default: ScenResp; patched: ScenResp; stored_default_result: Record<string, unknown>; matches_stored: boolean; wall_clock_s: number; note: string }
 type Example = ScenResp & { label: string; why: string }
 type Interp = { unsupported: boolean; reason: string | null; parameters: Record<string, { value: number; reason: string; clamped: boolean; rounded: boolean }> | null; model?: string; latency_s?: number; estimated_cost_usd?: number | null; label?: string }
 type Analysis = { hypotheses: Hyp[]; model: string; estimated_cost_usd: number | null; label: string; cost_note: string }
 
+const DEFAULT_POLICY: Record<string, number> = { grip_force: 15, approach_speed: 0.3, lift_height: 0.15, lift_speed: 0.3, grasp_hold_steps: 10, place_slow_factor: 1, retry_count: 0 }
 const AXIS_KEYS = ['mass_kg', 'friction', 'size_m', 'pos_offset_x', 'pos_offset_y', 'sensor_noise_m', 'gripper_delay_steps']
 const bad = (p: ParamSpec, v: number) => !Number.isFinite(v) || v < p.min || v > p.max || (p.integer && !Number.isInteger(v))
 const fmtN = (x: number, d = 3) => (Math.abs(x) >= 100 ? x.toFixed(0) : Number(x.toPrecision(d)).toString())
@@ -67,14 +70,14 @@ function Metric({ k, v, tone }: { k: string; v: ReactNode; tone?: string }) {
   return <div className="rounded-lg border hair bg-white/[.02] p-3"><div className="text-[11px] text-dim">{k}</div><div className={`font-mono text-sm tick ${tone ?? ''}`}>{v}</div></div>
 }
 
-function SingleResult({ r, label }: { r: ScenResp; label?: string }) {
+function SingleResult({ r, label, kind = 'live' }: { r: ScenResp; label?: string; kind?: 'live' | 'recorded' }) {
   const { reduce } = useMotionPrefs()
   const x = r.result
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-5">
         <Outcome ok={x.success} />
-        <div className="text-sm text-dim">{label && <div className="font-medium text-text">{label}</div>}seed {r.seed} | {r.wall_clock_s != null ? `simulated in ${r.wall_clock_s} s` : 'recorded real run'}</div>
+        <div className="space-y-1 text-sm text-dim">{label && <div className="font-medium text-text">{label}</div>}<div>seed {r.seed} | {r.wall_clock_s != null ? `simulated in ${r.wall_clock_s} s` : kind === 'recorded' ? 'recorded real run' : 'simulated now'}</div><SourceChip kind={kind} detail={kind === 'live' ? `simulated just now${r._at ? ` at ${r._at}` : ''} by this server` : 'recorded example of a real simulator run'} /></div>
       </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <Metric k="Success" v={x.success ? 'yes' : 'no'} tone={x.success ? 'text-phos' : 'text-verm'} />
@@ -157,8 +160,66 @@ function RowsTable({ b, onPick, onDownload }: { b: BatchResp; onPick: (i: number
   )
 }
 
+function RerunPanel({ runId }: { runId: string }) {
+  const { reduce } = useMotionPrefs()
+  const [info, setInfo] = useState<{ failing: { id: string; reason: string | null; targeted: boolean }[]; n_failing: number; final_patch: Record<string, number> } | null | undefined>(undefined)
+  const [sid, setSid] = useState('')
+  const [res, setRes] = useState<RerunResp | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState<PgError | null>(null)
+  const go = useCallback(async (id: string) => {
+    setBusy(true); setErr(null); setRes(null)
+    const r = await post<RerunResp>(`/api/verify/${encodeURIComponent(runId)}/rerun`, { scenario_id: id }, 60000)
+    setBusy(false)
+    if (r.ok) setRes({ ...r.data, default: { ...r.data.default, _at: new Date().toLocaleTimeString() }, patched: { ...r.data.patched, _at: new Date().toLocaleTimeString() } }); else setErr(r.error)
+  }, [runId])
+  useEffect(() => {
+    let live = true
+    fetch(`${API_BASE}/api/verify/${encodeURIComponent(runId)}/scenarios`).then((r) => (r.ok ? r.json() : null)).catch(() => null).then((d) => {
+      if (!live) return
+      setInfo(d && Array.isArray(d.failing) ? d : null)
+      if (d && d.failing?.length) { setSid(d.failing[0].id); go(d.failing[0].id) }
+    })
+    return () => { live = false }
+  }, [runId, go])
+  return (
+    <section className="glass mt-6 p-5" aria-label="Re-run of a recorded scenario">
+      <div className="eyebrow mb-1.5">re-run a recorded scenario</div>
+      <h2 className="text-2xl">{runId}: watch it reproduce</h2>
+      <p className="mt-1 max-w-3xl text-sm text-dim">The scenario and its seed come from the recorded run's analysis set (a dev seed, never held-out). It is simulated now with the default policy and with the run's final patch, and the default result is compared with the stored one.</p>
+      <div className="mt-3 flex flex-wrap items-center gap-2"><SourceChip kind="recorded" detail={`scenario, seed and patch from ${runId}`} />{res && <SourceChip kind="live" detail={`re-simulated just now at ${res.default._at} by this server`} />}<Link className="chip hover:!border-amber/60 hover:!text-text" to={`/runs/${runId}`}>Back to the run</Link></div>
+      {info === undefined && <Skeleton className="mt-4 h-24" />}
+      {info === null && <div className="mt-4"><Notice tone="warn" title="Backend offline">Re-running needs the simulator backend. Nothing was re-run and no result is shown. The same check from a terminal: <span className="font-mono text-xs text-text">scripts/dock.sh python scripts/verify_official.py --run {runId}</span></Notice></div>}
+      {info && (
+        <div className="mt-4 space-y-4">
+          <label className="block text-sm">Scenario (targeted failures first)
+            <select value={sid} onChange={(e) => { setSid(e.target.value); go(e.target.value) }} className="mt-1 block w-full max-w-xl rounded-lg border border-white/15 bg-black/40 px-3 py-2 text-sm">
+              {info.failing.map((f) => <option key={f.id} value={f.id}>{f.id} | {f.reason ? (REASON[f.reason] ?? f.reason) : 'failed'}{f.targeted ? ' | targeted by the analyst' : ''}</option>)}
+            </select></label>
+          {busy && <div className="flex items-center gap-3 text-sm" role="status"><span className="h-3 w-3 animate-pulse rounded-full bg-amber" />Simulating the scenario twice...</div>}
+          {err && <Notice tone="err" title={errTitle[err.kind]}>{err.message}</Notice>}
+          {res && (
+            <>
+              <Notice tone={res.matches_stored ? 'info' : 'err'} title={res.matches_stored ? 'Reproduced' : 'Differs from the stored result'}>
+                The default-policy result {res.matches_stored ? 'is identical to' : 'does NOT match'} the stored result for {res.scenario_id} (seed {res.seed}): success, collision, completion time, place error, slip and failure reason compared field by field. Simulated in {res.wall_clock_s} s.
+              </Notice>
+              <div className="grid gap-5 xl:grid-cols-2">
+                <div className="rounded-xl border hair p-4"><SingleResult r={res.default} label="Default policy" /></div>
+                <div className="rounded-xl border hair p-4"><SingleResult r={res.patched} label={`Final patch: ${Object.entries(info.final_patch).filter(([k, v]) => v !== DEFAULT_POLICY[k]).map(([k, v]) => `${k} ${fmtN(v)}`).join(', ') || 'no change'}`} /></div>
+              </div>
+              {reduce && <p className="text-xs text-dim">Reduced motion is on: use Play on each player.</p>}
+            </>
+          )}
+        </div>
+      )}
+    </section>
+  )
+}
+
 export default function Playground() {
   usePageTitle('Playground')
+  const [sp] = useSearchParams()
+  const rerunId = sp.get('rerun')
   const { reduce } = useMotionPrefs()
   const [spec, setSpec] = useState<Spec | null | undefined>(undefined)
   const examples = useData<Example[]>('playground_examples.json')
@@ -205,19 +266,19 @@ export default function Playground() {
     setBusy(true); setErr(null)
     const r = await post<ScenResp>('/api/sim/scenario', { scenario: s, policy: p, ...(sd != null ? { seed: sd } : {}) }, 30000)
     setBusy(false)
-    if (r.ok) setSingle(r.data); else setErr(r.error)
+    if (r.ok) setSingle({ ...r.data, _at: new Date().toLocaleTimeString() }); else setErr(r.error)
   }, [])
   const runSweep = async () => {
     setBusy(true); setErr(null); setAnalysis(null)
     const r = await post<SweepResp>('/api/sim/sweep', { policy: pol, n, ...(seed !== '' ? { seed: +seed } : {}) }, 90000)
     setBusy(false)
-    if (r.ok) setSweep(r.data); else setErr(r.error)
+    if (r.ok) setSweep({ ...r.data, _at: new Date().toLocaleTimeString() }); else setErr(r.error)
   }
   const runBatch = async () => {
     setBusy(true); setErr(null)
     const r = await post<BatchResp>('/api/sim/batch', { policy: pol, csv: csvText }, 90000)
     setBusy(false)
-    if (r.ok) setBatch(r.data); else setErr(r.error)
+    if (r.ok) setBatch({ ...r.data, _at: new Date().toLocaleTimeString() } as BatchResp); else setErr(r.error)
   }
   const download = (name: string, text: string, type = 'text/csv') => {
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; a.click(); URL.revokeObjectURL(a.href)
@@ -262,6 +323,8 @@ export default function Playground() {
       <p className="mt-3 max-w-2xl text-lg text-dim">Set the cube and the sensor conditions, set the policy parameters, and get real results from the same simulator the pipeline uses.</p>
       <div className="mt-4"><Notice tone="warn" title="Exploration, not a gate verdict">Uses the frozen simulator and parameter ranges. Not part of the official evaluation. One task only: a gripper picks up a cube, carries it over a low wall and places it in a target zone. Other robots would need a new simulator and a recalibrated gate (future work).</Notice></div>
 
+      {rerunId && /^official_\d{2}_seed\d+$/.test(rerunId) && <RerunPanel runId={rerunId} />}
+
       {spec === undefined && <div className="mt-8 grid gap-6 lg:grid-cols-[380px_1fr]"><Skeleton className="h-96" /><Skeleton className="h-96" /></div>}
 
       {spec !== undefined && !online && (
@@ -272,7 +335,7 @@ export default function Playground() {
           {!examples.data ? <Skeleton className="h-96" /> : examples.data.map((e) => (
             <section key={e.label} className="glass p-5">
               <h2 className="mb-1 text-2xl">{e.label}</h2><p className="mb-4 text-sm text-dim">{e.why} (recorded example)</p>
-              <SingleResult r={e} />
+              <SingleResult r={e} kind="recorded" />
             </section>
           ))}
         </div>
@@ -369,6 +432,7 @@ export default function Playground() {
               <div className="space-y-5">
                 <div className="glass p-5">
                   <h2 className="mb-1 text-2xl">Your policy vs the default policy</h2>
+                  <div className="mb-2"><SourceChip kind="live" detail={`simulated just now${cur._at ? ` at ${cur._at}` : ''} by this server`} /></div>
                   <p className="mb-4 text-sm text-dim">{cur.n} {sweepMode === 'csv' ? 'rows from your table' : `scenarios (seed ${cur.seed})`}, same scenarios for both policies, simulated in {cur.wall_clock_s} s. Exploration, not a gate verdict.{sweepMode === 'csv' ? ` Seeds are assigned by row (${(cur as BatchResp).seeds}).` : ''}</p>
                   <RatePair title="Pass rate (Wilson 95% interval)" before={cur.default_metrics} after={cur.metrics} beforeLabel="default" afterLabel="yours" />
                   <p className="mt-2 font-mono text-[11px] text-dim">{cur.metrics.passes} of {cur.metrics.n} pass with your policy; {cur.default_metrics.passes} of {cur.default_metrics.n} with the default.</p>
@@ -376,7 +440,8 @@ export default function Playground() {
                 <div className="grid gap-5 md:grid-cols-2"><Reasons m={cur.metrics} d={cur.default_metrics} />{cur.evidence_bins.length > 0 && <AxisBins bins={cur.evidence_bins} />}</div>
                 {sweepMode === 'csv' && <RowsTable b={cur as BatchResp} onPick={pick} onDownload={() => download('roboproof_results.csv', (cur as BatchResp).results_csv)} />}
                 {mapData && !reduce && (
-                  <div className="glass p-5"><h2 className="mb-3 text-2xl">Failure map of {sweepMode === 'csv' ? 'your table' : 'this sweep'}</h2>
+                  <div className="glass p-5"><h2 className="mb-2 text-2xl">Failure map of {sweepMode === 'csv' ? 'your table' : 'this sweep'}</h2>
+                    <div className="mb-3"><SourceChip kind="live" detail="points simulated just now by this server" /></div>
                     <Suspense fallback={<Skeleton className="h-[440px]" />}>
                       <Map3D d={mapData} reduce={reduce} alt={{ ok: cur.rows.default_ok, reason: cur.rows.default_reason, label: 'default policy', main: 'your policy' }} onPick={pick} pickHint="click a point to replay that scenario" />
                     </Suspense></div>
