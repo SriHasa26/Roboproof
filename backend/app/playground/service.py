@@ -50,6 +50,8 @@ class PlaygroundConfig:
     sweep_timeout_s: float = 60.0        # PLAYGROUND_SWEEP_TIMEOUT_S (whole sweep, both policies)
     max_sweep_n: int = 200               # PLAYGROUND_MAX_SWEEP_N
     analyze_usd_est: float = 0.03        # reserved against the daily spend cap before an analyze call
+    interpret_usd_est: float = 0.005     # reserved against the daily spend cap before an interpret call
+    rate_interpret_per_hour: int = 10    # PLAYGROUND_RATE_INTERPRET_PER_HOUR (per client IP)
     trust_proxy: bool = False            # LIVE_TRUST_PROXY (shared with the live service)
 
     @staticmethod
@@ -65,6 +67,7 @@ class PlaygroundConfig:
         c.enabled = e.get("PLAYGROUND_ENABLED", "1").strip().lower() in ("1", "true", "yes", "on")
         c.rate_scenario_per_min = int(num("PLAYGROUND_RATE_SCENARIO_PER_MIN", c.rate_scenario_per_min))
         c.rate_sweep_per_10min = int(num("PLAYGROUND_RATE_SWEEP_PER_10MIN", c.rate_sweep_per_10min))
+        c.rate_interpret_per_hour = int(num("PLAYGROUND_RATE_INTERPRET_PER_HOUR", c.rate_interpret_per_hour))
         c.max_concurrent = max(1, int(num("PLAYGROUND_MAX_CONCURRENT", c.max_concurrent)))
         c.scenario_timeout_s = num("PLAYGROUND_SCENARIO_TIMEOUT_S", c.scenario_timeout_s)
         c.sweep_timeout_s = num("PLAYGROUND_SWEEP_TIMEOUT_S", c.sweep_timeout_s)
@@ -162,6 +165,12 @@ class SweepRequest(BaseModel):
     @classmethod
     def _seed(cls, v):
         return _check_seed(v)
+
+
+class InterpretRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    text: str = Field(min_length=1, max_length=300)
+    access_code: str | None = None
 
 
 class AnalyzeRequest(BaseModel):

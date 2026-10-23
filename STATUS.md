@@ -30,3 +30,11 @@ Notes
 | 1. Typography (Sora, DM Sans, JetBrains Mono, variable fonts) | DONE |
 | 2. Playground (backend, UI, offline examples, tests) | DONE |
 | 3. QA and docs | DONE: 273 tests pass in the image |
+
+## Plain-English input, CSV batch, dynamic runs list (fourth master prompt)
+| Part | State |
+|---|---|
+| 1. Plain-English interpret (backend + UI + tests; 2 real calls: 3.4 s and 0.9 s, about $0.0001 each) | DONE |
+| 2. CSV / pasted batch | next |
+| 3. Live runs list on /results | not started |
+| 4. Demo flow, QA, docs | not started |

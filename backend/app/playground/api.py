@@ -9,7 +9,8 @@ from fastapi.responses import JSONResponse
 
 from ..live.api import client_ip
 from ..live.manager import LiveError, RunManager
-from .service import AnalyzeRequest, PlaygroundConfig, PlaygroundError, PlaygroundService, ScenarioRequest, SweepRequest
+from .interpret import InterpretError, interpret
+from .service import AnalyzeRequest, InterpretRequest, PlaygroundConfig, PlaygroundError, PlaygroundService, ScenarioRequest, SweepRequest
 from .spec import build_spec
 
 MIN_FAILURES_TO_ANALYZE = 5
@@ -29,6 +30,9 @@ def make_router(svc: PlaygroundService, live: RunManager | None) -> APIRouter:
         s["analyze_available"] = bool(live and live.cfg.enabled)
         s["analyze_access_code_required"] = bool(live and live.cfg.access_code)
         s["analyze_est_usd"] = svc.cfg.analyze_usd_est
+        s["interpret_available"] = bool(live and live.cfg.enabled)
+        s["interpret_max_chars"] = 300
+        s["interpret_est_usd"] = svc.cfg.interpret_usd_est
         return s
 
     @r.post("/api/sim/scenario")
@@ -44,6 +48,20 @@ def make_router(svc: PlaygroundService, live: RunManager | None) -> APIRouter:
             return svc.sweep(body, client_ip(request, live.cfg if live else _NoProxy))
         except PlaygroundError as e:
             return _err(e)
+
+    @r.post("/api/sim/interpret")
+    def interpret_text(body: InterpretRequest, request: Request):
+        """Plain English -> proposed scenario parameters (a model interpretation, never run here). Spends a little credit, so it is guarded like analyze."""
+        if live is None or not live.cfg.enabled:
+            return JSONResponse({"error": "disabled", "message": "Plain-English input needs the live backend to be enabled (it calls a model)."}, status_code=503)
+        if live.cfg.access_code and not secrets.compare_digest((body.access_code or "").encode(), live.cfg.access_code.encode()):
+            return JSONResponse({"error": "access_code", "message": "A valid access code is required for plain-English input."}, status_code=401)
+        try:
+            svc._rate(client_ip(request, live.cfg), "interpret", svc.cfg.rate_interpret_per_hour, 3600)
+            live.reserve_spend(svc.cfg.interpret_usd_est)
+        except (PlaygroundError, LiveError) as e:
+            return _err(e)
+        return _run_interpret(svc, live, body.text)
 
     @r.post("/api/sim/analyze")
     def analyze_sweep(body: AnalyzeRequest, request: Request):
@@ -68,6 +86,45 @@ def make_router(svc: PlaygroundService, live: RunManager | None) -> APIRouter:
 
 class _NoProxy:
     trust_proxy = False
+
+
+_PRICING: dict = {"t": 0.0, "v": None}
+
+
+def _pricing(settings):
+    from ..pipeline import fetch_pricing  # the pipeline's own helper, imported read-only
+    import time
+    if time.time() - _PRICING["t"] > 3600 or _PRICING["v"] is None:
+        _PRICING["v"], _PRICING["t"] = fetch_pricing(settings, {m for m in (settings.model_fast, settings.model_fallback) if m}), time.time()
+    return _PRICING["v"]
+
+
+def _run_interpret(svc: PlaygroundService, live: RunManager, text: str, client_factory=None):
+    from ..core.config import load_settings
+    from ..live.scrub import scrub_obj
+    from ..llm.client import LLMClient
+    from ..pipeline import estimate_cost
+    settings = load_settings()
+    if not (settings.api_key and settings.model_fast):
+        live.adjust_spend(-svc.cfg.interpret_usd_est)
+        return JSONResponse({"error": "not_configured", "message": "The server has no model configured for plain-English input."}, status_code=503)
+    client = (client_factory or LLMClient)(settings)
+
+    def settle() -> float | None:
+        est = estimate_cost(client.records, _pricing(settings))
+        live.adjust_spend((est if est is not None else svc.cfg.interpret_usd_est) - svc.cfg.interpret_usd_est)
+        return est
+    try:
+        res = interpret(client, text, settings.model_fast, settings.model_fallback)
+    except InterpretError as e:
+        if e.status in (422,):  # rejected before any model call
+            live.adjust_spend(-svc.cfg.interpret_usd_est)
+            return JSONResponse({"error": e.code, "message": e.message}, status_code=e.status)
+        est = settle()
+        return JSONResponse({"error": e.code, "message": e.message + (f" (about ${est:.4f} was spent on the attempts)" if est is not None else "")}, status_code=e.status)
+    res["estimated_cost_usd"] = settle()
+    res["cost_note"] = "ESTIMATE from token counts and API prices; billing is not checked."
+    return scrub_obj(res)
 
 
 def _run_analysis(svc: PlaygroundService, live: RunManager, sw: dict):

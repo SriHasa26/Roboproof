@@ -18,6 +18,7 @@ type Metrics = Rate & { passes: number; failure_reasons: Record<string, number> 
 type Rows = { ids: string[]; ok: number[]; reason: (string | null)[]; default_ok: number[]; default_reason: (string | null)[]; seed: number[] } & Record<string, any>
 type SweepResp = { sweep_id: string; n: number; seed: number; policy: Vals; metrics: Metrics; default_metrics: Metrics; evidence_bins: { axis: string; range: number[]; n: number; n_fail: number; fail_rate: number }[]; rows: Rows; wall_clock_s: number }
 type Example = ScenResp & { label: string; why: string }
+type Interp = { unsupported: boolean; reason: string | null; parameters: Record<string, { value: number; reason: string; clamped: boolean; rounded: boolean }> | null; model?: string; latency_s?: number; estimated_cost_usd?: number | null; label?: string }
 type Analysis = { hypotheses: Hyp[]; model: string; estimated_cost_usd: number | null; label: string; cost_note: string }
 
 const AXIS_KEYS = ['mass_kg', 'friction', 'size_m', 'pos_offset_x', 'pos_offset_y', 'sensor_noise_m', 'gripper_delay_steps']
@@ -138,6 +139,10 @@ export default function Playground() {
   const [analysis, setAnalysis] = useState<Analysis | null>(null)
   const [confirm, setConfirm] = useState(false)
   const [code, setCode] = useState('')
+  const [desc, setDesc] = useState('')
+  const [interp, setInterp] = useState<Interp | null>(null)
+  const [interpBusy, setInterpBusy] = useState(false)
+  const [interpErr, setInterpErr] = useState<PgError | null>(null)
 
   useEffect(() => { fetchSpec().then(setSpec) }, [])
   useEffect(() => {
@@ -176,6 +181,14 @@ export default function Playground() {
     setBusy(false)
     if (r.ok) setAnalysis(r.data); else setErr(r.error)
   }
+  const doInterpret = async () => {
+    setInterpBusy(true); setInterpErr(null); setInterp(null)
+    const r = await post<Interp>('/api/sim/interpret', { text: desc, ...(code ? { access_code: code } : {}) }, 90000)
+    setInterpBusy(false)
+    if (!r.ok) { setInterpErr(r.error); return }
+    setInterp(r.data)
+    if (!r.data.unsupported && r.data.parameters) setScn(Object.fromEntries(Object.entries(r.data.parameters).map(([k, g]) => [k, g.value])))
+  }
   const pick = (i: number) => {
     if (!sweep || !spec) return
     const s: Vals = Object.fromEntries(AXIS_KEYS.map((k) => [k, sweep.rows[k][i]]))
@@ -206,6 +219,35 @@ export default function Playground() {
             </section>
           ))}
         </div>
+      )}
+
+      {online && spec && spec.interpret_available && tab === 'single' && (
+        <section className="glass mt-6 p-5" aria-label="Describe the situation in plain English">
+          <h2 className="text-xl">Describe the situation in plain English</h2>
+          <p className="mt-1 text-sm text-dim">A Nemotron model proposes values for the scenario sliders. It only proposes: nothing runs until you press Run simulation, and the simulator decides the outcome.</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {['A 700 g cube on a wet tray with a noisy camera', 'A tiny cube on a dry rubber mat and a laggy gripper', 'A heavy cube that sits a bit off-centre, clean sensor'].map((t) => <button key={t} className="chip hover:!border-amber/60 hover:!text-text" onClick={() => setDesc(t)}>{t}</button>)}
+          </div>
+          <textarea value={desc} maxLength={spec.interpret_max_chars ?? 300} onChange={(e) => setDesc(e.target.value)} rows={2} placeholder="e.g. a 700 g cube on a wet tray with a noisy camera" aria-label="Situation description"
+            className="mt-3 block w-full rounded-lg border border-white/15 bg-black/40 px-3 py-2 text-sm outline-none focus:border-amber" />
+          <div className="mt-2 flex flex-wrap items-center gap-3">
+            {spec.analyze_access_code_required && <input type="password" value={code} onChange={(e) => setCode(e.target.value)} placeholder="access code" aria-label="Access code" className="w-36 rounded-lg border border-white/15 bg-black/40 px-3 py-1.5 font-mono text-xs outline-none focus:border-amber" />}
+            <button className="btn btn-ghost !py-2" disabled={interpBusy || !desc.trim()} onClick={doInterpret}>{interpBusy ? 'Interpreting...' : 'Interpret'}</button>
+            <span className="font-mono text-[11px] text-dim">{desc.length}/{spec.interpret_max_chars ?? 300} | about {usd(spec.interpret_est_usd)} per call (estimate)</span>
+          </div>
+          {interpErr && <div className="mt-3"><Notice tone="err" title={errTitle[interpErr.kind]}>{interpErr.message}</Notice></div>}
+          {interp?.unsupported && <div className="mt-3"><Notice tone="warn" title="Not something the simulator covers">The simulator covers only the cube pick-and-place task. {interp.reason}</Notice></div>}
+          {interp && !interp.unsupported && interp.parameters && (
+            <div className="mt-4">
+              <Notice tone="warn" title="Model interpretation, unverified">Edit before running. The sliders below have been filled in. {interp.model ? `Model: ${interp.model.split('/').pop()}, ${interp.latency_s}s, estimated cost ${usd(interp.estimated_cost_usd)}.` : ''}</Notice>
+              <ul className="mt-3 grid gap-x-6 gap-y-1.5 text-sm sm:grid-cols-2">
+                {spec.scenario.map((p) => { const g = interp.parameters![p.name]; return g ? (
+                  <li key={p.name} className="flex gap-2"><span className="w-36 shrink-0 font-medium">{p.label}</span><span className="font-mono text-xs tick">{fmtN(g.value)} {p.unit}</span>
+                    <span className="min-w-0 text-xs text-dim">{g.reason}{g.clamped ? ' (clamped to the allowed range)' : ''}{g.rounded ? ' (rounded to a whole number)' : ''}</span></li>) : null })}
+              </ul>
+            </div>
+          )}
+        </section>
       )}
 
       {online && spec && (

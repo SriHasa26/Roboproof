@@ -5,6 +5,7 @@ export type Preset = { id: string; label: string; scenario: Record<string, numbe
 export type Spec = {
   scenario: ParamSpec[]; policy: ParamSpec[]; presets: Preset[]; max_sweep_n: number; seed: { min: number; max: number; default: number }
   task: string; label: string; limits: string; enabled: boolean; analyze_available: boolean; analyze_access_code_required: boolean; analyze_est_usd: number
+  interpret_available?: boolean; interpret_max_chars?: number; interpret_est_usd?: number
 }
 export type PgError = { kind: 'invalid' | 'busy' | 'rate' | 'disabled' | 'timeout' | 'auth' | 'network' | 'other'; message: string }
 
