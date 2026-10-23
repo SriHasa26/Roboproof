@@ -53,14 +53,14 @@ Not done:
 
 ## Manual steps for you
 
-Create the public repo and push (replace `YOUR_USER`; needs the `gh` CLI logged in, or create the repo on github.com and use the last two lines):
+Create the public repo and push (the repo is already created and empty: use the last two lines):
 
 ```bash
 cd "C:/Users/Yagna Sri Hasa Telu/OneDrive/Desktop/react projects/nvdia"
 git branch -M main
 gh repo create roboproof --public --source=. --remote=origin --push
 # without gh: create an empty public repo "roboproof" on github.com, then
-#   git remote add origin https://github.com/YOUR_USER/roboproof.git
+#   git remote add origin https://github.com/SriHasa26/Roboproof.git
 #   git push -u origin main --tags
 ```
 

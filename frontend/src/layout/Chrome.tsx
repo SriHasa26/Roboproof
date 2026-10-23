@@ -74,7 +74,7 @@ export function Footer() {
         <div className="text-sm">
           <div className="eyebrow mb-3">Project</div>
           <ul className="space-y-2 text-dim">
-            <li>Source repository: link added at publication</li>
+            <li>Source repository: <a className="underline decoration-dotted underline-offset-4 hover:text-text" href="https://github.com/SriHasa26/Roboproof" target="_blank" rel="noopener noreferrer">github.com/SriHasa26/Roboproof</a></li>
             <li>License: MIT</li>
             <li>
               <label className="flex cursor-pointer items-center gap-2">
