@@ -47,3 +47,7 @@ Notes
 | 3. LIVE / RECORDED / REPLAY chips, navbar backend badge, Re-run in Playground (rerun endpoint) | DONE |
 | 4. Evidence docs (README table, DEVELOPMENT_LOG.md generated from git, FEEDBACK additions, About box) | DONE |
 | 5. QA (build, screenshots, 347 tests in the image, secrets, frozen files unchanged) | DONE |
+
+
+## Final polish pass
+- README lists what cannot be re-verified in the verifier's own words; `scripts/tamper_demo.py` (temp copy, 7 mismatches caught, repo untouched); two real recorded live replays (VERIFIED 07:29 UTC run, FAILED 13:00 UTC run) with a selector on /live; git facts build snapshot (`docs/evidence/git_facts_snapshot.json`) so the container's integrity rows are no longer 'cannot check'; Verify tables stacked on phones; recorded_runs/demo_live ignored.

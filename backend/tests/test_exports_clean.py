@@ -44,7 +44,7 @@ def test_call_logs_carry_replies_but_never_prompts():
         d = json.loads(p.read_text(encoding="utf-8"))
         assert "messages" not in json.dumps(d) and all("messages" not in r for r in d.get("replies", []))
         assert d["totals"]["calls"] == len(d["calls"])
-    live = DATA / "live_replay" / "calls.json"
+    live = DATA / "live_replay" / "failed" / "calls.json"
     if live.exists():
         d = json.loads(live.read_text(encoding="utf-8"))
         assert d["response_metadata_captured"] is True and all((c["response_id"] or "").startswith("chatcmpl-") for c in d["calls"])

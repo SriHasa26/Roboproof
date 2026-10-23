@@ -7,5 +7,7 @@
  "master_seed": 14304,
  "n_events": 27,
  "run_id": "live_20261023t130052_3b22",
- "note": "Recorded from a real live rehearsal run through the API (not official). Cost is an estimate."
+ "note": "Recorded from a real live rehearsal run through the API (not official). Cost is an estimate.",
+ "key": "failed",
+ "has_calls": true
 }

@@ -216,6 +216,60 @@ class Git:
         return self(" rev-parse".strip(), "--git-dir")[0] == 0
 
 
+SNAPSHOT_REL = "docs/evidence/git_facts_snapshot.json"
+
+
+class SnapshotGit:
+    """Answers the few git questions the integrity checks ask from a committed snapshot of git's own answers, for environments with no .git
+    (the container image). It is evidence taken from git at export time, not a live check, and the rows say so."""
+
+    available = True
+
+    def __init__(self, facts: dict):
+        self.f = facts
+
+    @classmethod
+    def load(cls, root: Path):
+        p = root / SNAPSHOT_REL
+        return cls(jl(p)) if p.exists() else None
+
+    def __call__(self, *a: str) -> tuple[int, str]:
+        f = self.f
+        try:
+            if a[0] == "log":
+                return (0, f["commit_times"][a[-1]]) if a[-1] in f["commit_times"] else (1, "")
+            if a[0] == "merge-base":
+                return (0 if f["ancestry"][f"{a[2]}>{a[3]}"] else 1, "")
+            if a[0] == "diff":
+                return (0 if f["protocol_unchanged"][f"{a[2]}>{a[3]}"] else 1, "")
+            if a[0] == "show":
+                c = a[1].split(":")[0]
+                return (0, f["frozen_hash_files"][c]) if c in f["frozen_hash_files"] else (1, "")
+            if a[0] == "rev-parse":
+                t = a[1].split("^")[0]
+                return (0, f["tags"][t]) if t in f["tags"] else (1, "")
+        except KeyError:
+            pass
+        return 1, ""
+
+
+def export_git_facts(root: Path, run_dirs: list[Path]) -> dict:
+    """Ask real git the exact questions integrity_rows asks, for the commits the runs recorded."""
+    git = Git(root)
+    sums = [jl(d / "summary.json") for d in run_dirs]
+    prov = sums[0]["provenance"]
+    pc = prov["protocol_commit"]
+    out: dict = {"exported_utc": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"), "head": git("rev-parse", "HEAD")[1], "commit_times": {}, "ancestry": {}, "protocol_unchanged": {}, "frozen_hash_files": {}, "tags": {}}
+    out["commit_times"][pc] = git("log", "-1", "--format=%cI", pc)[1]
+    for s in sums:
+        c = s["provenance"]["commit"]
+        out["ancestry"][f"{pc}>{c}"] = git("merge-base", "--is-ancestor", pc, c)[0] == 0
+        out["protocol_unchanged"][f"{pc}>{c}"] = git("diff", "--quiet", pc, c, "--", "docs/OFFICIAL_PROTOCOL.md")[0] == 0
+        out["frozen_hash_files"][c] = git("show", f"{c}:backend/app/core/FROZEN_PIPELINE_HASH.txt")[1]
+    out["tags"][prov["tag"]] = git("rev-parse", f"{prov['tag']}^{{commit}}")[1]
+    return out
+
+
 def _utc(ts: str) -> datetime:
     """Run timestamps are written by the container (UTC); the ledger's CURRENT_TIMESTAMP is UTC too, which corroborates it."""
     return datetime.strptime(ts, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
@@ -256,6 +310,12 @@ def integrity_rows(root: Path, run_dirs: list[Path], ledger_rows: list[dict] | N
     R(cmp("integrity", "no_study_overlap", "no rehearsal or study run used an official held-out block", "none", "none" if not clash else f"clash: {clash}"))
     # protocol before the first official run
     git = git or Git(root)
+    snap_note = ""
+    if not git.available:
+        snap = SnapshotGit.load(root)
+        if snap:
+            git, snap_note = snap, f"from build snapshot of git facts (exported {snap.f.get('exported_utc', '?')} UTC from the repository, not a live git check)"
+    n_before = len(rows)
     if not git.available:
         for k, n in (("protocol_time", "protocol file committed before the first official run started"), ("ancestry", "each official run's commit descends from the protocol commit"), ("freeze", "pipeline hash at the run's commit equals the hash recorded in the run")):
             R(unverifiable("integrity", k, n, "no git history in this environment"))
@@ -281,6 +341,9 @@ def integrity_rows(root: Path, run_dirs: list[Path], ledger_rows: list[dict] | N
         R(cmp("integrity", f"freeze_{s['run_id']}", f"{s['run_id']}: pipeline hash recorded in the run equals the hash committed at that commit", s["provenance"]["pipeline_hash"], h or "commit not found"))
     rc, tag_commit = git("rev-parse", f"{prov['tag']}^{{commit}}")
     R(cmp("integrity", "tag", f"git tag {prov['tag']} points at the commit recorded in the runs", prov["tag_commit"][:10], tag_commit[:10] if rc == 0 else "tag not found"))
+    if snap_note:
+        for r in rows[n_before:]:
+            r.note = f"{r.note} | {snap_note}" if r.note else snap_note
     return rows
 
 

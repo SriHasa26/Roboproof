@@ -1,0 +1,19 @@
+{
+ "exported_utc": "2026-10-23 16:28:30",
+ "head": "5916c8293751dd69adcef5242131c6e084226161",
+ "commit_times": {
+  "8171c7d5bff60a25307cb0a5bc1320b405cad81b": "2026-10-22T19:13:55+05:30"
+ },
+ "ancestry": {
+  "8171c7d5bff60a25307cb0a5bc1320b405cad81b>bac5f38d45eaa3ab7d0cceb4f05923927b10c627": true
+ },
+ "protocol_unchanged": {
+  "8171c7d5bff60a25307cb0a5bc1320b405cad81b>bac5f38d45eaa3ab7d0cceb4f05923927b10c627": true
+ },
+ "frozen_hash_files": {
+  "bac5f38d45eaa3ab7d0cceb4f05923927b10c627": "pipeline_hash f64b55a93c84c6ef69a050c833bd86f25c1568ef9b745a0c182d972c64d608a8\nbackend/app/analysis/analyst.py 6987dd91e530890aaacbbee36a3d2a382af503fd07b6e2fbc7b163cc31c90065\nbackend/app/analysis/evidence.py 314f7c12b5f245abea84fbcf680b388cc60f99b4c58f9949e7c588214df9edd5\nbackend/app/analysis/fixer.py 171f91b098eaa28ca8fcfa71426bcaa093bdf7fed1829c4ef0687bcf783642f7\nbackend/app/analysis/models.py ad15ec2f65661e05814616d9d15568c9dbd3f639292fdad4fe2c80a6add765ba\nbackend/app/core/gate_config.py 9f2954e44e0681e2f691636ab0f8025fee4a054439f0c6948ccab3503c7ca472\nbackend/app/core/provenance.py 254aafce6ef3095e46449d3188ef1214205c8ee66ce5712d5722f4a87710744b\nbackend/app/core/schemas.py c972ed06c32d86348f47316d407db63364c0a8ad2732d61b2a16a7033e482730\nbackend/app/core/seeds.py 94091ee0e5968224556eef4de76a815d5149cdc2fb6610f8793b260046747cbd\nbackend/app/core/stats.py 20eeac9d1cfc5d22bffbe426b959fbcb984291b38bd3cadb6367f738178da88b\nbackend/app/gate/gate.py 410f2c1caba928e3e49cb292c2b9617f4c6cc28c77acbfeb2890c2a01cb5d19c\nbackend/app/gate/verification.py 715ca34a15ea7dc4337e511970bc9df8aa7ea96661ee213b15bc35fca5b6e667\nbackend/app/llm/client.py e2c30876cbb12fac379d956cdbfcd966600847b29212fa53e2998e0d29b565ee\nbackend/app/llm/controls.py e8c5b351cd34eb5cdc6b6d6939cee6a6bc96c84757327bd368c94d8db95f38ad\nbackend/app/pipeline.py a4d8a786c7adae71e010dce2eda4fc7225f93eb098dcfbdc186553a93c37d22b\nbackend/app/runner/base.py 79800c8d4e060ff8fcb33cd5d8b54c2140920795038ae638a95db99cd6d6c466\nbackend/app/runner/local.py 0b6c0a34ab7c4d7a88cb39d927aa53eac7d76e5392992ff0658889c03986fb46\nbackend/app/scenarios/generator.py 6bb0e66e4f3514fda86ece195eeed1433ddc79dbfefd13da96c177977d3e2956\nbackend/app/scenarios/proposal.py 4b68063c04a52f549b41ac7db372acc5e779e6bdf9a45e16f4135bd46f24e7cd\nbackend/app/scenarios/sweep.py 80b6d0ae336824328b3e067b71f446a121ce2e264efda0f6b1506cc366b3cf92\nbackend/app/store/ledger.py 37e3a5efdcbd70e6c95d48c32f183b9ebe7d5025ef087d7e37be3948b2b3846b\ndocs/OFFICIAL_PROTOCOL.md 8590f7d4954419d0ff50dace0119fa8890f475413a2ba5b3d0fe485a1022a312"
+ },
+ "tags": {
+  "pipeline-frozen-v2": "f18ed6b8f95325f11e548f28881a6563334567c1"
+ }
+}

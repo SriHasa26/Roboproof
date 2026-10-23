@@ -23,7 +23,18 @@ function Table({ title, rows }: { title: string; rows: Row[] }) {
   return (
     <div className="glass overflow-x-auto">
       <h3 className="px-4 pt-4 font-display">{title}</h3>
-      <table className="mt-2 w-full text-left text-xs sm:min-w-[720px] [&_td]:break-words">
+      <ul className="mt-2 divide-y divide-white/10 px-4 pb-2 sm:hidden">
+        {rows.map((r, i) => (
+          <li key={r.id + i} className="py-2.5 text-xs">
+            <div className="flex items-start justify-between gap-3"><span className="leading-snug">{r.name}</span><Mark s={r.status} /></div>
+            {r.note && <div className="mt-0.5 text-[11px] text-dim">{r.note}</div>}
+            <dl className="mt-1.5 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 font-mono">
+              <dt className="text-dim">stored</dt><dd className="break-words">{r.stored || '-'}</dd>
+              <dt className="text-dim">now</dt><dd className="break-words">{r.recomputed || '-'}</dd>
+            </dl>
+          </li>))}
+      </ul>
+      <table className="mt-2 hidden w-full min-w-[720px] text-left text-xs sm:table [&_td]:break-words">
         <thead className="font-mono text-[10px] uppercase tracking-wider text-dim"><tr><th className="px-4 py-2">Check</th><th>Stored</th><th>Recomputed now</th><th /></tr></thead>
         <tbody>
           {rows.map((r, i) => (

@@ -60,10 +60,17 @@ def main() -> int:
     ap.add_argument("--timeout", type=float, default=120.0, help="per-shard timeout (s)")
     ap.add_argument("--json", help="write the full report to this file")
     ap.add_argument("--export-ledger-snapshot", action="store_true")
+    ap.add_argument("--export-git-snapshot", action="store_true", help="write docs/evidence/git_facts_snapshot.json (run before building the image)")
     ap.add_argument("--quiet", action="store_true", help="print only mismatches and the summary table")
     a = ap.parse_args()
     if a.export_ledger_snapshot:
         export_snapshot()
+        return 0
+    if a.export_git_snapshot:
+        from app.verify.core import SNAPSHOT_REL, export_git_facts
+        dirs = sorted(d for d in (ROOT / "recorded_runs" / "official_001").glob("official_*") if (d / "summary.json").exists())
+        (ROOT / SNAPSHOT_REL).write_text(json.dumps(export_git_facts(ROOT, dirs), indent=1) + chr(10), encoding="utf-8")
+        print(f"wrote {SNAPSHOT_REL}")
         return 0
     res = verify_all(ROOT, resim=not a.no_resim, all_attempts=a.all_attempts, timeout_s=a.timeout, only=a.run)
     for rid, rows in res["runs"].items():

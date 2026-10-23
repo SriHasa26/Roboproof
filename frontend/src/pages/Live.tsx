@@ -7,16 +7,16 @@ import { ApiError, LiveEvent, LiveStatus, cancelRun, fetchStatus, openStream, st
 import { derive } from '../live/derive'
 import { Candidates, Confirm, GateLights, Terminal, Timeline } from '../live/parts'
 
-type Source = { kind: 'live'; id: string; token: string | null } | { kind: 'replay' }
-type ReplayMeta = { date: string; verdict: string | null; duration_s: number; estimated_cost_usd: number | null; master_seed: number | null; n_events: number; note?: string }
+type Source = { kind: 'live'; id: string; token: string | null } | { kind: 'replay'; key: string }
+type ReplayMeta = { key: string; run_id: string; has_calls: boolean; date: string; verdict: string | null; duration_s: number; estimated_cost_usd: number | null; master_seed: number | null; n_events: number; note?: string }
 const KEY = 'roboproof.live'
 
 const fmtS = (s: number) => (s >= 60 ? `${Math.floor(s / 60)} min ${Math.round(s % 60)} s` : `${s.toFixed(0)} s`)
 
-function useReplayMeta() {
-  const [meta, set] = useState<ReplayMeta | null | undefined>(undefined)
-  useEffect(() => { load<ReplayMeta>('live_replay/meta.json').then(set).catch(() => set(null)) }, [])
-  return meta
+function useReplays() {
+  const [list, set] = useState<ReplayMeta[] | null | undefined>(undefined)
+  useEffect(() => { load<ReplayMeta[]>('live_replay/index.json').then((l) => set(Array.isArray(l) && l.length ? l : null)).catch(() => set(null)) }, [])
+  return list
 }
 
 function errText(e: ApiError): [string, string] {
@@ -35,7 +35,7 @@ export default function Live() {
   usePageTitle('Live console')
   const toast = useToast()
   const off = useData<Summary>('official.json')
-  const meta = useReplayMeta()
+  const replays = useReplays()
   const [probe, setProbe] = useState<'checking' | 'online' | 'offline'>('checking')
   const [status, setStatus] = useState<LiveStatus | null>(null)
   const [source, setSource] = useState<Source | null>(null)
@@ -80,7 +80,7 @@ export default function Live() {
     if (source?.kind !== 'replay') return
     setEvents([]); setLost(false)
     let stop = false, timer: ReturnType<typeof setTimeout>
-    load<LiveEvent[]>('live_replay/events.json').then((all) => {
+    load<LiveEvent[]>(`live_replay/${source.key}/events.json`).then((all) => {
       const t = (i: number) => Date.parse(all[i].time)
       const step = (i: number) => {
         if (stop || i >= all.length) return
@@ -120,7 +120,12 @@ export default function Live() {
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `roboproof_${source?.kind === 'live' ? source.id : 'replay'}.json`; a.click(); URL.revokeObjectURL(a.href)
   }
 
-  const replayBtn = meta ? <button className="btn btn-ghost" onClick={() => { setSource({ kind: 'replay' }); setReplayKey((k) => k + 1) }}>Replay a recorded live run</button> : null
+  const meta = source?.kind === 'replay' ? replays?.find((r) => r.key === source.key) : undefined
+  const replayBtn = replays ? (
+    <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Recorded live runs">
+      {replays.map((r) => <button key={r.key} className="btn btn-ghost" onClick={() => { setSource({ kind: 'replay', key: r.key }); setReplayKey((k) => k + 1) }}>Replay: {r.verdict ?? 'run'}, {r.date}</button>)}
+    </div>
+  ) : null
 
   return (
     <div>
@@ -184,7 +189,7 @@ export default function Live() {
               <li>The gate checks G1 to G6. The pipeline writes these together at the end of the run, so they appear together.</li>
               <li>The verdict and the before and after metrics.</li>
             </ol>
-            {meta && probe === 'online' && <p className="mt-4 text-xs text-dim">A recording of a real live run is also available to replay.</p>}
+            {replays && probe === 'online' && <p className="mt-4 text-xs text-dim">Recordings of real live runs ({replays.map((r) => `${r.verdict} ${r.date}`).join(' and ')}) are also available to replay.</p>}
           </div>
         </div>
       )}
@@ -200,8 +205,8 @@ export default function Live() {
         <div className="mt-8 space-y-6">
           {source.kind === 'replay' ? (
             <div role="note" className="rounded-xl border-2 border-amber bg-amber/10 p-4">
-              <div className="mb-2"><SourceChip kind="replay" detail={meta ? `recording of a real live run, ${meta.date}` : 'recording of a real live run'} /></div>
-              <div className="font-display text-lg font-bold text-amber">Recorded replay of a real live rehearsal run{meta ? ` (${meta.date})` : ''}</div>
+              <div className="mb-2"><SourceChip kind="replay" detail={meta ? `recording of a real live run, ${meta.date}, verdict ${meta.verdict}` : 'recording of a real live run'} /></div>
+              <div className="font-display text-lg font-bold text-amber">Recorded replay of a real live rehearsal run{meta ? ` (${meta.date}, verdict ${meta.verdict})` : ''}</div>
               <p className="mt-1 text-sm text-text/90">This is not live. These events were recorded from a real run and are played back{speed > 1 ? ` at ${speed}x, with waits over 2.5 s shortened` : ' in real time'}. Nothing is being computed now.</p>
               <div className="mt-3 flex flex-wrap items-center gap-2 font-mono text-xs">speed
                 {[1, 4, 8, 16].map((s) => <button key={s} onClick={() => setSpeed(s)} className={`rounded-full border px-3 py-1 ${speed === s ? 'border-amber bg-amber text-ink' : 'border-white/20 hover:border-amber'}`} aria-pressed={speed === s}>{s}x</button>)}
@@ -252,7 +257,7 @@ export default function Live() {
                 </div>
               )}
               <div className="mt-6 flex flex-wrap gap-3">
-                {view.verdict && <Link to={source.kind === 'live' ? `/live/report/${source.id}` : '/live/report/replay'} className="btn btn-primary">Open full report</Link>}
+                {view.verdict && <Link to={source.kind === 'live' ? `/live/report/${source.id}` : `/live/report/replay-${source.key}`} className="btn btn-primary">Open full report</Link>}
                 <button className="btn btn-ghost" onClick={download}>Download JSON</button>
                 <button className="btn btn-ghost" onClick={reset}>Back to the console</button>
               </div>

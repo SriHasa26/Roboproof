@@ -21,3 +21,6 @@ backend/data/
 
 # live rehearsal runs (artifacts, events, quota ledger)
 live_runs*/
+
+# local output of the CLI demo command in SUBMISSION.md (a rehearsal, regenerable)
+recorded_runs/demo_live/

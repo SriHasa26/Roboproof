@@ -64,7 +64,7 @@ Factual notes from building RoboProof, each dated and tied to evidence in this r
 
 ## Observed while building the live console, playground and verifier (2026-10-23)
 
-Evidence for each line: `frontend/public/data/live_replay/calls.json` (the recorded live run), the server logs of the runs, and the test output. Numbers are single observations, not benchmarks.
+Evidence for each line: `frontend/public/data/live_replay/failed/calls.json` (the recorded live run), the server logs of the runs, and the test output. Numbers are single observations, not benchmarks.
 - **Response metadata is returned and usable.** Every chat completion on Token Factory returned a response `id` (format `chatcmpl-...`), the model id as served, `finish_reason: stop`, and the reply in `message.content` (not a separate reasoning field) for the three calls of the recorded live run (`live_20261023t130052_3b22`). We now record these from outside the pipeline by wrapping the OpenAI SDK call.
 - **Latency varies a lot for the same call.** The scenario-generation call on the fast Nano model (835 prompt tokens, 287 completion tokens) took 51.6 s in that live run. The same kind of call took 2.6 s to 5.5 s in other runs on 2026-10-22 and 2026-10-23 (`recorded_runs/official_001/*/summary.json`, the earlier live run). We have no explanation; we did not investigate.
 - **Plain-English interpretation with the fast model (thinking off)** took 0.9 s to 6.8 s per call in 5 calls on 2026-10-23 (observed through the API and the UI; the figure is the call time reported by the service), at an estimated cost of about $0.0001 per call (tokens x the prices the API reports; billing was not checked).

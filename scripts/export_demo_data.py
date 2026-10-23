@@ -230,13 +230,14 @@ def main():
     a = ap.parse_args()
     keep = {}  # live_replay/ is recorded by a separate step (a real live run) and must survive a re-export
     if (OUT / "live_replay").exists():
-        keep = {f.name: f.read_bytes() for f in (OUT / "live_replay").iterdir() if f.is_file()}
+        keep = {f.relative_to(OUT / "live_replay"): f.read_bytes() for f in (OUT / "live_replay").rglob("*") if f.is_file()}
     if OUT.exists():
         shutil.rmtree(OUT)
     OUT.mkdir(parents=True)
     if keep:
         (OUT / "live_replay").mkdir()
         for name, data in keep.items():
+            (OUT / "live_replay" / name).parent.mkdir(parents=True, exist_ok=True)
             (OUT / "live_replay" / name).write_bytes(data)
     runs = []
     off_root = REC / "official_001"

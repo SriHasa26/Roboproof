@@ -44,7 +44,8 @@ export default function ModelCalls({ src }: { src: CallsSrc }) {
           <p className="mb-3 font-mono text-xs text-dim tick">
             {b.totals.calls} calls | {b.totals.prompt_tokens.toLocaleString()} prompt + {b.totals.completion_tokens.toLocaleString()} completion tokens | estimated cost {usd(b.totals.estimated_cost_usd)} (estimate, billing not checked){b.in_progress ? ' | run in progress' : ''}
           </p>
-          <div className="glass overflow-x-auto">
+          <div className="glass overflow-x-auto" tabIndex={0} role="region" aria-label="Model call table, scrolls sideways">
+            <p className="sticky left-0 px-3 pt-2 text-[11px] text-dim lg:hidden">Swipe sideways for all columns: started time, finish reason, channel and the provider response id.</p>
             <table className="w-full min-w-[1100px] text-left text-xs [&_td]:px-2 [&_th]:px-2 [&_th]:py-2 [&_td]:py-2">
               <thead className="font-mono text-[10px] uppercase tracking-wider text-dim"><tr><th className="p-2.5">#</th><th>Stage</th><th>Role</th><th>Model (as returned by the API)</th><th>Started (UTC)</th><th>Latency</th><th>Tokens in / out</th><th>Finish</th><th>Channel</th><th>Cached</th><th>Retry</th><th>Provider response id</th></tr></thead>
               <tbody>

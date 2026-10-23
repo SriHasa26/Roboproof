@@ -1,0 +1,20 @@
+[
+ {
+  "key": "verified",
+  "run_id": "live_20261023t072929_6bea",
+  "date": "2026-10-23",
+  "verdict": "VERIFIED",
+  "duration_s": 153.5,
+  "estimated_cost_usd": 0.03109,
+  "has_calls": false
+ },
+ {
+  "key": "failed",
+  "run_id": "live_20261023t130052_3b22",
+  "date": "2026-10-23",
+  "verdict": "FAILED",
+  "duration_s": 158.6,
+  "estimated_cost_usd": 0.03367,
+  "has_calls": true
+ }
+]
