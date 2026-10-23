@@ -10,7 +10,7 @@ function Head({ kicker, title, sub }: { kicker: string; title: ReactNode; sub?: 
   return (
     <Reveal className="mb-10 max-w-3xl">
       <div className="eyebrow mb-3">{kicker}</div>
-      <h2 className="font-display text-4xl font-extrabold leading-[1.05] md:text-5xl">{title}</h2>
+      <h2 className="font-display">{title}</h2>
       {sub && <p className="mt-4 text-lg leading-relaxed text-dim">{sub}</p>}
     </Reveal>
   )
@@ -22,7 +22,7 @@ function Hero() {
       <div>
         <Reveal><div className="eyebrow mb-5">Proof-of-robustness for robot policies</div></Reveal>
         <Reveal delay={0.05}>
-          <h1 className="font-display text-5xl font-extrabold leading-[1.02] sm:text-6xl lg:text-7xl">Robot fixes <span className="text-grad">you can trust.</span></h1>
+          <h1 className="h-hero">Robot fixes <span className="text-grad">you can trust.</span></h1>
         </Reveal>
         <Reveal delay={0.12}>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-dim">
@@ -65,7 +65,7 @@ function Problem() {
           <Reveal key={t} delay={i * 0.1}>
             <div className="glass glass-hover h-full p-6">
               <div className="mb-4">{icon}</div>
-              <h3 className="font-display text-xl font-bold">{t}</h3>
+              <h3 className="font-display">{t}</h3>
               <p className="mt-2 leading-relaxed text-dim">{d}</p>
             </div>
           </Reveal>
@@ -90,7 +90,7 @@ function StepCard({ s, i, onActive }: { s: (typeof STEPS)[number]; i: number; on
   return (
     <div ref={ref} className="min-h-[200px] md:min-h-[260px]">
       <div className="glass p-6 md:p-8">
-        <div className="flex items-center gap-3"><span className="font-mono text-sm text-amber">{s.n}</span><h3 className="font-display text-3xl font-extrabold">{s.name}</h3></div>
+        <div className="flex items-center gap-3"><span className="font-mono text-sm text-amber">{s.n}</span><h3 className="font-display">{s.name}</h3></div>
         <div className="mt-1 font-mono text-xs text-phos">{s.who}</div>
         <p className="mt-4 text-lg leading-relaxed text-dim">{s.text}</p>
       </div>
@@ -178,7 +178,7 @@ function Results({ off, studies }: { off: Summary | null; studies: Study[] | nul
             <Reveal>
               <div className="glass h-full p-7 shadow-glowP">
                 <div className="eyebrow mb-3 !text-phos">VERIFIED rate, small sample</div>
-                <div className="font-display text-8xl font-extrabold leading-none text-phos">
+                <div className="font-display text-8xl font-bold leading-none text-phos">
                   <CountUp value={a.verified_rate.verified} /><span className="text-4xl text-dim"> of <CountUp value={a.verified_rate.of_runs} /></span>
                 </div>
                 <p className="mt-4 font-mono text-sm text-dim tick">Wilson 95% interval {pct(a.verified_rate.wilson95[0])} to {pct(a.verified_rate.wilson95[1])}</p>
@@ -204,7 +204,7 @@ function Results({ off, studies }: { off: Summary | null; studies: Study[] | nul
                   <div className="flex items-center justify-between font-mono text-[11px] text-dim"><span>Run {i + 1}{i === 0 ? ' (headline)' : ''}</span><span>seed {r.master_seed ?? 'n/a'}</span></div>
                   <div className="my-3"><Stamp verdict={r.verdict} size="sm" /></div>
                   <div className="text-xs text-dim">held-out pass rate</div>
-                  <div className="font-display text-3xl font-extrabold tick">
+                  <div className="font-display text-3xl font-bold tick">
                     {r.verification_after ? <CountUp value={r.verification_after.pass_rate * 100} format={(v) => `${v.toFixed(1)}%`} /> : 'n/a'}
                   </div>
                   <div className="font-mono text-[11px] text-dim">from {pct(r.verification_before?.pass_rate)} unpatched | {r.attempts} attempt{r.attempts === 1 ? '' : 's'}</div>
@@ -229,7 +229,7 @@ function TryIt() {
         <div className="glass relative overflow-hidden p-8 text-center md:p-14">
           <div className="absolute inset-0 -z-10 bg-[radial-gradient(600px_240px_at_50%_0%,rgba(242,177,52,.16),transparent)]" aria-hidden />
           <div className="eyebrow mb-3">try it</div>
-          <h2 className="font-display text-4xl font-extrabold md:text-5xl">Watch the real pipeline run.</h2>
+          <h2 className="font-display">Watch the real pipeline run.</h2>
           <p className="mx-auto mt-4 max-w-xl text-lg text-dim">A live rehearsal runs the actual pipeline end to end on rehearsal seeds: real model calls, real simulation, a real gate verdict. It is never an official result.</p>
           <Link to="/live" className="btn btn-primary mt-8">Open the live console <span aria-hidden>&rarr;</span></Link>
         </div>

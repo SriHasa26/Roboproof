@@ -14,7 +14,7 @@ export default function Results() {
       <header className="mb-12 grid items-end gap-8 md:grid-cols-[1.5fr_1fr]">
         <Reveal>
           <div className="eyebrow mb-3">results</div>
-          <h1 className="font-display text-5xl font-extrabold leading-[1.02] md:text-6xl">The official batch, <span className="text-grad">with every run shown.</span></h1>
+          <h1 className="font-display">The official batch, <span className="text-grad">with every run shown.</span></h1>
           <p className="mt-5 max-w-2xl text-lg leading-relaxed text-dim">
             Five pre-registered runs of the frozen pipeline, each on its own single-use held-out set of 400 scenarios. Language models never decide pass or fail; the simulator and the gate do.
           </p>
@@ -23,7 +23,7 @@ export default function Results() {
           <Reveal delay={0.1}>
             <div className="glass p-6 shadow-glowP">
               <div className="eyebrow !text-phos">official batch, small sample</div>
-              <div className="mt-2 font-display text-7xl font-extrabold leading-none text-phos"><CountUp value={a.verified_rate.verified} /><span className="text-3xl text-dim"> of {a.verified_rate.of_runs}</span></div>
+              <div className="mt-2 font-display text-7xl font-bold leading-none text-phos"><CountUp value={a.verified_rate.verified} /><span className="text-3xl text-dim"> of {a.verified_rate.of_runs}</span></div>
               <div className="mt-1 font-display text-xl font-bold">VERIFIED</div>
               <p className="mt-3 font-mono text-[12px] leading-relaxed text-dim">Wilson 95% interval {pct(a.verified_rate.wilson95[0])} to {pct(a.verified_rate.wilson95[1])}. Five runs is a small sample.</p>
             </div>

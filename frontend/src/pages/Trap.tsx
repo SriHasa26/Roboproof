@@ -11,7 +11,7 @@ export default function TrapPage() {
       <header className="rise mb-10 flex flex-wrap items-end justify-between gap-6">
         <div>
           <div className="mb-2 font-mono text-[11px] uppercase tracking-[.3em] text-verm">the gate must be able to say no</div>
-          <h1 className="font-display text-5xl font-black uppercase leading-[.95] md:text-7xl">A tempting fix,<br />rejected.</h1>
+          <h1 className="font-display">A tempting fix,<br />rejected.</h1>
           <span className="mt-4 inline-block rounded-sm border-2 border-amber px-3 py-1 font-mono text-sm font-bold uppercase tracking-widest text-amber">{t.label}</span>
         </div>
         <Stamp verdict={t.verdict} />

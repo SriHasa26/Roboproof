@@ -23,3 +23,10 @@ Notes
 | E. Live console UI + recorded replay | DONE: one real live run recorded (VERIFIED, 153.5 s, est. $0.031) |
 | B2 3D failure map, B3 motion, C restyle | DONE (results page, run page, shared UI; trap/about restyled via the shared system) |
 | F. QA/docs | DONE: 229 tests pass in image (203 + 15 skipped on host); README and SUBMISSION updated |
+
+## Typography fix + Playground (third master prompt)
+| Part | State |
+|---|---|
+| 1. Typography (Sora, DM Sans, JetBrains Mono, variable fonts) | DONE |
+| 2. Playground | next |
+| 3. QA and docs | not started |

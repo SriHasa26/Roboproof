@@ -29,14 +29,14 @@ function Runs() {
   return (
     <div>
       <div className="eyebrow mb-3">recorded runs</div>
-      <h1 className="mb-8 font-display text-4xl font-extrabold md:text-5xl">Every run on record</h1>
+      <h1 className="mb-8 font-display">Every run on record</h1>
       {!data ? <Skeleton className="h-64" /> : (
         <ul className="glass divide-y divide-white/[.06]">
           {data.map((r) => (
             <li key={r.id}><Link to={`/runs/${r.id}`} className="flex flex-wrap items-center gap-3 p-4 transition-colors hover:bg-white/[.04]">
               <span className="font-mono text-sm">{r.id}</span>
               <span className="font-mono text-[11px] uppercase text-dim">{r.badges.mode} | pipeline {r.badges.pipeline_version} | seed {r.master_seed ?? 'not recorded'}</span>
-              <span className={`ml-auto font-display text-xl font-extrabold ${r.verdict === 'VERIFIED' ? 'text-phos' : r.verdict === 'FAILED' ? 'text-verm' : 'text-amber'}`}>{r.verdict}</span>
+              <span className={`ml-auto font-display text-xl font-bold ${r.verdict === 'VERIFIED' ? 'text-phos' : r.verdict === 'FAILED' ? 'text-verm' : 'text-amber'}`}>{r.verdict}</span>
             </Link></li>
           ))}
         </ul>

@@ -125,7 +125,7 @@ export default function Live() {
   return (
     <div>
       <div className="eyebrow mb-3">live console</div>
-      <h1 className="font-display text-4xl font-extrabold md:text-5xl">Run the real pipeline.</h1>
+      <h1 className="font-display">Run the real pipeline.</h1>
       <p className="mt-3 max-w-2xl text-lg text-dim">A live rehearsal runs the actual pipeline end to end: real Nemotron calls on Nebius Token Factory, real PyBullet simulation in a local container, a real deterministic gate.</p>
       <div className="mt-4 flex flex-wrap gap-2">
         <span className="chip !border-amber/40 !text-amber">REHEARSAL, NOT OFFICIAL</span><span className="chip">rehearsal seeds only, held-out seeds never touched</span><span className="chip">LOCAL FALLBACK, not Nebius Serverless Jobs</span>
@@ -137,14 +137,14 @@ export default function Live() {
           {probe === 'offline' && (
             <div className="glass border-amber/30 p-6">
               <div className="eyebrow !text-amber mb-2">offline</div>
-              <h2 className="font-display text-2xl font-extrabold">Live runs are offline in this deployment.</h2>
+              <h2 className="font-display">Live runs are offline in this deployment.</h2>
               <p className="mt-3 text-dim">This copy of the site is static and has no backend, so it cannot start a run. Live runs need the backend container (see the README, &ldquo;Running live&rdquo;). You can still watch a recording of a real live run.</p>
               <div className="mt-5">{replayBtn ?? <span className="text-sm text-dim">No recorded live run is included in this build.</span>}</div>
             </div>
           )}
           {probe === 'online' && status && (
             <div className="glass p-6">
-              <h2 className="font-display text-2xl font-extrabold">Start a live rehearsal</h2>
+              <h2 className="font-display">Start a live rehearsal</h2>
               {typical ? (
                 <ul className="mt-3 space-y-1.5 text-sm text-dim">
                   <li>Typical time: about <b className="text-text">{fmtS(typical.t.median)}</b> (range {fmtS(typical.t.min)} to {fmtS(typical.t.max)}) in the 5 recorded official-batch runs.</li>
@@ -176,7 +176,7 @@ export default function Live() {
             </div>
           )}
           <div className="glass p-6">
-            <h3 className="font-display text-xl font-bold">What you will see</h3>
+            <h3 className="font-display">What you will see</h3>
             <ol className="mt-3 list-decimal space-y-1.5 pl-5 text-sm text-dim">
               <li>The seven stages light up as each one finishes.</li>
               <li>A log of real events: model calls with latency and tokens, artifacts as they are written.</li>
@@ -200,7 +200,7 @@ export default function Live() {
         <div className="mt-8 space-y-6">
           {source.kind === 'replay' ? (
             <div role="note" className="rounded-xl border-2 border-amber bg-amber/10 p-4">
-              <div className="font-display text-lg font-extrabold uppercase tracking-wide text-amber">Recorded replay of a real live rehearsal run{meta ? ` (${meta.date})` : ''}</div>
+              <div className="font-display text-lg font-bold text-amber">Recorded replay of a real live rehearsal run{meta ? ` (${meta.date})` : ''}</div>
               <p className="mt-1 text-sm text-text/90">This is not live. These events were recorded from a real run and are played back{speed > 1 ? ` at ${speed}x, with waits over 2.5 s shortened` : ' in real time'}. Nothing is being computed now.</p>
               <div className="mt-3 flex flex-wrap items-center gap-2 font-mono text-xs">speed
                 {[1, 4, 8, 16].map((s) => <button key={s} onClick={() => setSpeed(s)} className={`rounded-full border px-3 py-1 ${speed === s ? 'border-amber bg-amber text-ink' : 'border-white/20 hover:border-amber'}`} aria-pressed={speed === s}>{s}x</button>)}
@@ -224,7 +224,7 @@ export default function Live() {
           <div className="grid gap-6 lg:grid-cols-[1.35fr_1fr]">
             <Terminal events={events} />
             <div>
-              <h3 className="mb-2 font-display text-lg font-bold">Gate checks</h3>
+              <h3 className="mb-2 font-display">Gate checks</h3>
               <GateLights gates={view.gates} done={view.ended} />
             </div>
           </div>
@@ -246,7 +246,7 @@ export default function Live() {
                 </>
               ) : (
                 <div role="alert">
-                  <div className="font-display text-2xl font-extrabold text-amber">{view.finalStatus === 'cancelled' ? 'Run cancelled' : view.finalStatus === 'timeout' ? 'Run timed out' : view.finalStatus === 'error' ? 'Run failed to produce a result' : 'No verdict'}</div>
+                  <div className="font-display text-2xl font-bold text-amber">{view.finalStatus === 'cancelled' ? 'Run cancelled' : view.finalStatus === 'timeout' ? 'Run timed out' : view.finalStatus === 'error' ? 'Run failed to produce a result' : 'No verdict'}</div>
                   <p className="mt-2 text-dim">{view.finalMessage ?? 'The run ended without a verdict.'} No verdict means the fix is neither proven nor disproven; nothing here counts as a pass.</p>
                 </div>
               )}

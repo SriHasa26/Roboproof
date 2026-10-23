@@ -8,9 +8,9 @@ export default {
         amber: '#f2b134', phos: '#5be39a', verm: '#ff6a47', slate: '#7f8da0', ice: '#7cc4ff',
       },
       fontFamily: {
-        display: ['"Bricolage Grotesque"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        sans: ['"Instrument Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        display: ['"Sora Variable"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['"DM Sans Variable"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono Variable"', 'ui-monospace', 'monospace'],
       },
       boxShadow: {
         glass: 'inset 0 1px 0 rgba(255,255,255,.07), 0 24px 60px -28px rgba(0,0,0,.8)',

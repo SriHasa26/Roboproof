@@ -17,8 +17,8 @@ function Markdown({ text }: { text: string }) {
   text.split('\n').forEach((line, k) => {
     if (line.startsWith('- ')) { list.push(line.slice(2)); return }
     flush(k)
-    if (line.startsWith('# ')) out.push(<h1 key={k} className="mb-3 font-display text-5xl font-black uppercase leading-none md:text-6xl">{line.slice(2)}</h1>)
-    else if (line.startsWith('## ')) out.push(<h2 key={k} className="mb-3 mt-10 font-display text-3xl font-extrabold uppercase tracking-wide text-amber">{line.slice(3)}</h2>)
+    if (line.startsWith('# ')) out.push(<h1 key={k} className="mb-3 font-display text-5xl font-bold leading-none md:text-6xl">{line.slice(2)}</h1>)
+    else if (line.startsWith('## ')) out.push(<h2 key={k} className="mb-3 mt-10 font-display text-3xl font-bold text-amber">{line.slice(3)}</h2>)
     else if (line.trim()) out.push(<p key={k} className="mb-4 leading-relaxed text-dim">{inline(line)}</p>)
   })
   flush(9999)
@@ -31,7 +31,7 @@ export default function About() {
     <div className="rise max-w-3xl">
       {error ? <p className="font-mono text-sm text-verm">Could not load the limitations text: {error}</p> : data ? <Markdown text={data} /> : <p className="font-mono text-sm text-dim">loading...</p>}
       <div className="panel mt-10 rounded p-5">
-        <h2 className="font-display text-2xl font-bold uppercase tracking-wide">How to read this site</h2>
+        <h2 className="font-display">How to read this site</h2>
         <ul className="mt-2 space-y-1 text-sm text-dim">
           <li><b className="text-text">OFFICIAL</b> means a pre-registered run on single-use held-out seeds. <b className="text-text">REHEARSAL</b> means the verification used a separate rehearsal seed block.</li>
           <li><b className="text-text">PIPELINE V1 / V2</b> are two frozen versions of the pipeline; the official batch used v2.</li>

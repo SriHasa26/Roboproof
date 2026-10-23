@@ -8,7 +8,7 @@ export function Logo() {
       <svg viewBox="0 0 64 64" width="28" height="28" aria-hidden><rect width="64" height="64" rx="14" fill="#0d1210" stroke="rgba(255,255,255,.12)" />
         <path d="M14 46V22l18-8 18 8v24l-18 8z" fill="none" stroke="#f2b134" strokeWidth="4" strokeLinejoin="round" />
         <path d="M23 33l6 6 13-14" fill="none" stroke="#5be39a" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-      <span className="font-display text-xl font-extrabold tracking-tight">Robo<span className="text-amber">Proof</span></span>
+      <span className="font-display text-xl font-bold">Robo<span className="text-amber">Proof</span></span>
     </Link>
   )
 }
@@ -91,7 +91,7 @@ export function NotFound() {
   return (
     <div className="mx-auto max-w-xl py-24 text-center">
       <div className="font-mono text-sm text-amber">404</div>
-      <h1 className="mt-2 font-display text-5xl font-extrabold">Nothing proven here.</h1>
+      <h1 className="mt-2 font-display">Nothing proven here.</h1>
       <p className="mt-3 text-dim">That page does not exist. The gate would call it UNVERIFIED.</p>
       <Link to="/" className="btn btn-primary mt-8">Back to the start</Link>
     </div>

@@ -27,7 +27,7 @@ function CandidateTable({ t }: { t: CandTable }) {
   return (
     <div className="panel mb-6 overflow-x-auto rounded">
       <div className="flex flex-wrap items-baseline justify-between gap-2 border-b hair p-3">
-        <h3 className="font-display text-xl font-bold uppercase tracking-wide">Attempt {t.attempt}</h3>
+        <h3 className="font-display">Attempt {t.attempt}</h3>
         <span className="font-mono text-[11px] text-dim">regression budget {t.regression_budget ?? 'n/a'} {t.v1_single_patch ? ' | pipeline v1: one patch per attempt, no candidate table' : ''}</span>
       </div>
       <table className="w-full min-w-[820px] text-left text-sm">
@@ -61,7 +61,7 @@ function HypCard({ h }: { h: Hyp }) {
   return (
     <div className="panel rounded p-4">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="font-display text-3xl font-black text-amber">{h.id}</span>
+        <span className="font-display text-3xl font-bold text-amber">{h.id}</span>
         {Object.entries(h.region).map(([k, v]) => <span key={k} className="rounded-sm border hair px-1.5 py-0.5 font-mono text-[11px]">{k} {v[0]} to {v[1]}</span>)}
         <span className="ml-auto font-mono text-[11px] text-dim">{h.targeted_failures} targeted failures (counted by code)</span>
       </div>
@@ -100,7 +100,7 @@ export function RunReport({ r, replays, back, map }: { r: RunT; replays: Replays
       <header className="rise mb-10 mt-3 flex flex-wrap items-end justify-between gap-6">
         <div>
           <div className="mb-2 font-mono text-[11px] uppercase tracking-[.3em] text-amber">run report</div>
-          <h1 className="font-display text-3xl font-extrabold [overflow-wrap:anywhere] sm:text-5xl md:text-6xl">{r.id}</h1>
+          <h1 className="font-display [overflow-wrap:anywhere]">{r.id}</h1>
           <div className="mt-3"><BadgeRow b={r.badges} /></div>
           <p className="mt-3 font-mono text-xs text-dim">master seed {r.master_seed ?? 'not recorded'} | {r.attempts_used} attempt(s) | G5 {r.g5_executed ? 'executed' : 'not executed'} | {r.analysis_set.n} analysis scenarios ({r.analysis_set.n_coverage} coverage, {r.analysis_set.n_targeted} from model-proposed regions)</p>
         </div>
@@ -121,7 +121,7 @@ export function RunReport({ r, replays, back, map }: { r: RunT; replays: Replays
         <div className="grid gap-4 md:grid-cols-2">
           <RatePair title="Analysis set (seen by the fixer)" before={r.metrics.analysis?.before} after={r.metrics.analysis?.after} />
           {r.metrics.verification ? <RatePair title="Held-out set (never seen)" before={r.metrics.verification.before} after={r.metrics.verification.after} target={0.9} />
-            : <div className="panel rounded p-4"><h3 className="font-display text-xl font-bold uppercase tracking-wide">Held-out set</h3><p className="mt-2 text-sm text-dim">Not run: an earlier check failed, so the single-use held-out block was not spent.</p></div>}
+            : <div className="panel rounded p-4"><h3 className="font-display">Held-out set</h3><p className="mt-2 text-sm text-dim">Not run: an earlier check failed, so the single-use held-out block was not spent.</p></div>}
         </div>
         {r.final_patch && <p className="mt-3 text-sm text-dim">Final patch tested by the gate: <Changes policy={r.final_patch} /></p>}
       </Section>

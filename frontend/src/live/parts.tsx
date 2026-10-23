@@ -67,7 +67,7 @@ export function Candidates({ attempts }: { attempts: Attempt[] }) {
     <div className="space-y-4">
       {attempts.map((a) => (
         <motion.div key={a.attempt} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="glass overflow-x-auto p-4">
-          <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2"><h3 className="font-display text-lg font-bold">Attempt {a.attempt}: candidates measured by code</h3>
+          <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2"><h3 className="font-display">Attempt {a.attempt}: candidates measured by code</h3>
             <span className="font-mono text-[11px] text-dim">regression budget {a.regression_budget ?? 'n/a'}</span></div>
           <table className="w-full min-w-[560px] text-left font-mono text-[12px]">
             <thead className="text-[11px] uppercase text-dim"><tr><th className="py-1">#</th><th>Changes</th><th>Fixed</th><th>Regressions</th><th>Pass rate</th><th /></tr></thead>
@@ -108,7 +108,7 @@ export function GateLights({ gates, done }: { gates: Check[]; done: boolean }) {
         const c = i < shown ? gates.find((g) => g.id === id) : undefined
         return (
           <li key={id} className="flex flex-wrap items-center gap-3 p-3.5">
-            <span className="w-9 font-display text-xl font-extrabold text-amber">{id}</span>
+            <span className="w-9 font-display text-xl font-bold text-amber">{id}</span>
             {c ? <motion.span initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}><Chip status={c.status} /></motion.span>
               : <span className="inline-block rounded-sm border border-white/10 px-2 py-0.5 font-mono text-[11px] tracking-widest text-dim">{done ? 'NOT REPORTED' : 'WAITING'}</span>}
             <span className="min-w-0 flex-1 text-sm">{NAMES[id]}</span>
@@ -131,7 +131,7 @@ export function Confirm({ title, children, confirm, onConfirm, onCancel, busy }:
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label={title} onClick={onCancel}>
       <motion.div initial={{ opacity: 0, scale: 0.96, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} className="glass w-full max-w-lg p-6" onClick={(e) => e.stopPropagation()}>
-        <h2 className="font-display text-2xl font-extrabold">{title}</h2>
+        <h2 className="font-display">{title}</h2>
         <div className="mt-3 space-y-3 text-sm leading-relaxed text-dim">{children}</div>
         <div className="mt-6 flex flex-wrap justify-end gap-3">
           <button className="btn btn-ghost" onClick={onCancel}>Cancel</button>

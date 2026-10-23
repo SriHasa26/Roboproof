@@ -13,7 +13,7 @@
   --ease: cubic-bezier(.2,.7,.2,1);
 }
 html { scroll-behavior: smooth; }
-body { margin: 0; color: var(--text); font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif; background: var(--ink); -webkit-font-smoothing: antialiased; }
+body { margin: 0; color: var(--text); font-family: 'DM Sans Variable', ui-sans-serif, system-ui, sans-serif; font-size: 16px; line-height: 1.6; font-synthesis: none; text-rendering: optimizeLegibility; background: var(--ink); }
 ::selection { background: rgba(242,177,52,.35); }
 a { color: inherit; }
 .tick { font-variant-numeric: tabular-nums; }
@@ -39,13 +39,20 @@ a { color: inherit; }
 .glass-hover { transition: transform .25s var(--ease), border-color .25s, box-shadow .25s; }
 .glass-hover:hover { transform: translateY(-3px); border-color: rgba(242,177,52,.35); box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 26px 60px -28px rgba(242,177,52,.25); }
 .hair { border-color: rgba(255,255,255,.07); }
-.eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: var(--amber); }
+.eyebrow { font-family: 'JetBrains Mono Variable', ui-monospace, monospace; font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); }
 .text-grad { background: linear-gradient(100deg, #ffd479 0%, #f2b134 40%, #5be39a 110%); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
-/* headings: the display face reads better in sentence case than in forced capitals */
-.font-display { letter-spacing: -.02em; }
-h1.uppercase, h2.uppercase, h3.uppercase { text-transform: none; letter-spacing: -.02em; }
-h1.tracking-wide, h2.tracking-wide, h3.tracking-wide { letter-spacing: -.01em; }
+/* ---- type system: Sora (display), DM Sans (body), JetBrains Mono (labels, numbers, code) ---- */
+html { font-synthesis: none; }
+h1, h2, h3, h4, .font-display { font-family: 'Sora Variable', 'DM Sans Variable', ui-sans-serif, system-ui, sans-serif; font-weight: 650; letter-spacing: -0.01em; line-height: 1.15; text-transform: none; text-wrap: balance; }
+h1 { font-size: clamp(2rem, 1.2rem + 3.2vw, 3.6rem); font-weight: 700; line-height: 1.1; }
+h2 { font-size: clamp(1.6rem, 1.15rem + 1.6vw, 2.5rem); }
+h3 { font-size: clamp(1.05rem, 1rem + 0.3vw, 1.25rem); font-weight: 600; letter-spacing: 0; line-height: 1.3; }
+.h-hero { font-size: clamp(2.4rem, 1.3rem + 4.2vw, 4.4rem); line-height: 1.08; letter-spacing: -0.015em; }
+.font-mono, table, .tick { font-variant-numeric: tabular-nums; }
+.font-mono { font-weight: 450; }
+p, li { text-wrap: pretty; }
+.text-grad { background: linear-gradient(100deg, #ffd479 0%, #f2b134 40%, #5be39a 110%); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
 /* ---- buttons and chips ---- */
 .btn { display: inline-flex; align-items: center; gap: .5rem; border-radius: var(--r-pill); padding: .7rem 1.25rem; font-weight: 600; font-size: .95rem; transition: transform .2s var(--ease), box-shadow .2s, background .2s, border-color .2s; }
@@ -54,7 +61,7 @@ h1.tracking-wide, h2.tracking-wide, h3.tracking-wide { letter-spacing: -.01em; }
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 36px -10px rgba(242,177,52,.85), inset 0 1px 0 rgba(255,255,255,.5); }
 .btn-ghost { border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.03); }
 .btn-ghost:hover { border-color: rgba(242,177,52,.5); background: rgba(242,177,52,.07); transform: translateY(-2px); }
-.chip { display: inline-flex; align-items: center; gap: .4rem; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.035); border-radius: var(--r-pill); padding: .25rem .7rem; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--dim); }
+.chip { display: inline-flex; align-items: center; gap: .4rem; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.035); border-radius: var(--r-pill); padding: .25rem .7rem; font-family: 'JetBrains Mono Variable', ui-monospace, monospace; font-size: 11px; color: var(--dim); }
 
 /* ---- keyframes used by the older pages ---- */
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
