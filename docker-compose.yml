@@ -1,0 +1,27 @@
+# Live rehearsal backend: `docker compose up` starts the API on http://localhost:8000
+# Secrets come from .env at run time (never baked into the image). Live runs are OFF unless LIVE_ENABLED=1 in .env.
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.sim
+    image: roboproof-sim:dev
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      LIVE_RUNS_DIR: /app/live_runs
+      ROBOPROOF_DB: /app/backend/data/roboproof.sqlite
+      LLM_DEV_CACHE: "0"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./live_runs:/app/live_runs          # run artifacts, events and the daily quota ledger
+      - ./backend/data:/app/backend/data    # SQLite (seed ledger and LLM call log) persists across restarts
+    command: ["uvicorn", "app.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

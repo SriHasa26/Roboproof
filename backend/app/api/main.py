@@ -5,9 +5,11 @@ import os
 
 from fastapi import FastAPI
 
+from ..live.api import install as install_live
 from ..sim import freeze
 
-app = FastAPI(title="RoboProof API", version="0.3.0")
+app = FastAPI(title="RoboProof API", version="0.4.0")
+install_live(app)  # live rehearsal service (off unless LIVE_ENABLED=1)
 
 
 @app.get("/health")
