@@ -11,3 +11,12 @@
 Notes
 - During the batch, artifacts are written to `backend/data/official_001_work` (gitignored) because the official-run guard needs a clean tree before every run; they are copied to `recorded_runs/official_001` afterwards.
 - Out of scope: P5 (Nebius Serverless Jobs). Simulations run on the local container.
+
+## UI overhaul plan (second master prompt)
+| Part | State |
+|---|---|
+| A. Design system + landing + routing | DONE (landing, nav/footer, 404, meta, motion toggle) |
+| B1. Procedural 3D hero (lazy chunk, fallback) | DONE |
+| B2. 3D failure map, B3 motion language | next |
+| C. Restyle old pages | next |
+| D. Live backend, E. Live console UI, F. QA/docs | not started |

@@ -80,14 +80,14 @@ export default function RunPage() {
   const { id = '' } = useParams()
   const { data: r, error } = useData<RunT>(`runs/${id}.json`)
   const rp = useData<Replays>('replays.json')
-  if (error) return <p className="font-mono text-sm text-verm">No such run ({error}). <Link className="underline" to="/">Back to the overview</Link></p>
+  if (error) return <p className="font-mono text-sm text-verm">No such run ({error}). <Link className="underline" to="/results">Back to the results</Link></p>
   if (!r) return <p className="font-mono text-sm text-dim">loading...</p>
   const t = r.timing, tot = Math.max(t.wall_clock_s, 1)
   const seg: [string, number, string][] = [['LLM calls', t.llm_s, '#f2b134'], ['candidate evaluation (simulator)', t.candidate_evals_s, '#5be39a'], ['other simulation and code', t.other_simulation_s, '#7f8da0']]
   const g = r.generator
   return (
     <div>
-      <Link to="/" className="font-mono text-xs text-dim hover:text-amber">&larr; overview</Link>
+      <Link to="/results" className="font-mono text-xs text-dim hover:text-amber">&larr; results</Link>
       <header className="rise mb-10 mt-3 flex flex-wrap items-end justify-between gap-6">
         <div>
           <div className="mb-2 font-mono text-[11px] uppercase tracking-[.3em] text-amber">run report</div>

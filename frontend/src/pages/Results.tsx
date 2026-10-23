@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Row, Study, Summary, ci, pct, short, usd, useData } from '../lib'
 import { IntervalPlot, Note, Section, Stamp } from '../ui'
+import { usePageTitle } from '../motion'
 
 const STEPS: [string, string, string][] = [
   ['01', 'Generate scenarios', 'Nemotron Nano proposes risky regions (Nemotron Super is the fallback). Code adds a coverage sweep so no region is left blank.'],
@@ -15,7 +16,8 @@ function Loading({ error }: { error: string | null }) {
   return <p className="font-mono text-sm text-dim">{error ? `Could not load data: ${error}` : 'loading recorded data...'}</p>
 }
 
-export default function Overview() {
+export default function Results() {
+  usePageTitle('Results')
   const off = useData<Summary>('official.json')
   const studies = useData<Study[]>('studies.json')
   const a = off.data?.aggregate
@@ -62,7 +64,7 @@ export default function Overview() {
                     <td className="font-mono text-xs">{r.attempts}</td>
                     <td className="font-mono text-xs tick">{ci(r.verification_before)} <span className="text-amber">to</span> {ci(r.verification_after)}</td>
                     <td className="font-mono text-xs">{usd(r.estimated_cost_usd)}</td>
-                    <td className="pr-3 text-right"><Link className="font-mono text-xs text-amber underline decoration-dotted underline-offset-4 hover:text-text" to={`/run/${r.run_id}`}>open report</Link></td>
+                    <td className="pr-3 text-right"><Link className="font-mono text-xs text-amber underline decoration-dotted underline-offset-4 hover:text-text" to={`/runs/${r.run_id}`}>open report</Link></td>
                   </tr>
                 ))}
               </tbody>
