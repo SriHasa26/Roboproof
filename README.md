@@ -106,7 +106,7 @@ npm run dev                          # http://localhost:5173
 npm run build && npm run preview     # production build from frontend/dist
 ```
 
-Routes: `/` landing, `/results` official batch, studies and the 3D failure map, `/runs` and `/runs/:id` run detail, `/live` live console, `/live/report/:id`, `/trap` (scripted example), `/about` (limits). Fonts are self-hosted (`@fontsource`). The hero scene is a procedural, purely illustrative animation (captioned as such); the failure map plots real scenarios from the recorded runs (the unpatched policy on each run's analysis set; per-scenario patched results were not stored, so none are shown). The 3D code is in lazy chunks, and a footer toggle ("Reduce motion and 3D", also set by `prefers-reduced-motion`) replaces it with static content. Nothing on the site is invented: counters come from the data, and the honesty labels (local runner, rehearsal vs official, unverified model opinion, scripted example) are kept on every page.
+Routes: `/` landing, `/playground`, `/results` official batch, studies and the 3D failure map, `/runs` and `/runs/:id` run detail, `/live` live console, `/live/report/:id`, `/trap` (scripted example), `/about` (limits). Fonts are self-hosted (`@fontsource`). The hero scene is a procedural, purely illustrative animation (captioned as such); the failure map plots real scenarios from the recorded runs (the unpatched policy on each run's analysis set; per-scenario patched results were not stored, so none are shown). The 3D code is in lazy chunks, and a footer toggle ("Reduce motion and 3D", also set by `prefers-reduced-motion`) replaces it with static content. Nothing on the site is invented: counters come from the data, and the honesty labels (local runner, rehearsal vs official, unverified model opinion, scripted example) are kept on every page.
 
 ## Running live
 
@@ -121,6 +121,18 @@ cd frontend && VITE_API_BASE=http://localhost:8000 npm run build   # point the s
 Endpoints: `GET /api/health`, `GET /api/live/status`, `POST /api/runs`, `GET /api/runs/{id}`, `GET /api/runs/{id}/events` (server-sent events, replayable from the start), `POST /api/runs/{id}/cancel`, plus `/report`, `/scenarios` and whitelisted `/files/{name}`. Protections: one run at a time, per-IP rate limit, daily run cap (`LIVE_DAILY_RUN_CAP`) and daily estimated-spend cap (`LIVE_DAILY_USD_CAP`), optional `LIVE_ACCESS_CODE`, kill switch `LIVE_ENABLED`, CORS allowlist `ALLOWED_ORIGINS` (never `*`), a 10-minute timeout, cancel, secret scrubbing of every event and log. Progress events come from the subprocess output, artifact files as the pipeline writes them, and the pipeline's own LLM-call log; the pipeline writes candidate tables and gate results together at the end, so those appear together. Tests (`backend/tests/test_live.py`) use a fake pipeline and make no real calls.
 
 **Static hosting:** a static host has no backend, so `/live` shows "Live runs are offline in this deployment" and offers **Replay a recorded live run**: the event stream and report of one real live run through the API (2026-10-23: VERIFIED, 153.5 s, about $0.031 estimated), clearly labelled as a recorded replay. The live backend needs a host that can run a container (the sim image) with the `.env` secrets.
+
+## Playground
+
+`/playground` lets you enter your own scenario conditions (cube mass, friction, size, position offsets, sensor noise, gripper delay) and policy parameters, and get **real results from the frozen simulator**. Controls are built from `GET /api/sim/spec`, which reads the frozen bounds and defaults; the two parameters measured to have no effect are shown greyed out.
+
+- **Single scenario** (`POST /api/sim/scenario`): success, collision, completion time, place error, slip, a plain-language failure reason, and a 3D playback of the real recorded trajectory (at most 300 frames).
+- **Sweep** (`POST /api/sim/sweep`, up to 200 scenarios): a seeded Latin-hypercube sweep of your policy and, on the identical scenarios, the default policy (cached): pass rates with Wilson 95% intervals, failure reasons, per-axis failure rates (from the evidence code), and the 3D failure map. Clicking a point replays that scenario exactly.
+- **Analyze with Nemotron** (`POST /api/sim/analyze`, optional): grounded hypotheses for a finished sweep, labelled "model opinion, unverified". It spends credits, so it needs `LIVE_ENABLED=1`, the access code if set, room under the daily spend cap, and a confirmation; it is never automatic.
+
+Safety: no LLM spend for scenario and sweep; every field validated against the frozen bounds (out-of-range, NaN and infinity rejected, unknown fields rejected); playground seeds are 100000 to 799999 only (held-out and rehearsal seeds are refused); per-IP rate limits, at most 2 simulations at once, 20 s and 60 s timeouts (the simulation runs in a killable process), `PLAYGROUND_ENABLED` kill switch. Results are **exploration, not a gate verdict** and are never part of the official evaluation.
+
+**What it cannot do:** the simulator models one task (a gripper picks a cube and places it in a target zone). A different robot would need a new simulator and a recalibrated gate; that is future work. On a static host with no backend, the page shows three recorded real simulator runs, labelled as recorded examples.
 
 ## Tests
 

@@ -12,6 +12,7 @@ import TrapPage from './pages/Trap'
 
 const Live = lazy(() => import('./pages/Live'))
 const LiveReport = lazy(() => import('./pages/LiveReport'))
+const Playground = lazy(() => import('./pages/Playground'))
 
 class Boundary extends Component<{ children: ReactNode }, { err: string | null }> {
   state = { err: null as string | null }
@@ -62,6 +63,7 @@ function Pages() {
               <Route path="/run/:id" element={<OldRun />} />
               <Route path="/live" element={<Live />} />
               <Route path="/live/report/:id" element={<LiveReport />} />
+              <Route path="/playground" element={<Playground />} />
               <Route path="/trap" element={<TrapPage />} />
               <Route path="/about" element={<About />} />
               <Route path="*" element={<NotFound />} />

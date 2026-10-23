@@ -25,6 +25,8 @@ NVIDIA Nemotron models run on Nebius Token Factory (OpenAI-compatible API): Nemo
 
 **Alternative or addition (live console):** with the backend running (README, "Running live"), open `/live`, press Start, and screen-record the stage timeline, the log, the candidate table and the gate checks resolving (about 2.5 to 3.5 minutes; speed up the waiting). If the backend is not available, use the recorded replay on `/live` and say so on camera: it is a recording of a real run (2026-10-23, VERIFIED, 153.5 s).
 
+**Playground segment (about 30 to 40 s, with the backend running):** open `/playground`, pick the "Heavy and slippery" preset and press Run simulation (FAIL, missed grasp, 3D playback of the real trajectory); raise the grip force to 40 and run again (PASS); switch to Sweep, press Test on 100 scenarios (about 8 s) and show your policy against the default with intervals and the failure map; click a failing point to replay it. Say: "exploration, not a gate verdict; one task only; a different robot would need a new simulator and a recalibrated gate". Without the backend, show the three recorded examples and say so.
+
 Record a live run beforehand as a fallback in case Token Factory is slow (the Nano endpoint hung once during development, see FEEDBACK.md).
 
 ## Hackathon checklist

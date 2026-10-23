@@ -178,6 +178,32 @@ def scenario_points(d: Path) -> dict:
     return out
 
 
+def playground_examples() -> list[dict]:
+    """Three REAL simulator runs (frozen simulator, same code path as the playground endpoint) for the offline playground."""
+    import tempfile
+    from app.core.schemas import Policy
+    from app.playground.service import EXPLAIN, _scenario_job
+    from app.playground.spec import DEFAULT_SEED, PRESETS
+    pre = {p["id"]: p for p in PRESETS}
+    benign, heavy = pre["benign"]["scenario"], pre["heavy_slippery"]["scenario"]
+    cases = [("Benign cube, default policy", "An easy cube and the default policy.", benign, {}),
+             ("Heavy and slippery cube, default policy", "The default policy on a heavy, slippery cube with a little noise and delay.", heavy, {}),
+             ("Same cube, stronger grip", "Same scenario and seed as the previous example; only the grip force is raised to 40.", heavy, {"grip_force": 40.0})]
+    out = []
+    for label, why, scn, over in cases:
+        pol = Policy(**over)
+        scenario = {"id": f"pg-{DEFAULT_SEED}", "seed": DEFAULT_SEED, "tag": "playground", **scn}
+        with tempfile.TemporaryDirectory() as td:
+            f = Path(td) / "o.json"
+            _scenario_job(pol.model_dump(), scenario, str(f))
+            data = json.loads(f.read_text())
+        reason = data["result"].get("failure_reason")
+        out.append({"label": label, "why": why, "scenario": scenario, "policy": pol.model_dump(), "seed": DEFAULT_SEED, "result": data["result"],
+                    "explanation": EXPLAIN.get(reason) if reason else "The cube was lifted, carried over the wall and placed upright inside the target zone.",
+                    "trajectory": data["trajectory"], "world": data["world"]})
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-replays", action="store_true")
@@ -220,6 +246,7 @@ def main():
         rp = make_replays(runs[0][1], runs[0][0]) if first else None
         put(OUT / "replays.json", rp)
         print("replays:", "recorded for " + rp["scenario"]["id"] if rp else "none found")
+        put(OUT / "playground_examples.json", playground_examples())
     total = sum(f.stat().st_size for f in OUT.rglob("*") if f.is_file())
     print(f"exported {len(runs)} runs; bundle size {total / 1024:.0f} KiB")
 

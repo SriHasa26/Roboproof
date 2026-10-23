@@ -57,7 +57,7 @@ function CandidateTable({ t }: { t: CandTable }) {
   )
 }
 
-function HypCard({ h }: { h: Hyp }) {
+export function HypCard({ h }: { h: Hyp }) {
   return (
     <div className="panel rounded p-4">
       <div className="flex flex-wrap items-center gap-2">

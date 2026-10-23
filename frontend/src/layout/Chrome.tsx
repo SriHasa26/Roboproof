@@ -13,7 +13,7 @@ export function Logo() {
   )
 }
 
-const LINKS: [string, string][] = [['/results', 'Results'], ['/runs', 'Runs'], ['/trap', 'Scripted trap'], ['/about', 'Limits']]
+const LINKS: [string, string][] = [['/results', 'Results'], ['/runs', 'Runs'], ['/playground', 'Playground'], ['/trap', 'Scripted trap'], ['/about', 'Limits']]
 const lk = ({ isActive }: { isActive: boolean }) =>
   `rounded-full px-3.5 py-1.5 text-sm transition-colors ${isActive ? 'bg-white/10 text-text' : 'text-dim hover:bg-white/5 hover:text-text'}`
 
@@ -64,6 +64,7 @@ export function Footer() {
           <ul className="space-y-2 text-dim">
             <li><Link className="hover:text-text" to="/results">Official results</Link></li>
             <li><Link className="hover:text-text" to="/live">Live console</Link></li>
+            <li><Link className="hover:text-text" to="/playground">Playground</Link></li>
             <li><Link className="hover:text-text" to="/trap">Scripted trap</Link></li>
             <li><Link className="hover:text-text" to="/about">Limits and honesty</Link></li>
           </ul>

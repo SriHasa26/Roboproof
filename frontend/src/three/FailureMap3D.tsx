@@ -14,7 +14,7 @@ export const AXES: { key: keyof ScenData; label: string; unit: string }[] = [
 const SPAN = 4
 const GREEN = new THREE.Color('#5be39a'), RED = new THREE.Color('#ff6a47')
 
-function Points({ d, ax, showPass, showFail, onHover }: { d: ScenData; ax: [number, number, number]; showPass: boolean; showFail: boolean; onHover: (i: number | null) => void }) {
+function Points({ d, ok, ax, showPass, showFail, onHover, onPick }: { d: ScenData; ok: number[]; ax: [number, number, number]; showPass: boolean; showFail: boolean; onHover: (i: number | null) => void; onPick?: (i: number) => void }) {
   const mesh = useRef<THREE.InstancedMesh>(null)
   const range = useMemo(() => AXES.map((a) => { const v = d[a.key] as number[]; return [Math.min(...v), Math.max(...v)] as [number, number] }), [d])
   useLayoutEffect(() => {
@@ -22,21 +22,22 @@ function Points({ d, ax, showPass, showFail, onHover }: { d: ScenData; ax: [numb
     if (!m) return
     const o = new THREE.Object3D()
     for (let i = 0; i < d.n; i++) {
-      const vis = d.ok[i] ? showPass : showFail
+      const vis = ok[i] ? showPass : showFail
       const p = [0, 1, 2].map((k) => { const [lo, hi] = range[ax[k]]; const v = (d[AXES[ax[k]].key] as number[])[i]; return ((hi > lo ? (v - lo) / (hi - lo) : 0.5) - 0.5) * SPAN })
       o.position.set(p[0], p[1], p[2])
-      o.scale.setScalar(vis ? (d.ok[i] ? 1 : 1.35) : 0.0001)
+      o.scale.setScalar(vis ? (ok[i] ? 1 : 1.35) : 0.0001)
       o.updateMatrix()
       m.setMatrixAt(i, o.matrix)
-      m.setColorAt(i, d.ok[i] ? GREEN : RED)
+      m.setColorAt(i, ok[i] ? GREEN : RED)
     }
     m.instanceMatrix.needsUpdate = true
     if (m.instanceColor) m.instanceColor.needsUpdate = true
     m.computeBoundingSphere()
-  }, [d, ax, range, showPass, showFail])
+  }, [d, ok, ax, range, showPass, showFail])
   return (
     <instancedMesh ref={mesh} args={[undefined, undefined, d.n]}
-      onPointerMove={(e: ThreeEvent<PointerEvent>) => { e.stopPropagation(); const i = e.instanceId ?? null; onHover(i != null && (d.ok[i] ? showPass : showFail) ? i : null) }}
+      onPointerMove={(e: ThreeEvent<PointerEvent>) => { e.stopPropagation(); const i = e.instanceId ?? null; onHover(i != null && (ok[i] ? showPass : showFail) ? i : null) }}
+      onClick={(e: ThreeEvent<MouseEvent>) => { if (onPick && e.instanceId != null && (ok[e.instanceId] ? showPass : showFail)) { e.stopPropagation(); onPick(e.instanceId) } }}
       onPointerOut={() => onHover(null)}>
       <sphereGeometry args={[0.07, 14, 14]} />
       <meshStandardMaterial roughness={0.35} metalness={0.2} emissive="#101010" />
@@ -58,7 +59,10 @@ function Frame({ ax }: { ax: [number, number, number] }) {
   )
 }
 
-export default function FailureMap3D({ d, reduce }: { d: ScenData; reduce: boolean }) {
+export default function FailureMap3D({ d, reduce, alt, onPick, pickHint }: { d: ScenData; reduce: boolean; alt?: { ok: number[]; reason: (string | null)[]; label: string; main: string }; onPick?: (i: number) => void; pickHint?: string }) {
+  const [useAlt, setUseAlt] = useState(false)
+  const ok = useAlt && alt ? alt.ok : d.ok
+  const reasons = useAlt && alt ? alt.reason : d.reason
   const [ax, setAx] = useState<[number, number, number]>([0, 1, 2])
   const [showPass, setShowPass] = useState(true), [showFail, setShowFail] = useState(true)
   const [hover, setHover] = useState<number | null>(null)
@@ -66,7 +70,7 @@ export default function FailureMap3D({ d, reduce }: { d: ScenData; reduce: boole
   const [pos, setPos] = useState({ x: 0, y: 0 })
   useEffect(() => { setHover(null) }, [ax, showPass, showFail])
   const set = (k: number, v: number) => setAx((a) => { const n = [...a] as [number, number, number]; const j = n.indexOf(v); if (j >= 0 && j !== k) n[j] = n[k]; n[k] = v; return n })
-  const nFail = d.ok.filter((x) => !x).length
+  const nFail = ok.filter((x) => !x).length
   return (
     <div>
       <div className="mb-3 flex flex-wrap items-center gap-3 text-sm">
@@ -79,26 +83,31 @@ export default function FailureMap3D({ d, reduce }: { d: ScenData; reduce: boole
         <label className="flex items-center gap-1.5 text-dim"><input type="checkbox" className="accent-[#5be39a]" checked={showPass} onChange={(e) => setShowPass(e.target.checked)} />pass</label>
         <label className="flex items-center gap-1.5 text-dim"><input type="checkbox" className="accent-[#ff6a47]" checked={showFail} onChange={(e) => setShowFail(e.target.checked)} />fail</label>
         <div className="ml-auto flex overflow-hidden rounded-full border border-white/15 text-xs" role="group" aria-label="Policy shown">
-          <span className="bg-white/10 px-3 py-1">unpatched policy</span>
-          <span className="cursor-not-allowed px-3 py-1 text-dim/60" title="The pipeline did not store per-scenario results for the patched policy, so there is nothing real to show here.">patched: not stored</span>
+          {alt ? (<>
+            <button className={`px-3 py-1 ${!useAlt ? 'bg-white/10' : 'text-dim hover:text-text'}`} aria-pressed={!useAlt} onClick={() => setUseAlt(false)}>{alt.main}</button>
+            <button className={`px-3 py-1 ${useAlt ? 'bg-white/10' : 'text-dim hover:text-text'}`} aria-pressed={useAlt} onClick={() => setUseAlt(true)}>{alt.label}</button>
+          </>) : (<>
+            <span className="bg-white/10 px-3 py-1">unpatched policy</span>
+            <span className="cursor-not-allowed px-3 py-1 text-dim/60" title="The pipeline did not store per-scenario results for the patched policy, so there is nothing real to show here.">patched: not stored</span>
+          </>)}
         </div>
       </div>
       <div ref={wrap} className="relative h-[380px] overflow-hidden rounded-xl border hair bg-black/30 sm:h-[460px]" onPointerMove={(e) => { const r = wrap.current!.getBoundingClientRect(); setPos({ x: e.clientX - r.left, y: e.clientY - r.top }) }}>
         <Canvas dpr={[1, 1.5]} camera={{ position: [5.2, 3.4, 6], fov: 42 }} gl={{ antialias: true, alpha: true, powerPreference: 'low-power' }}>
           <ambientLight intensity={0.7} /><directionalLight position={[4, 6, 5]} intensity={1.4} />
           <Frame ax={ax} />
-          <Points d={d} ax={ax} showPass={showPass} showFail={showFail} onHover={setHover} />
+          <Points d={d} ok={ok} ax={ax} showPass={showPass} showFail={showFail} onHover={setHover} onPick={onPick} />
           <OrbitControls enableDamping makeDefault autoRotate={!reduce} autoRotateSpeed={0.5} minDistance={4} maxDistance={16} />
         </Canvas>
         {hover != null && (
           <div className="pointer-events-none absolute z-10 max-w-[16rem] rounded-lg border border-white/15 bg-black/85 p-2.5 font-mono text-[11px] leading-relaxed" style={{ left: Math.min(pos.x + 14, (wrap.current?.clientWidth ?? 400) - 260), top: Math.max(pos.y - 8, 4) }}>
-            <div className={d.ok[hover] ? 'text-phos' : 'text-verm'}>{d.ids[hover]}: {d.ok[hover] ? 'PASS' : `FAIL (${d.reason[hover] ?? 'no reason code'})`}</div>
+            <div className={ok[hover] ? 'text-phos' : 'text-verm'}>{d.ids[hover]}: {ok[hover] ? 'PASS' : `FAIL (${reasons[hover] ?? 'no reason code'})`}</div>
             {AXES.map((a) => <div key={a.key} className="text-dim">{a.label} {Number((d[a.key] as number[])[hover]).toPrecision(3)} {a.unit}</div>)}
           </div>
         )}
-        <p className="pointer-events-none absolute bottom-2 left-3 font-mono text-[10px] text-dim">drag to orbit, scroll to zoom, hover a point</p>
+        <p className="pointer-events-none absolute bottom-2 left-3 font-mono text-[10px] text-dim">drag to orbit, scroll to zoom, hover a point{pickHint ? `, ${pickHint}` : ''}</p>
       </div>
-      <p className="mt-2 font-mono text-[11px] text-dim">{d.set} ({d.n} scenarios, {nFail} fail), {d.policy}. Each point is one real simulated scenario.</p>
+      <p className="mt-2 font-mono text-[11px] text-dim">{d.set} ({d.n} scenarios, {nFail} fail), {useAlt && alt ? alt.label : d.policy}. Each point is one real simulated scenario.</p>
     </div>
   )
 }

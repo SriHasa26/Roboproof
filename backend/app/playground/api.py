@@ -86,8 +86,13 @@ def _run_analysis(svc: PlaygroundService, live: RunManager, sw: dict):
     try:
         hyps = analyze(client, ev, scns, sw["policy"])
     except LLMError as e:
-        live.adjust_spend(-svc.cfg.analyze_usd_est)
-        return JSONResponse({"error": "model_failed", "message": f"The model's answer could not be used ({type(e).__name__}). Nothing was charged to the daily cap."}, status_code=502)
+        # the attempts were real calls: keep their estimated cost against the cap instead of refunding the reservation
+        est = estimate_cost(client.records, fetch_pricing(settings, {settings.model_reasoning}))
+        if est is not None:
+            live.adjust_spend(est - svc.cfg.analyze_usd_est)
+        detail = str(e)[:240]
+        return JSONResponse({"error": "model_failed", "message": f"The model's answer could not be used ({type(e).__name__}: {detail}). The model calls were made, so their estimated cost "
+                             f"({'about $%.3f' % est if est is not None else 'unknown'}) counts against the daily cap. Try again."}, status_code=502)
     tf = targeted_failures(hyps, scns, results)
     est = estimate_cost(client.records, fetch_pricing(settings, {settings.model_reasoning}))
     if est is not None:

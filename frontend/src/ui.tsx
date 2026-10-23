@@ -95,7 +95,7 @@ export function IntervalPlot({ items }: { items: { label: string; sub: string; k
 }
 
 /** Before and after pass rate with Wilson 95% whiskers on a 0 to 100% axis. */
-export function RatePair({ title, before, after, target }: { title: string; before?: Rate | null; after?: Rate | null; target?: number }) {
+export function RatePair({ title, before, after, target, beforeLabel = 'before', afterLabel = 'after' }: { title: string; before?: Rate | null; after?: Rate | null; target?: number; beforeLabel?: string; afterLabel?: string }) {
   const row = (label: string, r: Rate | null | undefined, color: string, y: number) =>
     r ? (
       <g>
@@ -114,11 +114,11 @@ export function RatePair({ title, before, after, target }: { title: string; befo
       <svg viewBox="0 0 560 78" className="w-full">
         {[0, 0.25, 0.5, 0.75, 1].map((t) => <line key={t} x1={60 + 440 * t} x2={60 + 440 * t} y1={0} y2={64} stroke="#1f2924" />)}
         {target != null && <g><line x1={60 + 440 * target} x2={60 + 440 * target} y1={0} y2={64} stroke="#f2b134" strokeDasharray="4 3" /><text x={60 + 440 * target} y={76} fill="#f2b134" fontSize="10" textAnchor="middle" fontFamily="JetBrains Mono Variable">target {pct(target, 0)}</text></g>}
-        {row('before', before, '#7f8da0', 20)}
-        {row('after', after, '#5be39a', 48)}
+        {row(beforeLabel, before, '#7f8da0', 20)}
+        {row(afterLabel, after, '#5be39a', 48)}
       </svg>
       <div className="mt-1 grid grid-cols-2 gap-2 font-mono text-[11px] text-dim">
-        <span>before {ci(before)}</span><span>after {ci(after)}</span>
+        <span>{beforeLabel} {ci(before)}</span><span>{afterLabel} {ci(after)}</span>
         <span>collisions {pct(before?.collision_rate)} {'->'} {pct(after?.collision_rate)}</span>
         <span>mean time of successes {before?.mean_completion_time_s?.toFixed(2) ?? 'n/a'}s {'->'} {after?.mean_completion_time_s?.toFixed(2) ?? 'n/a'}s</span>
       </div>

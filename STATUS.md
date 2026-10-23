@@ -28,5 +28,5 @@ Notes
 | Part | State |
 |---|---|
 | 1. Typography (Sora, DM Sans, JetBrains Mono, variable fonts) | DONE |
-| 2. Playground | next |
-| 3. QA and docs | not started |
+| 2. Playground (backend, UI, offline examples, tests) | DONE |
+| 3. QA and docs | DONE: 273 tests pass in the image |
