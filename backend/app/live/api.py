@@ -58,6 +58,10 @@ def make_router(mgr: RunManager) -> APIRouter:
     def live_status() -> dict:
         return mgr.status()
 
+    @r.get("/api/runs")
+    def list_runs(limit: int = Query(default=50, ge=1, le=200)) -> dict:
+        return {"runs": mgr.list_runs(limit), "note": "Live rehearsal runs created on this server. Recorded and official runs are not listed here."}
+
     @r.post("/api/runs", status_code=201)
     def start(body: StartRequest, request: Request):
         try:

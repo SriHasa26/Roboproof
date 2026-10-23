@@ -231,7 +231,7 @@ function TryIt() {
           <div className="eyebrow mb-3">try it</div>
           <h2 className="font-display">Watch the real pipeline run.</h2>
           <p className="mx-auto mt-4 max-w-xl text-lg text-dim">A live rehearsal runs the actual pipeline end to end on rehearsal seeds: real model calls, real simulation, a real gate verdict. It is never an official result.</p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3"><Link to="/live" className="btn btn-primary">Open the live console <span aria-hidden>&rarr;</span></Link><Link to="/playground" className="btn btn-ghost">Try your own scenario in the playground</Link></div>
+          <div className="mt-8 flex flex-wrap justify-center gap-3"><Link to="/live" className="btn btn-primary">Open the live console <span aria-hidden>&rarr;</span></Link><Link to="/playground" className="btn btn-ghost">Try your own conditions</Link></div>
         </div>
       </Reveal>
     </section>

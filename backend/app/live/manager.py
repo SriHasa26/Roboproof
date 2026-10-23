@@ -200,6 +200,21 @@ class RunManager:
             self.runs[rid] = st
             return st
 
+    def list_runs(self, limit: int = 50) -> list[dict]:
+        """Live runs on this server, newest first. Only folders this service created (live_*); recorded and official runs are not here."""
+        with self.lock:
+            out: dict[str, dict] = {}
+            for d in self.cfg.runs_dir.glob("live_*"):
+                if d.is_dir() and RUN_ID_RE.match(d.name):
+                    m = _jload(d / "meta.json")
+                    if m:
+                        out[d.name] = m
+            for rid, st in self.runs.items():  # in-memory state is fresher than the file for a run in progress
+                out[rid] = st.meta()
+            rows = sorted(out.values(), key=lambda m: m.get("created", ""), reverse=True)[: max(1, min(limit, 200))]
+            return [{"id": m["id"], "created": m.get("created"), "started": m.get("started"), "ended": m.get("ended"), "status": m.get("status"), "verdict": m.get("verdict"),
+                     "estimated_cost_usd": m.get("estimated_cost_usd"), "master_seed": m.get("master_seed"), "mode": "rehearsal"} for m in rows]
+
     def cancel(self, rid: str, token: str) -> RunState:
         st = self.get(rid)
         if st is None:

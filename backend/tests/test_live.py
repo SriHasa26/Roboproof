@@ -213,3 +213,28 @@ def test_scrub_function(monkeypatch):
     monkeypatch.setenv("LIVE_ACCESS_CODE", "hunter2hunter2")
     out = scrub(f"key={SECRET} code=hunter2hunter2 Authorization: Bearer abcdefghijkl123 nvapi-abcdefghijklmnop")
     assert SECRET not in out and "hunter2" not in out and "abcdefghijkl123" not in out and "nvapi-abcdef" not in out
+
+
+def test_runs_list_is_newest_first_and_only_lists_live_runs(tmp_path, monkeypatch):
+    c, mgr, cfg = make(tmp_path, monkeypatch)
+    assert c.get("/api/runs").json()["runs"] == []
+    ids = []
+    for _ in range(3):
+        r = c.post("/api/runs", json={})
+        assert r.status_code == 201
+        wait(c, r.json()["id"])
+        ids.append(r.json()["id"])
+        time.sleep(0.01)
+    (cfg.runs_dir / "not_a_run").mkdir()  # stray folders and files are ignored
+    (cfg.runs_dir / "live_bogus").mkdir()
+    body = c.get("/api/runs").json()
+    assert [x["id"] for x in body["runs"]] == ids[::-1]
+    first = body["runs"][0]
+    assert first["status"] == "finished" and first["verdict"] == "VERIFIED" and first["estimated_cost_usd"] == 0.03 and first["mode"] == "rehearsal"
+    assert set(first) == {"id", "created", "started", "ended", "status", "verdict", "estimated_cost_usd", "master_seed", "mode"}  # nothing else (no tokens, no paths)
+    assert len(c.get("/api/runs?limit=2").json()["runs"]) == 2
+    assert c.get("/api/runs?limit=0").status_code == 422
+    # a fresh manager (server restart) rebuilds the list from the data folder
+    app2 = FastAPI()
+    install(app2, cfg)
+    assert [x["id"] for x in TestClient(app2).get("/api/runs").json()["runs"]] == ids[::-1]

@@ -1,8 +1,57 @@
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { API_BASE } from '../live/api'
 import { Row, Study, Summary, ci, pct, short, usd, useData } from '../lib'
 import { CountUp, Reveal, Skeleton, usePageTitle } from '../motion'
 import { IntervalPlot, Note, Section, Stamp } from '../ui'
 import FailureMapPanel from '../three/FailureMapPanel'
+
+type LiveRow = { id: string; created: string | null; started: string | null; status: string; verdict: string | null; estimated_cost_usd: number | null; master_seed: number | null }
+
+function LiveRuns() {
+  const [st, setSt] = useState<{ kind: 'loading' } | { kind: 'offline' } | { kind: 'ok'; runs: LiveRow[] }>({ kind: 'loading' })
+  const load = useCallback(async () => {
+    const ctl = new AbortController()
+    const t = setTimeout(() => ctl.abort(), 5000)
+    try {
+      const r = await fetch(`${API_BASE}/api/runs`, { signal: ctl.signal })
+      const b = await r.json().catch(() => null)
+      setSt(r.ok && b && Array.isArray(b.runs) ? { kind: 'ok', runs: b.runs } : { kind: 'offline' })
+    } catch { setSt({ kind: 'offline' }) } finally { clearTimeout(t) }
+  }, [])
+  useEffect(() => { load() }, [load])
+  const color = (v: string | null) => (v === 'VERIFIED' ? 'text-phos' : v === 'FAILED' ? 'text-verm' : 'text-amber')
+  return (
+    <Section kicker="created on this server" title="Live runs on this server" delay={0}>
+      <Note>Rehearsal runs started from the live console on this server, newest first. They are exploration, never official results, and are separate from the recorded studies below.</Note>
+      <div className="glass mt-4 overflow-x-auto">
+        {st.kind === 'loading' && <Skeleton className="m-4 h-24" />}
+        {st.kind === 'offline' && <p className="p-5 text-sm text-dim"><b className="text-text">Backend offline.</b> This copy of the site has no live backend, so no live runs can be listed. The recorded results below are unaffected. <Link className="text-amber underline decoration-dotted underline-offset-4" to="/live">Open the live console</Link> to replay a recorded live run.</p>}
+        {st.kind === 'ok' && st.runs.length === 0 && <p className="p-5 text-sm text-dim">No live runs have been started on this server yet. <Link className="text-amber underline decoration-dotted underline-offset-4" to="/live">Start one</Link>.</p>}
+        {st.kind === 'ok' && st.runs.length > 0 && (
+          <table className="w-full min-w-[640px] text-left text-sm">
+            <thead className="border-b hair font-mono text-[11px] uppercase tracking-wider text-dim"><tr><th className="p-3">Run</th><th>Started</th><th>Status</th><th>Verdict (rehearsal)</th><th>Est. cost</th><th /></tr></thead>
+            <tbody>
+              {st.runs.map((r) => (
+                <tr key={r.id} className="border-b hair last:border-0 hover:bg-white/[.04]">
+                  <td className="p-3 font-mono text-xs">{r.id}</td>
+                  <td className="font-mono text-xs">{r.started ?? r.created ? new Date((r.started ?? r.created)!).toLocaleString() : 'n/a'}</td>
+                  <td className="font-mono text-xs">{r.status}</td>
+                  <td className={`font-display font-semibold ${color(r.verdict)}`}>{r.verdict ?? (r.status === 'running' || r.status === 'queued' ? 'in progress' : 'no verdict')}</td>
+                  <td className="font-mono text-xs">{usd(r.estimated_cost_usd)}</td>
+                  <td className="pr-3 text-right font-mono text-xs">
+                    {r.verdict ? <Link className="text-amber underline decoration-dotted underline-offset-4 hover:text-text" to={`/live/report/${r.id}`}>open report</Link>
+                      : r.status === 'running' || r.status === 'queued' ? <Link className="text-amber underline decoration-dotted underline-offset-4 hover:text-text" to="/live">open console</Link> : <span className="text-dim">no report</span>}
+                  </td>
+                </tr>))}
+            </tbody>
+          </table>
+        )}
+      </div>
+      <button className="chip mt-3 hover:!border-amber/60 hover:!text-text" onClick={() => { setSt({ kind: 'loading' }); load() }}>Refresh</button>
+    </Section>
+  )
+}
 
 export default function Results() {
   usePageTitle('Results')
@@ -30,6 +79,15 @@ export default function Results() {
           </Reveal>
         ) : <Skeleton className="h-44" />}
       </header>
+
+      <Reveal>
+        <div className="glass mb-10 flex flex-wrap items-center justify-between gap-4 p-5">
+          <div><h2 className="text-xl">Try your own conditions</h2><p className="mt-1 text-sm text-dim">Type a situation in plain English, set the sliders, or upload a CSV of scenarios, and get real simulator results.</p></div>
+          <Link to="/playground" className="btn btn-primary">Open the playground <span aria-hidden>&rarr;</span></Link>
+        </div>
+      </Reveal>
+
+      <LiveRuns />
 
       <Section kicker="the official batch" title="Five runs, nothing re-rolled">
         <Note>
