@@ -46,7 +46,7 @@ def _err(row: int, line: int, field: str, problem: str) -> dict:
     return {"row": row, "line": line, "field": field, "problem": problem}
 
 
-def parse_batch(text: str) -> list[dict]:
+def parse_batch(text: str, max_rows: int = MAX_ROWS) -> list[dict]:
     """Return one dict of validated scenario fields per data row, or raise BatchError listing every problem (nothing is run if any row is invalid)."""
     if len(text.encode("utf-8")) > MAX_BYTES:
         raise BatchError(413, "too_large", f"The table is larger than {MAX_BYTES // 1024} KB.")
@@ -81,8 +81,8 @@ def parse_batch(text: str) -> list[dict]:
         raise BatchError(422, "invalid_header", "The header row does not match the scenario columns.", errs[:MAX_ERRORS_SHOWN])
     if not rows:
         raise BatchError(422, "no_rows", "The table has a header but no data rows.")
-    if len(rows) > MAX_ROWS:
-        raise BatchError(413, "too_many_rows", f"At most {MAX_ROWS} rows are allowed; the table has {len(rows)}.")
+    if len(rows) > max_rows:
+        raise BatchError(413, "too_many_rows", f"At most {max_rows} rows are allowed; the table has {len(rows)}.")
     out: list[dict] = []
     for i, (line, cells) in enumerate(rows, 1):
         if len(cells) != len(header):

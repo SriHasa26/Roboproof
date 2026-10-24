@@ -29,7 +29,7 @@ def make_router(svc: PlaygroundService, live: RunManager | None) -> APIRouter:
 
     @r.get("/api/sim/spec")
     def spec() -> dict:
-        s = build_spec(svc.cfg.max_sweep_n)
+        s = build_spec(svc.cfg.max_sweep_n, svc.cfg.max_batch_rows)
         s["enabled"] = svc.cfg.enabled
         s["analyze_available"] = bool(live and live.cfg.enabled)
         s["analyze_access_code_required"] = bool(live and live.cfg.access_code)
@@ -63,7 +63,7 @@ def make_router(svc: PlaygroundService, live: RunManager | None) -> APIRouter:
     @r.get("/api/sim/batch/template")
     def batch_template():
         from fastapi.responses import PlainTextResponse
-        return PlainTextResponse(template_csv(build_spec(svc.cfg.max_sweep_n)["presets"]), media_type="text/csv",
+        return PlainTextResponse(template_csv(build_spec(svc.cfg.max_sweep_n, svc.cfg.max_batch_rows)["presets"]), media_type="text/csv",
                                  headers={"Content-Disposition": 'attachment; filename="roboproof_scenarios_template.csv"'})
 
     @r.post("/api/sim/interpret")

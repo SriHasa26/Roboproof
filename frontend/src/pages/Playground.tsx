@@ -2,6 +2,7 @@ import { ReactNode, Suspense, lazy, useCallback, useEffect, useMemo, useState } 
 import { Hyp, Rate, pct, useData, usd } from '../lib'
 import { Skeleton, useMotionPrefs, usePageTitle } from '../motion'
 import { RatePair, SourceChip } from '../ui'
+import { WakingNote, useBackend } from '../backend'
 import { Link, useSearchParams } from 'react-router-dom'
 import { HypCard } from './Run'
 import { Confirm } from '../live/parts'
@@ -167,6 +168,7 @@ function RerunPanel({ runId }: { runId: string }) {
   const [res, setRes] = useState<RerunResp | null>(null)
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState<PgError | null>(null)
+  const be = useBackend()
   const go = useCallback(async (id: string) => {
     setBusy(true); setErr(null); setRes(null)
     const r = await post<RerunResp>(`/api/verify/${encodeURIComponent(runId)}/rerun`, { scenario_id: id }, 60000)
@@ -174,6 +176,8 @@ function RerunPanel({ runId }: { runId: string }) {
     if (r.ok) setRes({ ...r.data, default: { ...r.data.default, _at: new Date().toLocaleTimeString() }, patched: { ...r.data.patched, _at: new Date().toLocaleTimeString() } }); else setErr(r.error)
   }, [runId])
   useEffect(() => {
+    if (be.state === 'checking' || be.state === 'waking') return
+    if (be.state === 'offline') { setInfo(null); return }
     let live = true
     fetch(`${API_BASE}/api/verify/${encodeURIComponent(runId)}/scenarios`).then((r) => (r.ok ? r.json() : null)).catch(() => null).then((d) => {
       if (!live) return
@@ -181,14 +185,14 @@ function RerunPanel({ runId }: { runId: string }) {
       if (d && d.failing?.length) { setSid(d.failing[0].id); go(d.failing[0].id) }
     })
     return () => { live = false }
-  }, [runId, go])
+  }, [runId, go, be.state])
   return (
     <section className="glass mt-6 p-5" aria-label="Re-run of a recorded scenario">
       <div className="eyebrow mb-1.5">re-run a recorded scenario</div>
       <h2 className="text-2xl">{runId}: watch it reproduce</h2>
       <p className="mt-1 max-w-3xl text-sm text-dim">The scenario and its seed come from the recorded run's analysis set (a dev seed, never held-out). It is simulated now with the default policy and with the run's final patch, and the default result is compared with the stored one.</p>
       <div className="mt-3 flex flex-wrap items-center gap-2"><SourceChip kind="recorded" detail={`scenario, seed and patch from ${runId}`} />{res && <SourceChip kind="live" detail={`re-simulated just now at ${res.default._at} by this server`} />}<Link className="chip hover:!border-amber/60 hover:!text-text" to={`/runs/${runId}`}>Back to the run</Link></div>
-      {info === undefined && <Skeleton className="mt-4 h-24" />}
+      {info === undefined && (be.state === 'waking' ? <WakingNote className="mt-4" /> : <Skeleton className="mt-4 h-24" />)}
       {info === null && <div className="mt-4"><Notice tone="warn" title="Backend offline">Re-running needs the simulator backend. Nothing was re-run and no result is shown. The same check from a terminal: <span className="font-mono text-xs text-text">scripts/dock.sh python scripts/verify_official.py --run {runId}</span></Notice></div>}
       {info && (
         <div className="mt-4 space-y-4">
@@ -244,7 +248,11 @@ export default function Playground() {
   const [interpBusy, setInterpBusy] = useState(false)
   const [interpErr, setInterpErr] = useState<PgError | null>(null)
 
-  useEffect(() => { fetchSpec().then(setSpec) }, [])
+  const be = useBackend()
+  useEffect(() => {
+    if (be.state === 'online') fetchSpec().then(setSpec)
+    else if (be.state === 'offline') setSpec((cur) => cur ?? null)
+  }, [be.state])
   useEffect(() => {
     if (!spec) return
     const b = spec.presets.find((p) => p.id === 'benign')!
@@ -325,6 +333,7 @@ export default function Playground() {
 
       {rerunId && /^official_\d{2}_seed\d+$/.test(rerunId) && <RerunPanel runId={rerunId} />}
 
+      {spec === undefined && be.state === 'waking' && <WakingNote className="mt-8" />}
       {spec === undefined && <div className="mt-8 grid gap-6 lg:grid-cols-[380px_1fr]"><Skeleton className="h-96" /><Skeleton className="h-96" /></div>}
 
       {spec !== undefined && !online && (

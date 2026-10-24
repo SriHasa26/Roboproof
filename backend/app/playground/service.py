@@ -49,7 +49,8 @@ class PlaygroundConfig:
     max_concurrent: int = 2              # PLAYGROUND_MAX_CONCURRENT simulations at once
     scenario_timeout_s: float = 20.0     # PLAYGROUND_SCENARIO_TIMEOUT_S
     sweep_timeout_s: float = 60.0        # PLAYGROUND_SWEEP_TIMEOUT_S (whole sweep, both policies)
-    max_sweep_n: int = 200               # PLAYGROUND_MAX_SWEEP_N
+    max_sweep_n: int = 200               # MAX_SWEEP_N (or PLAYGROUND_MAX_SWEEP_N); default 50 in host mode
+    max_batch_rows: int = 200            # MAX_BATCH_ROWS; default 50 in host mode
     analyze_usd_est: float = 0.03        # reserved against the daily spend cap before an analyze call
     interpret_usd_est: float = 0.005     # reserved against the daily spend cap before an interpret call
     rate_interpret_per_hour: int = 10    # PLAYGROUND_RATE_INTERPRET_PER_HOUR (per client IP)
@@ -69,10 +70,12 @@ class PlaygroundConfig:
         c.rate_scenario_per_min = int(num("PLAYGROUND_RATE_SCENARIO_PER_MIN", c.rate_scenario_per_min))
         c.rate_sweep_per_10min = int(num("PLAYGROUND_RATE_SWEEP_PER_10MIN", c.rate_sweep_per_10min))
         c.rate_interpret_per_hour = int(num("PLAYGROUND_RATE_INTERPRET_PER_HOUR", c.rate_interpret_per_hour))
-        c.max_concurrent = max(1, int(num("PLAYGROUND_MAX_CONCURRENT", c.max_concurrent)))
+        from .. import hosting
+        c.max_concurrent = max(1, int(num("PLAYGROUND_MAX_CONCURRENT", 1 if hosting.host_mode(e) and hosting.effective_cpus() <= 1 else c.max_concurrent)))
         c.scenario_timeout_s = num("PLAYGROUND_SCENARIO_TIMEOUT_S", c.scenario_timeout_s)
         c.sweep_timeout_s = num("PLAYGROUND_SWEEP_TIMEOUT_S", c.sweep_timeout_s)
-        c.max_sweep_n = min(200, int(num("PLAYGROUND_MAX_SWEEP_N", c.max_sweep_n)))  # never above the documented cap
+        c.max_sweep_n = hosting.max_sweep_n(e)  # never above the documented cap of 200
+        c.max_batch_rows = hosting.max_batch_rows(e)
         c.trust_proxy = e.get("LIVE_TRUST_PROXY", "").strip().lower() in ("1", "true", "yes", "on")
         return c
 
@@ -228,7 +231,8 @@ def run_scenario_isolated(policy: Policy, scenario: Scenario, timeout_s: float) 
 
 def run_sweep_isolated(policy: Policy, scenarios: list[Scenario], timeout_s: float) -> list[Result]:
     from ..runner.local import LocalRunner  # LocalRunner: shards run as killable processes with a per-shard timeout
-    rr = LocalRunner(shard_timeout_s=timeout_s).run(policy, scenarios, shards=min(10, len(scenarios)))
+    from ..hosting import worker_count  # the container's real CPU limit, not the host's core count
+    rr = LocalRunner(max_workers=worker_count(), shard_timeout_s=timeout_s).run(policy, scenarios, shards=min(10, len(scenarios)))
     if not rr.complete:
         raise PlaygroundError(504, "timeout", "The sweep did not finish in time (some shards timed out or failed) and was stopped.")
     return rr.results
@@ -362,7 +366,7 @@ class PlaygroundService:
         from ..analysis.evidence import compute_evidence
         self._enabled()
         try:
-            recs = parse_batch(req.csv)  # every row validated first; nothing runs if any row is invalid
+            recs = parse_batch(req.csv, self.cfg.max_batch_rows)  # every row validated first; nothing runs if any row is invalid
         except BatchError as e:
             raise PlaygroundError(e.status, e.code, e.message, e.errors)
         self._rate(ip, "batch", self.cfg.rate_sweep_per_10min, 600)

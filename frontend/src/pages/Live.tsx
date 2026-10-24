@@ -2,12 +2,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Summary, load, pct, usd, useData } from '../lib'
 import { Skeleton, useToast, usePageTitle } from '../motion'
+import { WakingNote, useBackend } from '../backend'
 import { RatePair, SourceChip, Stamp } from '../ui'
 import { ApiError, LiveEvent, LiveStatus, cancelRun, fetchStatus, openStream, startRun } from '../live/api'
 import { derive } from '../live/derive'
 import { Candidates, Confirm, GateLights, Terminal, Timeline } from '../live/parts'
 
 type Source = { kind: 'live'; id: string; token: string | null } | { kind: 'replay'; key: string }
+type StatusX = LiveStatus & { pipeline_enabled?: boolean }
 type ReplayMeta = { key: string; run_id: string; has_calls: boolean; date: string; verdict: string | null; duration_s: number; estimated_cost_usd: number | null; master_seed: number | null; n_events: number; note?: string }
 const KEY = 'roboproof.live'
 
@@ -36,8 +38,9 @@ export default function Live() {
   const toast = useToast()
   const off = useData<Summary>('official.json')
   const replays = useReplays()
+  const be = useBackend()
   const [probe, setProbe] = useState<'checking' | 'online' | 'offline'>('checking')
-  const [status, setStatus] = useState<LiveStatus | null>(null)
+  const [status, setStatus] = useState<StatusX | null>(null)
   const [source, setSource] = useState<Source | null>(null)
   const [events, setEvents] = useState<LiveEvent[]>([])
   const [lost, setLost] = useState(false)
@@ -56,6 +59,8 @@ export default function Live() {
 
   // probe the backend, and re-attach to a run this tab started before a refresh
   useEffect(() => {
+    if (be.state === 'offline') { setProbe('offline'); setStatus(null); return }
+    if (be.state !== 'online') { setProbe('checking'); return }  // checking or waking: the shared health check decides
     let live = true
     refresh().then((s) => {
       if (!live || !s) return
@@ -65,7 +70,7 @@ export default function Live() {
       } catch { /* no saved run */ }
     })
     return () => { live = false }
-  }, [refresh])
+  }, [refresh, be.state])
 
   // live stream
   useEffect(() => {
@@ -138,7 +143,7 @@ export default function Live() {
 
       {!source && (
         <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
-          {probe === 'checking' && <Skeleton className="h-64" />}
+          {probe === 'checking' && (be.state === 'waking' ? <WakingNote /> : <Skeleton className="h-64" />)}
           {probe === 'offline' && (
             <div className="glass border-amber/30 p-6">
               <div className="eyebrow !text-amber mb-2">offline</div>
@@ -164,6 +169,11 @@ export default function Live() {
               </div>
               {!status.enabled ? (
                 <p className="mt-5 rounded-lg border border-amber/30 bg-amber/[.06] p-3 text-sm text-amber">Live runs are switched off on this server.</p>
+              ) : status.pipeline_enabled === false ? (
+                <div className="mt-5">
+                  <p className="rounded-lg border border-amber/30 bg-amber/[.06] p-3 text-sm text-amber">Full pipeline runs are switched off on this host (it is a small free instance). They are available when the project is run locally, see the README, &ldquo;Running live&rdquo;. The playground (scenario, sweep, batch, plain-English input and analysis) still works here, and you can watch recordings of real live runs.</p>
+                  <div className="mt-4">{replayBtn}</div>
+                </div>
               ) : (
                 <>
                   {status.access_code_required && (

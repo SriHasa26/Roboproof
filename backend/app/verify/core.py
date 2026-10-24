@@ -139,7 +139,8 @@ def _scenarios(run_dir: Path) -> list[Scenario]:
 
 def default_runner(timeout_s: float):
     from ..runner.local import LocalRunner
-    return LocalRunner(shard_timeout_s=timeout_s)
+    from ..hosting import worker_count
+    return LocalRunner(max_workers=worker_count(), shard_timeout_s=timeout_s)
 
 
 def resimulate_run(run_dir: Path, runner_factory: Callable[[float], object] = default_runner, timeout_s: float = 60.0, all_attempts: bool = False) -> list[Row]:

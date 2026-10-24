@@ -41,7 +41,7 @@ def default_policy_dict() -> dict:
     return {k: (int(v[2]) if k in INT_POLICY_PARAMS else float(v[2])) for k, v in POLICY_BOUNDS.items()}
 
 
-def build_spec(max_sweep_n: int) -> dict:
+def build_spec(max_sweep_n: int, max_batch_rows: int = 200) -> dict:
     scenario = [{"name": k, "min": lo, "max": hi, "integer": k == "gripper_delay_steps", "default": 0 if k == "gripper_delay_steps" else None, **SCENARIO_INFO[k]}
                 for k, (lo, hi) in SCENARIO_BOUNDS.items()]
     policy = []
@@ -52,7 +52,7 @@ def build_spec(max_sweep_n: int) -> dict:
     return {
         "scenario": scenario, "policy": policy, "presets": PRESETS, "max_sweep_n": max_sweep_n, "seed": {"min": PG_SEED_MIN, "max": PG_SEED_MAX - 1, "default": DEFAULT_SEED},
         "task": "One task only: a gripper picks up a cube, carries it over a low wall and places it in a green target zone.",
-        "batch": {"max_rows": 200, "max_kb": 100, "columns": list(SCENARIO_BOUNDS), "template_url": "/api/sim/batch/template"},
+        "batch": {"max_rows": max_batch_rows, "max_kb": 100, "columns": list(SCENARIO_BOUNDS), "template_url": "/api/sim/batch/template"},
         "label": "Exploration, not a gate verdict. Uses the frozen simulator and parameter ranges. Not part of the official evaluation.",
         "limits": "Other robots would need a new simulator and a recalibrated gate; that is future work.",
     }

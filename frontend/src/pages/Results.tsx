@@ -25,7 +25,7 @@ function LiveRuns() {
   const color = (v: string | null) => (v === 'VERIFIED' ? 'text-phos' : v === 'FAILED' ? 'text-verm' : 'text-amber')
   return (
     <Section kicker="created on this server" title="Live runs on this server" delay={0}>
-      <div className="mb-3">{st.kind === 'ok' ? <SourceChip kind="live" detail="listed by this server just now" /> : <span className="chip">{be.state === 'checking' ? 'checking the backend...' : 'no live backend'}</span>}</div>
+      <div className="mb-3">{st.kind === 'ok' ? <SourceChip kind="live" detail="listed by this server just now" /> : <span className="chip">{be.state === 'checking' ? 'checking the backend...' : be.state === 'waking' ? 'backend waking up...' : 'no live backend'}</span>}</div>
       <Note>Rehearsal runs started from the live console on this server, newest first. They are exploration, never official results, and are separate from the recorded studies below.</Note>
       <div className="glass mt-4 overflow-x-auto">
         {st.kind === 'loading' && <Skeleton className="m-4 h-24" />}

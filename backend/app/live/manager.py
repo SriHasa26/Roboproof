@@ -15,6 +15,7 @@ import queue
 import re
 import secrets
 import signal
+import shutil
 import sqlite3
 import subprocess
 import threading
@@ -135,7 +136,7 @@ class RunManager:
         with self.lock:
             led = self._ledger()
             return {
-                "enabled": self.cfg.enabled, "busy": bool(self.current and not self.current.done),
+                "enabled": self.cfg.enabled, "pipeline_enabled": self.cfg.pipeline_enabled, "busy": bool(self.current and not self.current.done),
                 "current_run_id": self.current.id if self.current and not self.current.done else None,
                 "access_code_required": bool(self.cfg.access_code),
                 "runs_left_today": max(0, self.cfg.daily_run_cap - led["runs"]),
@@ -151,6 +152,8 @@ class RunManager:
         with self.lock:
             if not c.enabled:
                 raise LiveError(503, "disabled", "Live runs are switched off on this server.")
+            if not c.pipeline_enabled:
+                raise LiveError(503, "pipeline_disabled", "Full pipeline runs are switched off on this host. They are available when the project is run locally; the recorded runs can still be replayed.")
             if c.access_code and not secrets.compare_digest((code or "").encode(), c.access_code.encode()):
                 raise LiveError(401, "access_code", "A valid access code is required to start a live run.")
             now = time.time()
@@ -169,6 +172,7 @@ class RunManager:
             seed = SEED_LO + secrets.randbelow(SEED_HI - SEED_LO)
             assert seed < 900_000  # a live run can never use a held-out seed
             st = RunState(id=rid, seed=seed, dir=c.runs_dir / rid, cancel_token=secrets.token_urlsafe(16), created=_now())
+            self._prune()
             st.dir.mkdir(parents=True)
             self.runs[rid] = st
             self.current = st
@@ -178,6 +182,15 @@ class RunManager:
                        {"mode": "rehearsal", "master_seed": seed})
             threading.Thread(target=self._worker, args=(st,), daemon=True, name=f"live-{rid}").start()
             return st
+
+    def _prune(self) -> None:
+        """Keep only the newest (keep_runs - 1) finished run folders so a new one fits within keep_runs; the disk on a small host is limited."""
+        dirs = sorted((d for d in self.cfg.runs_dir.glob("live_*") if d.is_dir() and RUN_ID_RE.match(d.name)), key=lambda d: d.name)
+        for d in dirs[: max(0, len(dirs) - (self.cfg.keep_runs - 1))]:
+            if self.current is not None and d.name == self.current.id and not self.current.done:
+                continue
+            shutil.rmtree(d, ignore_errors=True)
+            self.runs.pop(d.name, None)
 
     def get(self, rid: str) -> RunState | None:
         if not RUN_ID_RE.match(rid):

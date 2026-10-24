@@ -1,0 +1,41 @@
+# RoboProof as ONE container for a small free host (for example Render free): the built frontend and the FastAPI backend/simulator on one port.
+# Build from the repo root:  docker build -f docker/Dockerfile.host -t roboproof-host:dev .
+# Run:                       docker run --rm -p 8000:8000 -e PORT=8000 roboproof-host:dev     (then open http://localhost:8000)
+# Runs as a non-root user. Runtime data goes to DATA_DIR (default /tmp/roboproof): local disk that such hosts lose when the instance
+# spins down, so the daily live-run counters and kept runs reset on restart. No secrets are baked in: NEBIUS_API_KEY etc. come from the host's env.
+
+# --- stage 1: build the frontend (VITE_API_BASE unset: the site calls the relative /api on the same origin)
+FROM node:20-slim AS web
+WORKDIR /web
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci --no-audit --no-fund
+COPY frontend ./
+RUN npm run build
+
+# --- stage 2: compile the PyBullet wheel (needs gcc/g++, not needed at runtime)
+FROM python:3.11 AS wheels
+RUN pip wheel --no-cache-dir --wheel-dir /wheels pybullet
+
+# --- stage 3: slim runtime
+FROM python:3.11-slim
+COPY --from=wheels /wheels /wheels
+RUN pip install --no-cache-dir --no-index --find-links /wheels pybullet && rm -rf /wheels
+COPY backend/requirements.txt /tmp/requirements.txt
+RUN grep -v '^#' /tmp/requirements.txt | pip install --no-cache-dir -r /dev/stdin && rm /tmp/requirements.txt
+WORKDIR /app
+COPY backend /app/backend
+COPY scripts /app/scripts
+COPY docs /app/docs
+COPY recorded_runs/official_001 /app/recorded_runs/official_001
+COPY --from=web /web/dist /app/frontend_dist
+RUN python -m compileall -q /app/backend \
+ && useradd --create-home --uid 10001 app \
+ && mkdir -p /tmp/roboproof && chown -R app:app /tmp/roboproof
+ENV PYTHONPATH=/app/backend PYTHONHASHSEED=0 PYTHONUNBUFFERED=1 \
+    ROBOPROOF_HOST_MODE=1 DATA_DIR=/tmp/roboproof ROBOPROOF_DB=/tmp/roboproof/roboproof.sqlite FRONTEND_DIR=/app/frontend_dist \
+    LIVE_ENABLED=0 PORT=8000
+USER app
+EXPOSE 8000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD python -c "import os,urllib.request;urllib.request.urlopen('http://localhost:%s/api/health' % os.environ.get('PORT','8000'))"
+CMD ["sh", "-c", "exec uvicorn app.api.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
