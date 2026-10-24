@@ -127,6 +127,9 @@ def one(profile: tuple[str, str, str], op: str) -> dict:
         out["error"] = "health check never succeeded: " + sh("docker", "logs", "--tail", "5", cid)
         sh("docker", "rm", "-f", "rp-measure")
         return out
+    rs, rb = http("GET", "/", timeout=10)
+    out["root_page"] = rs == 200 and isinstance(rb, str) and "<div id=\"root\">" in rb
+    out["health_body"] = http("GET", "/api/health", timeout=10)[1].get("status") if isinstance(http("GET", "/api/health", timeout=10)[1], dict) else None
     ver = http("GET", "/api/version")[1]
     out["workers"] = ver.get("workers") if isinstance(ver, dict) else None
     out["effective_cpus"] = ver.get("effective_cpus") if isinstance(ver, dict) else None
@@ -177,15 +180,15 @@ def main() -> int:
             r = one(prof, op)
             results.append(r)
             print("   ", json.dumps({k: v for k, v in r.items() if k != "cid"}), flush=True)
-    head = "| Limit | Operation | HTTP | Time | Peak memory (cgroup) | Sampled peak | Idle server | Workers | Killed? | Start to healthy |\n|---|---|---|---|---|---|---|---|---|---|"
+    head = "| Limit | Operation | HTTP | Time | Peak memory (cgroup) | Sampled peak | Idle server | Workers | Killed? | Start to healthy | Site at / |\n|---|---|---|---|---|---|---|---|---|---|---|"
     lines = [head]
     names = {"scenario": "1 scenario", "sweep50": "50-scenario sweep", "batch50": "50-row batch"}
     for r in results:
         if "error" in r:
-            lines.append(f"| {r['profile']} | {names[r['op']]} | - | - | - | - | - | - | ERROR: {r['error'][:80]} | {r.get('start_s', '-')} s |")
+            lines.append(f"| {r['profile']} | {names[r['op']]} | - | - | - | - | - | - | ERROR: {r['error'][:80]} | {r.get('start_s', '-')} s | - |")
             continue
         lines.append(f"| {r['profile']} | {names[r['op']]} | {r['http']} | {r['seconds']} s | {r['peak_mib']} MiB | {r['sampled_peak_mib']} MiB | {r['idle_peak_mib']} MiB | {r['workers']} | "
-                     f"{'YES' if r['killed'] else 'no'} (oom events {r['oom_kill_events']}) | {r['start_s']} s |")
+                     f"{'YES' if r['killed'] else 'no'} (oom events {r['oom_kill_events']}) | {r['start_s']} s | {'yes' if r.get('root_page') else 'NO'} |")
     table = "\n".join(lines)
     print("\n" + table)
     if a.out:

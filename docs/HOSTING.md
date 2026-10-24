@@ -51,6 +51,6 @@ With `LIVE_PIPELINE_ENABLED=0`, `/live` shows the recorded replays and says that
 
 ## What this setup cannot do
 
-- The full pipeline run was not measured in a constrained container (it spends model credits); only scenario, sweep and batch were. A run takes minutes and, on a host that sleeps and loses its disk, is a poor fit, so `LIVE_PIPELINE_ENABLED=0` is the sensible setting there. Run the pipeline locally or on a larger instance.
+- The full pipeline run was not run in a constrained container (it spends credits), so this is an **estimate, not a measurement**: an official run simulates about 2,000 scenarios (250 analysis, 4 candidates x 250, 2 x 400 held-out). At the measured 0.5 CPU rate (about 8 simulations per second) that is roughly 4 to 5 minutes of simulation plus about 30 s of model calls, close to the default `RUN_TIMEOUT_S=600` and longer if a second attempt is needed. With 2 CPUs it is about 1.5 minutes. A host with about 0.1 CPU (which I believe is the free tier, but have not verified) would be several times slower and would not finish in time. So on the free tier set `LIVE_PIPELINE_ENABLED=0`, and run the pipeline locally or on a larger instance.
 - Daily quotas and kept runs are not durable across restarts.
 - The first visit after idle shows the waking state; nothing is faked while it waits.

@@ -57,3 +57,8 @@ Notes
 - `backend/app/hosting.py`: real cgroup CPU limit drives worker counts; host-mode defaults `MAX_SWEEP_N` / `MAX_BATCH_ROWS` = 50 (hard cap 200); `RUN_TIMEOUT_S`; `LIVE_PIPELINE_ENABLED=0` disables only the pipeline run; `LIVE_KEEP_RUNS` (20); `/api/version` reports effective CPUs and workers.
 - Frontend: "Backend waking up (about 1 minute)" with a 90 s retry window then offline mode; "online" only after health succeeds; a host that answers 404/HTML is offline at once; `/live` shows replays plus a note when the pipeline is off.
 - Measured (single runs, laptop, fresh container each): nothing OOM-killed at 512 MB / 0.5 CPU or 2 GB / 2 CPUs; peak under about 141 MiB; 50-scenario sweep about 21 s vs 4 s.
+
+## Hosting prep, second pass
+- Docker verified (29.2.1, WSL2 backend, cgroup v2, 158 GB free); other projects' containers and ports (8000, 5173) untouched. Compose stack runs on API_PORT=8010.
+- Added: PORT default 7860 (Render sets 10000), startup self-check (simulator import + playground spec, always in host mode), the pipeline's LocalRunner pool sized from the container CPU limit via `scripts/run_live_pipeline.py` (frozen runner untouched), exact replay-note wording, PLAYGROUND_ENABLED in render.yaml.
+- Re-measured the final image (`docs/HOSTING_MEASUREMENTS.md`): nothing killed at 512 MB / 0.5 CPU or 2 GB / 2 CPUs. Full pipeline on the free tier: estimate only (see docs/HOSTING.md).
