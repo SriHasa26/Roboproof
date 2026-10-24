@@ -128,3 +128,17 @@ def test_prepare_data_dir_creates_live_runs(tmp_path):
 @pytest.mark.skipif(not Path("/proc/self/cgroup").exists(), reason="cgroups are a Linux thing")
 def test_live_cgroup_values_are_sane():
     assert hosting.worker_count() >= 1 and hosting.effective_cpus() > 0
+
+
+def test_startup_self_check_reports_a_broken_simulator(monkeypatch):
+    import builtins
+    from app.api import main
+    real = builtins.__import__
+
+    def fake(name, *a, **k):
+        if name == "pybullet":
+            raise ImportError("no pybullet in this test")
+        return real(name, *a, **k)
+    monkeypatch.setattr(builtins, "__import__", fake)
+    with pytest.raises(RuntimeError, match="STARTUP SELF-CHECK FAILED"):
+        main.startup_self_check()

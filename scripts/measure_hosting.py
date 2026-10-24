@@ -110,7 +110,7 @@ def one(profile: tuple[str, str, str], op: str) -> dict:
     label, mem, cpus = profile
     sh("docker", "rm", "-f", "rp-measure")
     t0 = time.time()
-    cid = sh("docker", "run", "-d", "--name", "rp-measure", "--memory", mem, "--memory-swap", mem, "--cpus", cpus, "-p", f"{PORT}:8000",
+    cid = sh("docker", "run", "-d", "--name", "rp-measure", "--memory", mem, "--memory-swap", mem, "--cpus", cpus, "-p", f"{PORT}:7860", "-e", "PORT=7860",
              "-e", "ROBOPROOF_HOST_MODE=1", IMAGE)
     out: dict = {"profile": label, "op": op, "cid": cid[:12]}
     if not cid:

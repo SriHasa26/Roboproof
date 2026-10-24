@@ -14,12 +14,12 @@ Facts about the host, taken from its own terms at the time of writing (check the
 
 ## The image
 
-`docker/Dockerfile.host` is multi-stage: Node builds the frontend (with `VITE_API_BASE` unset, so the site calls the relative `/api` on its own origin), a Python stage compiles PyBullet, and a slim runtime stage copies in the backend, the built site and the five recorded official runs. It runs as a **non-root user** (`app`, uid 10001) and listens on `$PORT` (default 8000).
+`docker/Dockerfile.host` is multi-stage: Node builds the frontend (with `VITE_API_BASE` unset, so the site calls the relative `/api` on its own origin), a Python stage compiles PyBullet, and a slim runtime stage copies in the backend, the built site and the five recorded official runs. It runs as a **non-root user** (`app`, uid 10001) and listens on `$PORT` (Render sets 10000; the image defaults to 7860).
 
 ```bash
 docker build -f docker/Dockerfile.host -t roboproof-host:dev .
-docker run --rm -p 8000:8000 -e PORT=8000 roboproof-host:dev        # open http://localhost:8000
-docker run --rm -p 8000:8000 --memory=512m --cpus=0.5 roboproof-host:dev   # the smallest host profile
+docker run --rm -p 7860:7860 -e PORT=7860 roboproof-host:dev        # open http://localhost:7860
+docker run --rm -p 7860:7860 -e PORT=7860 --memory=512m --cpus=0.5 roboproof-host:dev   # the smallest host profile
 ```
 
 `render.yaml` is a Blueprint for a free Docker web service (`healthCheckPath: /api/health`, no secret values; the secrets are `sync: false` and entered in the dashboard).
@@ -28,12 +28,14 @@ docker run --rm -p 8000:8000 --memory=512m --cpus=0.5 roboproof-host:dev   # the
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `PORT` | 8000 | Port the single server listens on (the host sets it). |
+| `PORT` | 7860 (Render: 10000) | Port the single server listens on (the host sets it). |
 | `ROBOPROOF_HOST_MODE` | `1` in the host image, else off | Small defaults for the limits below. |
 | `DATA_DIR` | `/tmp/roboproof` | Runtime data directory (local disk; lost on spin-down). |
 | `MAX_SWEEP_N` | 50 in host mode, else 200 | Largest sweep. Never above 200. (`PLAYGROUND_MAX_SWEEP_N` still works.) |
 | `MAX_BATCH_ROWS` | 50 in host mode, else 200 | Largest CSV batch. Never above 200. |
 | `RUN_TIMEOUT_S` | 600 | A full pipeline run is killed after this long (`LIVE_TIMEOUT_S` still works). |
+| `PLAYGROUND_ENABLED` | 1 | Kill switch for the simulator playground. |
+| `STARTUP_SELF_CHECK` | on in host mode | At start the server imports the simulator and builds the playground spec; if either fails it refuses to start with a clear message. |
 | `LIVE_ENABLED` | 0 | Master switch for anything that calls a model or spends credits (full pipeline, plain-English input, analysis). |
 | `LIVE_PIPELINE_ENABLED` | 1 | **0 disables only the full pipeline run.** Scenario, sweep, batch, interpret and analyze keep working. |
 | `LIVE_KEEP_RUNS` | 20 | Finished run folders kept on disk. |

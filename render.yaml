@@ -15,8 +15,10 @@ services:
     healthCheckPath: /api/health
     autoDeploy: false
     envVars:
-      # --- what the container needs (PORT is set by Render itself)
+      # --- what the container needs (Render sets PORT itself, default 10000; locally the image defaults to 7860)
       - key: ROBOPROOF_HOST_MODE        # already set in the image; small defaults for sweep size and batch rows
+        value: "1"
+      - key: PLAYGROUND_ENABLED         # kill switch for the simulator playground
         value: "1"
       - key: DATA_DIR                   # runtime data (live runs, daily counters, SQLite): local disk, lost on spin-down
         value: /tmp/roboproof

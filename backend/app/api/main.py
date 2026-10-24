@@ -21,6 +21,28 @@ _live = install_live(app)  # live rehearsal service (off unless LIVE_ENABLED=1)
 install_playground(app, _live)  # simulator playground (no LLM spend except the guarded analyze endpoint)
 
 
+def startup_self_check() -> dict:
+    """Import the simulator and build the playground spec; raise with a clear message if either fails, so a broken image never reports healthy."""
+    try:
+        import pybullet  # noqa: F401
+        from ..sim import pickplace  # noqa: F401
+    except Exception as e:
+        raise RuntimeError(f"STARTUP SELF-CHECK FAILED: the simulator could not be imported ({type(e).__name__}: {e}). The image is broken; refusing to start.") from e
+    try:
+        from ..playground.spec import build_spec
+        spec = build_spec(app.state.playground.cfg.max_sweep_n, app.state.playground.cfg.max_batch_rows)
+        assert spec["scenario"] and spec["policy"]
+    except Exception as e:
+        raise RuntimeError(f"STARTUP SELF-CHECK FAILED: the playground spec could not be built ({type(e).__name__}: {e}).") from e
+    return {"simulator": "ok", "spec_params": len(spec["scenario"]) + len(spec["policy"])}
+
+
+@app.on_event("startup")
+def _self_check() -> None:
+    if hosting.host_mode() or os.environ.get("STARTUP_SELF_CHECK", "").strip().lower() in ("1", "true", "yes", "on"):
+        print(f"[roboproof] startup self-check ok: {startup_self_check()}", flush=True)
+
+
 @app.get("/health")
 def health() -> dict:
     return {"status": "ok"}

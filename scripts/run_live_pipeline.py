@@ -10,6 +10,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "backend"))
 
 if __name__ == "__main__":
+    from app.hosting import worker_count
+    os.cpu_count = worker_count  # the frozen LocalRunner sizes its pool from os.cpu_count(); give it the container's real CPU limit, not the host's cores
     log = os.environ.get("LIVE_CALL_LOG")
     if log:
         from app.live.capture import install

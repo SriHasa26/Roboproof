@@ -171,7 +171,7 @@ export default function Live() {
                 <p className="mt-5 rounded-lg border border-amber/30 bg-amber/[.06] p-3 text-sm text-amber">Live runs are switched off on this server.</p>
               ) : status.pipeline_enabled === false ? (
                 <div className="mt-5">
-                  <p className="rounded-lg border border-amber/30 bg-amber/[.06] p-3 text-sm text-amber">Full pipeline runs are switched off on this host (it is a small free instance). They are available when the project is run locally, see the README, &ldquo;Running live&rdquo;. The playground (scenario, sweep, batch, plain-English input and analysis) still works here, and you can watch recordings of real live runs.</p>
+                  <p className="rounded-lg border border-amber/30 bg-amber/[.06] p-3 text-sm text-amber">Full pipeline runs are switched off on this host (it is a small free instance): full pipeline runs are available when you run the project locally, see the README, &ldquo;Running live&rdquo;. The playground (scenario, sweep, batch, plain-English input and analysis) still works here, and you can watch recordings of real live runs.</p>
                   <div className="mt-4">{replayBtn}</div>
                 </div>
               ) : (
