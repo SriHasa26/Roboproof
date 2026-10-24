@@ -47,8 +47,13 @@ class PlaygroundConfig:
     rate_scenario_per_min: int = 20      # PLAYGROUND_RATE_SCENARIO_PER_MIN (per client IP)
     rate_sweep_per_10min: int = 6        # PLAYGROUND_RATE_SWEEP_PER_10MIN (per client IP)
     max_concurrent: int = 2              # PLAYGROUND_MAX_CONCURRENT simulations at once
-    scenario_timeout_s: float = 20.0     # PLAYGROUND_SCENARIO_TIMEOUT_S
-    sweep_timeout_s: float = 60.0        # PLAYGROUND_SWEEP_TIMEOUT_S (whole sweep, both policies)
+    scenario_timeout_s: float = 20.0     # SCENARIO_TIMEOUT_S (or PLAYGROUND_SCENARIO_TIMEOUT_S); 30 in host mode
+    sweep_timeout_s: float = 60.0        # SWEEP_TIMEOUT_S (or PLAYGROUND_SWEEP_TIMEOUT_S): whole sweep, both policies; 90 in host mode
+    batch_timeout_s: float = 60.0        # BATCH_TIMEOUT_S: whole batch, both policies; defaults to the sweep value
+    verify_timeout_s: float = 54.0       # VERIFY_TIMEOUT_S: per-shard limit of the re-simulation
+    interpret_timeout_s: float | None = None   # INTERPRET_TIMEOUT_S: per model call (default: the module's 45 s / 60 s)
+    analyze_timeout_s: float | None = None     # ANALYZE_TIMEOUT_S: per model call (default: LLM_TIMEOUT_S)
+    verify_enabled: bool = True          # VERIFY_ENABLED: off in host mode (render.yaml): the re-simulation does not fit a free instance
     max_sweep_n: int = 200               # MAX_SWEEP_N (or PLAYGROUND_MAX_SWEEP_N); default 50 in host mode
     max_batch_rows: int = 200            # MAX_BATCH_ROWS; default 50 in host mode
     analyze_usd_est: float = 0.03        # reserved against the daily spend cap before an analyze call
@@ -72,8 +77,14 @@ class PlaygroundConfig:
         c.rate_interpret_per_hour = int(num("PLAYGROUND_RATE_INTERPRET_PER_HOUR", c.rate_interpret_per_hour))
         from .. import hosting
         c.max_concurrent = max(1, int(num("PLAYGROUND_MAX_CONCURRENT", 1 if hosting.host_mode(e) and hosting.effective_cpus() <= 1 else c.max_concurrent)))
-        c.scenario_timeout_s = num("PLAYGROUND_SCENARIO_TIMEOUT_S", c.scenario_timeout_s)
-        c.sweep_timeout_s = num("PLAYGROUND_SWEEP_TIMEOUT_S", c.sweep_timeout_s)
+        host = hosting.host_mode(e)
+        c.scenario_timeout_s = hosting.env_float(e, ("SCENARIO_TIMEOUT_S", "PLAYGROUND_SCENARIO_TIMEOUT_S"), 30.0 if host else c.scenario_timeout_s)
+        c.sweep_timeout_s = hosting.env_float(e, ("SWEEP_TIMEOUT_S", "PLAYGROUND_SWEEP_TIMEOUT_S"), 90.0 if host else c.sweep_timeout_s)
+        c.batch_timeout_s = hosting.env_float(e, ("BATCH_TIMEOUT_S",), c.sweep_timeout_s)
+        c.verify_timeout_s = hosting.env_float(e, ("VERIFY_TIMEOUT_S",), c.verify_timeout_s)
+        c.interpret_timeout_s = hosting.env_float(e, ("INTERPRET_TIMEOUT_S",), 0.0) or None
+        c.analyze_timeout_s = hosting.env_float(e, ("ANALYZE_TIMEOUT_S",), 0.0) or None
+        c.verify_enabled = hosting.verify_enabled(e)
         c.max_sweep_n = hosting.max_sweep_n(e)  # never above the documented cap of 200
         c.max_batch_rows = hosting.max_batch_rows(e)
         c.trust_proxy = e.get("LIVE_TRUST_PROXY", "").strip().lower() in ("1", "true", "yes", "on")
@@ -223,7 +234,8 @@ def run_scenario_isolated(policy: Policy, scenario: Scenario, timeout_s: float) 
         if p.is_alive():
             p.kill()
             p.join()
-            raise PlaygroundError(504, "timeout", f"The simulation did not finish within {timeout_s:.0f} s and was stopped.")
+            from ..hosting import slow_message
+            raise PlaygroundError(504, "timeout", slow_message(timeout_s, "the simulation"))
         if p.exitcode != 0 or not Path(out).exists():
             raise PlaygroundError(500, "sim_failed", "The simulation process failed.")
         return json.loads(Path(out).read_text())
@@ -234,7 +246,8 @@ def run_sweep_isolated(policy: Policy, scenarios: list[Scenario], timeout_s: flo
     from ..hosting import worker_count  # the container's real CPU limit, not the host's core count
     rr = LocalRunner(max_workers=worker_count(), shard_timeout_s=timeout_s).run(policy, scenarios, shards=min(10, len(scenarios)))
     if not rr.complete:
-        raise PlaygroundError(504, "timeout", "The sweep did not finish in time (some shards timed out or failed) and was stopped.")
+        from ..hosting import slow_message
+        raise PlaygroundError(504, "timeout", slow_message(timeout_s, "the sweep (some shards timed out or failed)"))
     return rr.results
 
 
@@ -372,7 +385,7 @@ class PlaygroundService:
         self._rate(ip, "batch", self.cfg.rate_sweep_per_10min, 600)
         scns = [Scenario(id=f"pgb-{i + 1}", seed=BATCH_SEED_BASE + i, tag="playground-batch", **r) for i, r in enumerate(recs)]
         pol, default = req.policy.to_policy(), Policy()
-        per_phase = self.cfg.sweep_timeout_s * 0.45
+        per_phase = self.cfg.batch_timeout_s * 0.45
         key = tuple((s.seed, s.mass_kg, s.friction, s.size_m, s.pos_offset_x, s.pos_offset_y, s.sensor_noise_m, s.gripper_delay_steps) for s in scns)
         t0 = time.perf_counter()
         with self._Slot(self.slots):

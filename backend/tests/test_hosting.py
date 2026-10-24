@@ -44,13 +44,13 @@ def test_memory_limit(tmp_path):
 def test_host_mode_defaults_and_overrides():
     assert hosting.max_sweep_n({}) == 200 and hosting.max_batch_rows({}) == 200
     host = {"ROBOPROOF_HOST_MODE": "1"}
-    assert hosting.max_sweep_n(host) == 50 and hosting.max_batch_rows(host) == 50
+    assert hosting.max_sweep_n(host) == 20 and hosting.max_batch_rows(host) == 20
     assert hosting.max_sweep_n({**host, "MAX_SWEEP_N": "30"}) == 30
     assert hosting.max_sweep_n({**host, "MAX_SWEEP_N": "9999"}) == 200      # never above the documented cap
-    assert hosting.max_batch_rows({**host, "MAX_BATCH_ROWS": "abc"}) == 50   # junk falls back to the default
+    assert hosting.max_batch_rows({**host, "MAX_BATCH_ROWS": "abc"}) == 20   # junk falls back to the default
     assert hosting.max_sweep_n({"PLAYGROUND_MAX_SWEEP_N": "80"}) == 80       # the older name still works
     c = PlaygroundConfig.from_env({**host, "MAX_BATCH_ROWS": "20"})
-    assert (c.max_sweep_n, c.max_batch_rows) == (50, 20)
+    assert (c.max_sweep_n, c.max_batch_rows) == (20, 20)
 
 
 def test_live_config_from_env(tmp_path):
@@ -142,3 +142,93 @@ def test_startup_self_check_reports_a_broken_simulator(monkeypatch):
     monkeypatch.setattr(builtins, "__import__", fake)
     with pytest.raises(RuntimeError, match="STARTUP SELF-CHECK FAILED"):
         main.startup_self_check()
+
+
+# ---------------------------------------------------------------- timeouts, verify switch, worker counts (free host with about 0.1 CPU)
+def test_every_timeout_is_configurable_and_host_mode_is_roomier():
+    c = PlaygroundConfig.from_env({})
+    assert (c.scenario_timeout_s, c.sweep_timeout_s, c.batch_timeout_s, c.verify_timeout_s) == (20.0, 60.0, 60.0, 54.0)
+    assert c.interpret_timeout_s is None and c.analyze_timeout_s is None and c.verify_enabled is True
+    h = PlaygroundConfig.from_env({"ROBOPROOF_HOST_MODE": "1"})
+    assert (h.scenario_timeout_s, h.sweep_timeout_s, h.batch_timeout_s) == (30.0, 90.0, 90.0)
+    e = PlaygroundConfig.from_env({"SCENARIO_TIMEOUT_S": "7", "SWEEP_TIMEOUT_S": "33", "BATCH_TIMEOUT_S": "44", "VERIFY_TIMEOUT_S": "99",
+                                   "INTERPRET_TIMEOUT_S": "12", "ANALYZE_TIMEOUT_S": "88", "VERIFY_ENABLED": "0"})
+    assert (e.scenario_timeout_s, e.sweep_timeout_s, e.batch_timeout_s, e.verify_timeout_s, e.interpret_timeout_s, e.analyze_timeout_s, e.verify_enabled) == (7, 33, 44, 99, 12, 88, False)
+    assert PlaygroundConfig.from_env({"PLAYGROUND_SWEEP_TIMEOUT_S": "40"}).sweep_timeout_s == 40  # the older names still work
+
+
+def test_slow_message_is_plain_on_a_free_host():
+    m = hosting.slow_message(30, "the simulation", {"ROBOPROOF_HOST_MODE": "1"})
+    assert "took too long on the free host" in m and "30 s" in m and "locally" in m
+    assert "free host" not in hosting.slow_message(30, "the simulation", {})
+
+
+def test_a_timed_out_simulation_says_so_on_a_free_host(monkeypatch):
+    from app.core.schemas import Policy, Scenario
+    from app.playground.service import PlaygroundError, run_scenario_isolated
+    monkeypatch.setenv("ROBOPROOF_HOST_MODE", "1")
+    scn = Scenario(id="t", seed=200001, tag="t", mass_kg=0.2, friction=0.8, size_m=0.05, pos_offset_x=0, pos_offset_y=0, sensor_noise_m=0, gripper_delay_steps=0)
+    with pytest.raises(PlaygroundError) as ei:
+        run_scenario_isolated(Policy(), scn, 0.0001)
+    assert ei.value.status == 504 and "took too long on the free host" in ei.value.message
+
+
+def test_verify_can_be_switched_off(tmp_path, monkeypatch):
+    app, c, mgr = make(tmp_path, monkeypatch)
+    install_playground(app, mgr, PlaygroundConfig(verify_enabled=False))
+    assert c.get("/api/health").json()["verify_enabled"] is False and c.get("/api/sim/spec").json()["verify_enabled"] is False
+    ids = c.get("/api/verify").json()["runs"]
+    rid = ids[0] if ids else "official_01_seed3101"
+    r = c.post(f"/api/verify/{rid}")
+    if ids:
+        assert r.status_code == 503 and r.json()["error"] == "verify_disabled" and "locally or on a larger host" in r.json()["message"] and r.json()["commands"]
+    # the cheap single-scenario re-run is not the expensive re-simulation and stays available
+    assert c.get("/api/verify").status_code == 200
+
+
+def test_interpret_passes_its_timeout_and_reports_a_slow_model():
+    from app.llm.client import LLMTransportError
+    from app.playground.interpret import InterpretError, interpret
+
+    class Slow:
+        seen = []
+
+        def complete_json(self, *a, **k):
+            Slow.seen.append(k["timeout"])
+            raise LLMTransportError("timed out")
+    with pytest.raises(InterpretError) as ei:
+        interpret(Slow(), "a heavy cube", "m1", "m2", 7.0)
+    assert Slow.seen == [7.0, 7.0] and "took too long (limit 7 s)" in ei.value.message
+
+
+def test_every_simulating_path_gets_the_container_worker_count(monkeypatch):
+    """Sweep, batch, verify (and the pipeline pool, see scripts/run_live_pipeline.py) must never fall back to the host's core count."""
+    import ast
+    import app.runner.local as local
+    from app.playground.service import run_sweep_isolated
+    from app.verify import core
+    monkeypatch.setattr(hosting, "worker_count", lambda cgroup=hosting.CGROUP: 1)
+    seen = []
+
+    class Fake:
+        def __init__(self, max_workers=None, **kw):
+            seen.append(max_workers)
+
+        def run(self, *a, **k):
+            from types import SimpleNamespace
+            return SimpleNamespace(complete=True, results=[])
+    monkeypatch.setattr(local, "LocalRunner", Fake)
+    run_sweep_isolated(None, [], 5.0)
+    core.default_runner(5.0)
+    assert seen == [1, 1]
+    root = Path(__file__).resolve().parents[1] / "app"
+    offenders = []
+    for f in root.rglob("*.py"):
+        if "runner" in f.parts:
+            continue
+        for node in ast.walk(ast.parse(f.read_text(encoding="utf-8"))):
+            if isinstance(node, ast.Call) and getattr(node.func, "id", getattr(node.func, "attr", "")) == "LocalRunner" and not any(k.arg == "max_workers" for k in node.keywords):
+                offenders.append(f"{f.name}:{node.lineno}")
+    assert not offenders, offenders
+    src = (root.parents[1] / "scripts" / "run_live_pipeline.py").read_text(encoding="utf-8")
+    assert "os.cpu_count = worker_count" in src

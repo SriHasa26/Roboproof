@@ -46,15 +46,20 @@ def _export_module():
     return mod
 
 
+def _verify_on(request: Request) -> bool:
+    pg = getattr(request.app.state, "playground", None)
+    return True if pg is None else bool(pg.cfg.verify_enabled)
+
+
 def make_router(mgr: RunManager) -> APIRouter:
     r = APIRouter()
     cfg = mgr.cfg
 
     @r.get("/api/health")
-    def health() -> dict:
+    def health(request: Request) -> dict:
         from datetime import datetime, timezone
         from ..core.provenance import PIPELINE_VERSION, TAG  # read-only: the frozen pipeline's version and tag names
-        return {"status": "ok", "live_enabled": cfg.enabled, "pipeline_enabled": cfg.pipeline_enabled, "pipeline_version": PIPELINE_VERSION, "pipeline_tag": TAG,
+        return {"status": "ok", "live_enabled": cfg.enabled, "pipeline_enabled": cfg.pipeline_enabled, "verify_enabled": _verify_on(request), "pipeline_version": PIPELINE_VERSION, "pipeline_tag": TAG,
                 "server_time_utc": datetime.now(timezone.utc).isoformat(timespec="seconds")}
 
     @r.get("/api/live/status")

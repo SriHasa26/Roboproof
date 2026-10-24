@@ -152,7 +152,18 @@ export default function Live() {
               <div className="mt-5">{replayBtn ?? <span className="text-sm text-dim">No recorded live run is included in this build.</span>}</div>
             </div>
           )}
-          {probe === 'online' && status && (
+          {probe === 'online' && status && (!status.enabled || status.pipeline_enabled === false) && (
+            <div className="glass border-amber/30 p-6">
+              <div className="eyebrow !text-amber mb-2">runs are off on this host</div>
+              <h2 className="font-display">Full pipeline runs are not available here.</h2>
+              <p className="mt-3 text-dim">
+                {status.enabled ? 'This is a small free instance, so full pipeline runs are switched off on it.' : 'Live runs are switched off on this server.'} Full pipeline runs are available when you run the project locally, see the README, &ldquo;Running live&rdquo;.
+                {status.enabled ? ' The playground (scenario, sweep, batch, plain-English input and analysis) still works here.' : ''} You can watch recordings of real live runs:
+              </p>
+              <div className="mt-5">{replayBtn}</div>
+            </div>
+          )}
+          {probe === 'online' && status && status.enabled && status.pipeline_enabled !== false && (
             <div className="glass p-6">
               <h2 className="font-display">Start a live rehearsal</h2>
               {typical ? (
@@ -167,14 +178,7 @@ export default function Live() {
                 <span className="chip">~${status.estimated_usd_left_today.toFixed(2)} estimated spend left today</span>
                 <span className={`chip ${status.busy ? '!border-verm/50 !text-verm' : ''}`}>{status.busy ? 'busy: a run is in progress' : 'idle'}</span>
               </div>
-              {!status.enabled ? (
-                <p className="mt-5 rounded-lg border border-amber/30 bg-amber/[.06] p-3 text-sm text-amber">Live runs are switched off on this server.</p>
-              ) : status.pipeline_enabled === false ? (
-                <div className="mt-5">
-                  <p className="rounded-lg border border-amber/30 bg-amber/[.06] p-3 text-sm text-amber">Full pipeline runs are switched off on this host (it is a small free instance): full pipeline runs are available when you run the project locally, see the README, &ldquo;Running live&rdquo;. The playground (scenario, sweep, batch, plain-English input and analysis) still works here, and you can watch recordings of real live runs.</p>
-                  <div className="mt-4">{replayBtn}</div>
-                </div>
-              ) : (
+              {(
                 <>
                   {status.access_code_required && (
                     <label className="mt-5 block text-sm">Access code<input type="password" value={code} onChange={(e) => setCode(e.target.value)} autoComplete="off"
@@ -190,6 +194,7 @@ export default function Live() {
               {err && (() => { const [t, m] = errText(err); return <div role="alert" className="mt-5 rounded-lg border border-verm/40 bg-verm/[.07] p-3 text-sm"><b className="text-verm">{t}.</b> {m}</div> })()}
             </div>
           )}
+          {!(probe === 'online' && status && (!status.enabled || status.pipeline_enabled === false)) && (
           <div className="glass p-6">
             <h3 className="font-display">What you will see</h3>
             <ol className="mt-3 list-decimal space-y-1.5 pl-5 text-sm text-dim">
@@ -201,6 +206,7 @@ export default function Live() {
             </ol>
             {replays && probe === 'online' && <p className="mt-4 text-xs text-dim">Recordings of real live runs ({replays.map((r) => `${r.verdict} ${r.date}`).join(' and ')}) are also available to replay.</p>}
           </div>
+          )}
         </div>
       )}
 

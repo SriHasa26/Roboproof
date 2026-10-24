@@ -3,39 +3,53 @@
 # every `sync: false` variable is entered in the Render dashboard.
 #
 # Free-instance facts to plan around (Render's own terms; check their current docs): the service spins down after about 15 minutes without
-# traffic and wakes on the next request in roughly a minute; local disk is lost on spin-down; CPU and RAM are small. See docs/HOSTING.md for
-# measured memory and time in a container limited to 512 MB / 0.5 CPU and to 2 GB / 2 CPUs.
+# traffic and wakes on the next request in roughly a minute; local disk is lost on spin-down; CPU and RAM are small (possibly about 0.1 CPU,
+# up to 5x slower than the 0.5 CPU I measured). See docs/HOSTING.md for the measurements.
 services:
   - type: web
     name: roboproof
     runtime: docker
     plan: free
-    dockerfilePath: ./docker/Dockerfile.host
+    dockerfilePath: docker/Dockerfile.host
     dockerContext: .
     healthCheckPath: /api/health
     autoDeploy: false
     envVars:
-      # --- what the container needs (Render sets PORT itself, default 10000; locally the image defaults to 7860)
-      - key: ROBOPROOF_HOST_MODE        # already set in the image; small defaults for sweep size and batch rows
-        value: "1"
-      - key: PLAYGROUND_ENABLED         # kill switch for the simulator playground
+      # PORT is set by Render itself (default 10000); locally the image defaults to 7860.
+      - key: ROBOPROOF_HOST_MODE        # small defaults and longer timeouts for a very small instance
         value: "1"
       - key: DATA_DIR                   # runtime data (live runs, daily counters, SQLite): local disk, lost on spin-down
         value: /tmp/roboproof
-      # --- limits (host-mode defaults shown; hard caps are 200)
+      # --- what is switched on
+      - key: PLAYGROUND_ENABLED         # the simulator playground
+        value: "1"
+      - key: LIVE_ENABLED               # master switch for anything that calls a model; set to 1 only if you want interpret and analyze online
+        value: "0"
+      - key: LIVE_PIPELINE_ENABLED      # 0 disables ONLY the full pipeline run (it needs minutes of CPU)
+        value: "0"
+      - key: VERIFY_ENABLED             # 0: "Verify this result" shows the terminal command; the re-simulation does not fit this host
+        value: "0"
+      # --- limits for a very small CPU (every timeout below can be raised if the host is bigger)
       - key: MAX_SWEEP_N
-        value: "50"
-      - key: MAX_BATCH_ROWS
-        value: "50"
-      - key: RUN_TIMEOUT_S              # kill a full pipeline run after this long
-        value: "600"
-      - key: LIVE_KEEP_RUNS             # finished run folders kept on disk
         value: "20"
-      # --- model-backed features. Everything that calls a model is OFF unless LIVE_ENABLED=1.
-      - key: LIVE_ENABLED
-        value: "0"
-      - key: LIVE_PIPELINE_ENABLED      # 0 disables ONLY the full pipeline run; scenario, sweep, batch, interpret and analyze keep working
-        value: "0"
+      - key: MAX_BATCH_ROWS
+        value: "20"
+      - key: SCENARIO_TIMEOUT_S
+        value: "30"
+      - key: SWEEP_TIMEOUT_S
+        value: "90"
+      - key: BATCH_TIMEOUT_S
+        value: "90"
+      - key: VERIFY_TIMEOUT_S
+        value: "54"
+      - key: INTERPRET_TIMEOUT_S        # per model call
+        value: "45"
+      - key: ANALYZE_TIMEOUT_S          # per model call
+        value: "120"
+      - key: RUN_TIMEOUT_S              # full pipeline run (only if LIVE_PIPELINE_ENABLED=1)
+        value: "600"
+      - key: LIVE_KEEP_RUNS
+        value: "20"
       - key: LIVE_DAILY_RUN_CAP
         value: "5"
       - key: LIVE_DAILY_USD_CAP
@@ -44,9 +58,9 @@ services:
         value: "3"
       - key: LIVE_TRUST_PROXY           # Render puts the client address in X-Forwarded-For
         value: "1"
+      # --- set in the dashboard (names only here; never put values in this file)
       - key: ALLOWED_ORIGINS            # only needed if the site is served from a different origin than the API
-        value: ""
-      # --- secrets and model names: set in the dashboard, never here
+        sync: false
       - key: NEBIUS_API_KEY
         sync: false
       - key: NEBIUS_BASE_URL
@@ -57,5 +71,5 @@ services:
         sync: false
       - key: NEBIUS_MODEL_FALLBACK
         sync: false
-      - key: LIVE_ACCESS_CODE           # optional shared code for live runs
+      - key: LIVE_ACCESS_CODE
         sync: false

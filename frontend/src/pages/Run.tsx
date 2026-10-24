@@ -145,7 +145,7 @@ export function RunReport({ r, replays, back, map, calls, origin = 'recorded' }:
         <div className="mt-4 grid gap-4 lg:grid-cols-2">{r.hypotheses.map((h) => <HypCard key={h.id} h={h} />)}</div>
       </Section>
 
-      {r.badges.mode === 'official' && r.badges.recorded && <VerifyPanel runId={r.id} />}
+      {r.badges.mode === 'official' && r.badges.recorded && <VerifyPanel runId={r.id} stored={{ verdict: r.verdict, checks: r.gate.checks }} />}
 
       {map !== null && <FailureMapPanel {...(map ?? { file: `scenarios/${r.id}.json` })} chip={{ kind: origin, detail: origin === 'recorded' ? `analysis set of ${r.id}` : origin === 'live' ? 'this run, analysis set' : 'recorded live run, analysis set' }} />}
 

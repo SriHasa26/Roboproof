@@ -41,16 +41,19 @@ def make_router(svc: PlaygroundService, live, verify_fn=core.verify_all, root: P
     def verify(run_id: str, request: Request):
         if not RUN_RE.match(run_id) or run_id not in official_ids(root):  # whitelist: the id never becomes a path from the client
             return JSONResponse({"error": "not_found", "message": "No such recorded official run."}, status_code=404)
+        if not svc.cfg.verify_enabled:
+            return JSONResponse({"error": "verify_disabled", "message": "Recomputation runs locally or on a larger host. It re-simulates about 500 scenarios, which does not fit this host.", "commands": [f"scripts/dock.sh python scripts/verify_official.py --run {run_id}", "scripts/dock.sh python scripts/verify_official.py"]}, status_code=503)
         try:
             svc._enabled()
             svc._rate(client_ip(request, live.cfg if live else _NoProxy), "verify", 6, 600)
             t0 = time.perf_counter()
             with svc._Slot(svc.slots):
-                res = verify_fn(root, resim=True, only=run_id, timeout_s=svc.cfg.sweep_timeout_s * 0.9)
+                res = verify_fn(root, resim=True, only=run_id, timeout_s=svc.cfg.verify_timeout_s)
         except PlaygroundError as e:
             return JSONResponse({"error": e.code, "message": e.message}, status_code=e.status)
         except RuntimeError as e:
-            return JSONResponse({"error": "timeout", "message": f"The re-simulation did not finish in time ({e})."}, status_code=504)
+            from ..hosting import slow_message
+            return JSONResponse({"error": "timeout", "message": slow_message(svc.cfg.verify_timeout_s, f"the re-simulation ({e})")}, status_code=504)
         rows = res["runs"][run_id]
         return {"run_id": run_id, "mode": "verification of a recorded official run (analysis set re-simulated; held-out seeds never used)", "rows": rows, "integrity": res["integrity"],
                 "limits": res["limits"], "tally": core.tally(res), "elapsed_s": round(time.perf_counter() - t0, 1),

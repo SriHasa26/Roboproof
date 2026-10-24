@@ -1,8 +1,8 @@
 import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { API_BASE } from './live/api'
 
-type Health = { status: string; live_enabled?: boolean; pipeline_enabled?: boolean; pipeline_version?: string; pipeline_tag?: string; server_time_utc?: string }
-export type BackendState = { state: 'checking' | 'waking' | 'online' | 'offline'; health?: Health; liveEnabled?: boolean; pipelineEnabled?: boolean; checkedAt?: number; wakeStartedAt?: number; refresh: () => void }
+type Health = { status: string; live_enabled?: boolean; pipeline_enabled?: boolean; verify_enabled?: boolean; pipeline_version?: string; pipeline_tag?: string; server_time_utc?: string }
+export type BackendState = { state: 'checking' | 'waking' | 'online' | 'offline'; health?: Health; liveEnabled?: boolean; pipelineEnabled?: boolean; verifyEnabled?: boolean; checkedAt?: number; wakeStartedAt?: number; refresh: () => void }
 const Ctx = createContext<BackendState>({ state: 'checking', refresh: () => {} })
 export const useBackend = () => useContext(Ctx)
 
@@ -45,7 +45,7 @@ export function BackendProvider({ children }: { children: ReactNode }) {
     const l = await getJson('/api/live/status', 5000)
     const liveEnabled = l && l.body && typeof l.body.enabled === 'boolean' ? !!l.body.enabled : !!h.live_enabled
     const pipelineEnabled = l && l.body && typeof l.body.pipeline_enabled === 'boolean' ? !!l.body.pipeline_enabled : h.pipeline_enabled !== false
-    setSt({ state: 'online', health: h, liveEnabled, pipelineEnabled, checkedAt: Date.now() })
+    setSt({ state: 'online', health: h, liveEnabled, pipelineEnabled, verifyEnabled: h.verify_enabled !== false, checkedAt: Date.now() })
   }, [])
 
   /** startWaking: begin the 90 s retry window when nothing answers (first load, a manual refresh, or a host that went to sleep). */

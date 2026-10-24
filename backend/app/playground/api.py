@@ -37,6 +37,7 @@ def make_router(svc: PlaygroundService, live: RunManager | None) -> APIRouter:
         s["interpret_available"] = bool(live and live.cfg.enabled)
         s["interpret_max_chars"] = 300
         s["interpret_est_usd"] = svc.cfg.interpret_usd_est
+        s["verify_enabled"] = svc.cfg.verify_enabled
         return s
 
     @r.post("/api/sim/scenario")
@@ -132,7 +133,7 @@ def _run_interpret(svc: PlaygroundService, live: RunManager, text: str, client_f
         live.adjust_spend((est if est is not None else svc.cfg.interpret_usd_est) - svc.cfg.interpret_usd_est)
         return est
     try:
-        res = interpret(client, text, settings.model_fast, settings.model_fallback)
+        res = interpret(client, text, settings.model_fast, settings.model_fallback, svc.cfg.interpret_timeout_s)
     except InterpretError as e:
         if e.status in (422,):  # rejected before any model call
             live.adjust_spend(-svc.cfg.interpret_usd_est)
@@ -154,6 +155,9 @@ def _run_analysis(svc: PlaygroundService, live: RunManager, sw: dict):
     if not (settings.api_key and settings.model_reasoning):
         live.adjust_spend(-svc.cfg.analyze_usd_est)
         return JSONResponse({"error": "not_configured", "message": "The server has no model configured for the analysis."}, status_code=503)
+    if svc.cfg.analyze_timeout_s:  # ANALYZE_TIMEOUT_S bounds each model call of the analysis
+        import dataclasses
+        settings = dataclasses.replace(settings, llm_timeout_s=svc.cfg.analyze_timeout_s)
     client = LLMClient(settings)
     scns, results = sw["scenarios"], sw["results"]
     ev = compute_evidence(scns, results)
@@ -165,7 +169,8 @@ def _run_analysis(svc: PlaygroundService, live: RunManager, sw: dict):
         if est is not None:
             live.adjust_spend(est - svc.cfg.analyze_usd_est)
         detail = str(e)[:240]
-        return JSONResponse({"error": "model_failed", "message": f"The model's answer could not be used ({type(e).__name__}: {detail}). The model calls were made, so their estimated cost "
+        slow = " (the model call took too long or was unreachable; limit %.0f s)" % settings.llm_timeout_s if type(e).__name__ == "LLMTransportError" else ""
+        return JSONResponse({"error": "model_failed", "message": f"The model's answer could not be used ({type(e).__name__}: {detail}){slow}. The model calls were made, so their estimated cost "
                              f"({'about $%.3f' % est if est is not None else 'unknown'}) counts against the daily cap. Try again."}, status_code=502)
     tf = targeted_failures(hyps, scns, results)
     est = estimate_cost(client.records, fetch_pricing(settings, {settings.model_reasoning}))

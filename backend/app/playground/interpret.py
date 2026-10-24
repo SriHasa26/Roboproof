@@ -110,7 +110,7 @@ def _finalize(out: InterpretOut) -> dict:
     return {"unsupported": False, "reason": None, "parameters": res}
 
 
-def interpret(client: LLMClient, text: str, model_fast: str, model_fallback: str | None) -> dict:
+def interpret(client: LLMClient, text: str, model_fast: str, model_fallback: str | None, timeout_s: float | None = None) -> dict:
     """Primary fast Nemotron model (thinking off), then the second Nemotron model on a transport or validation failure."""
     text = clean_text(text)
     if not text:
@@ -118,9 +118,9 @@ def interpret(client: LLMClient, text: str, model_fast: str, model_fallback: str
     if len(text) > MAX_CHARS:
         raise InterpretError(422, "too_long", f"Keep the description to {MAX_CHARS} characters or fewer.")
     system, user = build_prompt(text)
-    chain = [("primary", model_fast, PRIMARY_MAX_TOKENS, PRIMARY_TIMEOUT_S)]
+    chain = [("primary", model_fast, PRIMARY_MAX_TOKENS, timeout_s or PRIMARY_TIMEOUT_S)]
     if model_fallback and model_fallback != model_fast:
-        chain.append(("fallback", model_fallback, FALLBACK_MAX_TOKENS, FALLBACK_TIMEOUT_S))
+        chain.append(("fallback", model_fallback, FALLBACK_MAX_TOKENS, timeout_s or FALLBACK_TIMEOUT_S))
     t0 = time.perf_counter()
     last = "no model answered"
     for stage, model, max_tokens, timeout in chain:
@@ -129,7 +129,7 @@ def interpret(client: LLMClient, text: str, model_fast: str, model_fallback: str
         except LLMBudgetExceeded:
             raise InterpretError(503, "budget", "The call budget for this request was exhausted.")
         except LLMTransportError:
-            last = "the model endpoint timed out or was unreachable"
+            last = f"the model call took too long (limit {timeout:.0f} s) or the endpoint was unreachable"
             continue
         except LLMValidationError:
             last = "the model's answer did not match the required format"

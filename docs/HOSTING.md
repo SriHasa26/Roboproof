@@ -10,7 +10,7 @@ Facts about the host, taken from its own terms at the time of writing (check the
 |---|---|
 | Spins down when idle, wakes in about a minute | The site shows **"Backend waking up (about 1 minute)"** and retries the health check every 3 s for up to **90 s**, then falls back to offline mode with recorded data. It shows "Backend online" only after `/api/health` has answered. A host that answers with a 404 or HTML (a static host with no API) is treated as offline at once, without waiting. |
 | Local disk is lost | Runtime data goes to `DATA_DIR` (default `/tmp/roboproof`): kept live-run folders, the daily live-run and spend counters, the SQLite file. **They reset whenever the host restarts or spins down**, so the daily caps are per instance lifetime, not a durable quota. Only the newest 20 runs are kept (`LIVE_KEEP_RUNS`). Recorded runs and replays are baked into the image and are not affected. |
-| Small CPU and RAM | Worker counts come from the container's real CPU limit (cgroup quota, not the host's core count: a 0.5 CPU container starts 1 simulator worker). In host mode a sweep is at most 50 scenarios and a batch at most 50 rows. See "Measured" below. |
+| Small CPU and RAM | Worker counts come from the container's real CPU limit (cgroup quota, not the host's core count: a 0.5 CPU container starts 1 simulator worker). In host mode a sweep is at most 20 scenarios and a batch at most 20 rows (a free instance may have only about 0.1 CPU, up to 5 times slower than the 0.5 CPU measured below). See "Measured" below. |
 
 ## The image
 
@@ -31,11 +31,13 @@ docker run --rm -p 7860:7860 -e PORT=7860 --memory=512m --cpus=0.5 roboproof-hos
 | `PORT` | 7860 (Render: 10000) | Port the single server listens on (the host sets it). |
 | `ROBOPROOF_HOST_MODE` | `1` in the host image, else off | Small defaults for the limits below. |
 | `DATA_DIR` | `/tmp/roboproof` | Runtime data directory (local disk; lost on spin-down). |
-| `MAX_SWEEP_N` | 50 in host mode, else 200 | Largest sweep. Never above 200. (`PLAYGROUND_MAX_SWEEP_N` still works.) |
-| `MAX_BATCH_ROWS` | 50 in host mode, else 200 | Largest CSV batch. Never above 200. |
+| `MAX_SWEEP_N` | 20 in host mode, else 200 | Largest sweep. Never above 200. (`PLAYGROUND_MAX_SWEEP_N` still works.) |
+| `MAX_BATCH_ROWS` | 20 in host mode, else 200 | Largest CSV batch. Never above 200. |
 | `RUN_TIMEOUT_S` | 600 | A full pipeline run is killed after this long (`LIVE_TIMEOUT_S` still works). |
 | `PLAYGROUND_ENABLED` | 1 | Kill switch for the simulator playground. |
 | `STARTUP_SELF_CHECK` | on in host mode | At start the server imports the simulator and builds the playground spec; if either fails it refuses to start with a clear message. |
+| `SCENARIO_TIMEOUT_S`, `SWEEP_TIMEOUT_S`, `BATCH_TIMEOUT_S`, `VERIFY_TIMEOUT_S`, `INTERPRET_TIMEOUT_S`, `ANALYZE_TIMEOUT_S` | 20, 60, 60, 54, 45 (per call), `LLM_TIMEOUT_S`; host mode 30, 90, 90 | Time limits per request kind. A request that hits one returns "This took too long on the free host" with the limit and what to try. The older `PLAYGROUND_*_TIMEOUT_S` names still work. |
+| `VERIFY_ENABLED` | 1 | 0 turns off the server-side re-simulation behind "Verify this result" (about 500 scenarios); the page then shows the terminal command and the stored result, with the note "recomputation runs locally or on a larger host". `render.yaml` sets 0. |
 | `LIVE_ENABLED` | 0 | Master switch for anything that calls a model or spends credits (full pipeline, plain-English input, analysis). |
 | `LIVE_PIPELINE_ENABLED` | 1 | **0 disables only the full pipeline run.** Scenario, sweep, batch, interpret and analyze keep working. |
 | `LIVE_KEEP_RUNS` | 20 | Finished run folders kept on disk. |

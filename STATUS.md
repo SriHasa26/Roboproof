@@ -62,3 +62,6 @@ Notes
 - Docker verified (29.2.1, WSL2 backend, cgroup v2, 158 GB free); other projects' containers and ports (8000, 5173) untouched. Compose stack runs on API_PORT=8010.
 - Added: PORT default 7860 (Render sets 10000), startup self-check (simulator import + playground spec, always in host mode), the pipeline's LocalRunner pool sized from the container CPU limit via `scripts/run_live_pipeline.py` (frozen runner untouched), exact replay-note wording, PLAYGROUND_ENABLED in render.yaml.
 - Re-measured the final image (`docs/HOSTING_MEASUREMENTS.md`): nothing killed at 512 MB / 0.5 CPU or 2 GB / 2 CPUs. Full pipeline on the free tier: estimate only (see docs/HOSTING.md).
+
+## Final hosting fixes
+- Host-mode limits for about 0.1 CPU: MAX_SWEEP_N and MAX_BATCH_ROWS default to 20; every request kind has an env timeout (SCENARIO/SWEEP/BATCH/VERIFY/INTERPRET/ANALYZE_TIMEOUT_S) and a plain "took too long on the free host" message; VERIFY_ENABLED=0 swaps the Verify button for the command and the stored result; the sweep, batch, verify and pipeline pools take the container's CPU quota (tested); /live shows its own card with replays when runs are off. Suite: 368 passed in the image.

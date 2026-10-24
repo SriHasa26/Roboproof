@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { API_BASE } from '../live/api'
 import { Skeleton, useToast } from '../motion'
 import { SourceChip } from '../ui'
+import { useBackend } from '../backend'
+import type { Check } from '../lib'
 
 type Row = { group: string; id: string; name: string; stored: string; recomputed: string; status: 'match' | 'mismatch' | 'unverifiable' | 'info'; note: string }
 type Resp = { run_id: string; rows: Row[]; integrity: Row[]; limits: Row[]; tally: Record<string, number>; elapsed_s: number; commands: string[]; mode: string }
@@ -51,8 +53,9 @@ function Table({ title, rows }: { title: string; rows: Row[] }) {
 }
 
 /** Recomputes and re-simulates (analysis set only) one recorded official run on the server, then shows stored vs recomputed numbers. */
-export default function VerifyPanel({ runId }: { runId: string }) {
+export default function VerifyPanel({ runId, stored }: { runId: string; stored?: { verdict: string; checks: Check[] } }) {
   const toast = useToast()
+  const be = useBackend()
   const [state, setState] = useState<'idle' | 'running' | 'done' | 'offline' | 'error'>('idle')
   const [res, setRes] = useState<Resp | null>(null)
   const [msg, setMsg] = useState('')
@@ -82,6 +85,27 @@ export default function VerifyPanel({ runId }: { runId: string }) {
 
   const rows = res?.rows ?? []
   const t = res?.tally
+  if (be.state === 'online' && be.verifyEnabled === false) {
+    return (
+      <section className="mb-14" aria-label="Verify this result">
+        <div className="eyebrow mb-1.5">don't trust it, check it</div>
+        <h2 className="mb-3 text-3xl">Verify this result</h2>
+        <div className="rounded-xl border border-amber/40 bg-amber/[.07] p-4 text-sm" role="note">
+          <b className="text-amber">Recomputation runs locally or on a larger host.</b> Verifying re-simulates about 500 scenarios and recomputes the gate from the stored counts, which does not fit this small host, so the button is off here. Nothing was recomputed and no new result is shown. Run it yourself from the repository root:
+          <pre className="mt-2 whitespace-pre-wrap break-all rounded-lg bg-black/40 p-3 font-mono text-xs text-text">{cmd}</pre>
+          <button className="chip mt-2 hover:!border-amber/60 hover:!text-text" onClick={() => navigator.clipboard?.writeText(cmd).then(() => toast('Command copied.', 'ok'))}>Copy command</button>
+        </div>
+        {stored && (
+          <div className="glass mt-4 p-4">
+            <div className="flex flex-wrap items-center gap-2"><SourceChip kind="recorded" detail={`stored gate report of ${runId}, not recomputed`} /><span className="font-mono text-xs text-dim">stored verdict: <b className="text-text">{stored.verdict}</b></span></div>
+            <ul className="mt-3 grid gap-1.5 text-xs sm:grid-cols-2">
+              {stored.checks.map((c) => <li key={c.id} className="flex items-baseline justify-between gap-3 border-b hair pb-1"><span><b className="font-mono">{c.id}</b> {c.name}</span><span className="font-mono text-dim">{c.status}</span></li>)}
+            </ul>
+          </div>
+        )}
+      </section>
+    )
+  }
   return (
     <section className="mb-14" aria-label="Verify this result">
       <div className="eyebrow mb-1.5">don't trust it, check it</div>
@@ -98,7 +122,7 @@ export default function VerifyPanel({ runId }: { runId: string }) {
       {state === 'offline' && (
         <div className="mt-4 rounded-xl border border-amber/40 bg-amber/[.07] p-4 text-sm" role="alert">
           <b className="text-amber">Backend offline.</b> Nothing was verified, and no result is shown. Run the same check yourself in a terminal from the repository root:
-          <pre className="mt-2 overflow-x-auto rounded-lg bg-black/40 p-3 font-mono text-xs text-text">{cmd}</pre>
+          <pre className="mt-2 whitespace-pre-wrap break-all rounded-lg bg-black/40 p-3 font-mono text-xs text-text">{cmd}</pre>
           <button className="chip mt-2 hover:!border-amber/60 hover:!text-text" onClick={() => navigator.clipboard?.writeText(cmd).then(() => toast('Command copied.', 'ok'))}>Copy command</button>
         </div>
       )}

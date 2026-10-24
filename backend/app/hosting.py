@@ -11,8 +11,8 @@ from pathlib import Path
 
 CGROUP = Path("/sys/fs/cgroup")
 DEFAULT_DATA_DIR = "/tmp/roboproof"
-HOST_MAX_SWEEP_N = 50
-HOST_MAX_BATCH_ROWS = 50
+HOST_MAX_SWEEP_N = 20   # a free instance may have about 0.1 CPU: measured 0.5 CPU rates were up to 5x faster than that
+HOST_MAX_BATCH_ROWS = 20
 HARD_MAX_SWEEP_N = 200   # the documented cap, never exceeded
 HARD_MAX_BATCH_ROWS = 200
 
@@ -93,6 +93,31 @@ def max_sweep_n(env: dict | None = None) -> int:
 def max_batch_rows(env: dict | None = None) -> int:
     e = env if env is not None else dict(os.environ)
     return env_int(e, "MAX_BATCH_ROWS", HOST_MAX_BATCH_ROWS if host_mode(e) else HARD_MAX_BATCH_ROWS, 1, HARD_MAX_BATCH_ROWS)
+
+
+def env_float(env: dict, names: tuple[str, ...], default: float) -> float:
+    """The first of `names` that is set to a positive number, else `default` (so a short name like SWEEP_TIMEOUT_S and the older PLAYGROUND_* name both work)."""
+    for n in names:
+        try:
+            v = float(env[n]) if env.get(n) not in (None, "") else None
+        except ValueError:
+            v = None
+        if v is not None and v > 0:
+            return v
+    return default
+
+
+def verify_enabled(env: dict | None = None) -> bool:
+    """VERIFY_ENABLED: whether POST /api/verify may re-simulate about 500 scenarios here. On by default; render.yaml turns it off."""
+    return _flag((env if env is not None else os.environ).get("VERIFY_ENABLED"), True)
+
+
+def slow_message(limit_s: float, what: str, env: dict | None = None) -> str:
+    """The message for a request that hit its time limit. On a small host it says so plainly instead of a vague failure."""
+    if host_mode(env):
+        return (f"This took too long on the free host: {what} did not finish within {limit_s:.0f} s. A free instance has very little CPU. "
+                "Try fewer scenarios, or run the project locally where it is much faster.")
+    return f"{what[:1].upper()}{what[1:]} did not finish within {limit_s:.0f} s and was stopped."
 
 
 def prepare_data_dir(env: dict | None = None) -> Path:
